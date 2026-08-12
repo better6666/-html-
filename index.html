@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HTML网页转在线链接 - 静态网页一键发布</title>
-  <meta name="description" content="上传 HTML 文件，输入激活码后生成可访问的在线链接。无需服务器，无需部署环境。">
+  <meta name="description" content="上传 HTML 文件，几秒生成可访问的在线链接。无需服务器，无需部署环境。">
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23087f8c'/%3E%3Cpath d='M18 20h28v6H18zm0 9h21v6H18zm0 9h28v6H18z' fill='white'/%3E%3C/svg%3E">
 
@@ -17,7 +17,6 @@
       --line: #dce4ea;
       --teal: #087f8c;
       --teal-dark: #06606b;
-      --amber: #f5a524;
       --red: #c24538;
       --green: #16805b;
       --blue: #246bfe;
@@ -351,27 +350,16 @@
       line-height: 1.45;
     }
 
-    textarea:focus,
-    input:focus {
+    textarea:focus {
       border-color: var(--teal);
       box-shadow: 0 0 0 3px rgba(8, 127, 140, 0.13);
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: 1fr;
       gap: 10px;
       margin-top: 14px;
-    }
-
-    input {
-      min-height: 46px;
-      width: 100%;
-      padding: 0 13px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      outline: none;
-      background: #fff;
     }
 
     .result {
@@ -703,6 +691,7 @@
 
 <header class="topbar">
   <nav class="nav" aria-label="主导航">
+
     <a class="brand" href="#top">
       <span class="brand-mark">H</span>
       <span>HTML网页转在线链接</span>
@@ -714,6 +703,7 @@
       <a href="#steps">使用流程</a>
       <a href="#notice">使用须知</a>
     </div>
+
   </nav>
 </header>
 
@@ -727,7 +717,7 @@
 <div>
 
 <span class="kicker">
-静态网页一键发布 · 激活码自助使用
+静态网页一键发布 · 无需服务器
 </span>
 
 <h1>
@@ -736,7 +726,7 @@ HTML网页转在线链接
 
 <p class="lead">
 上传 HTML 文件，或者直接粘贴 AI 生成的 HTML 代码，
-输入激活码后即可生成专属访问链接。
+几秒即可生成专属在线访问链接。
 无需购买服务器，无需配置环境。
 </p>
 
@@ -754,8 +744,8 @@ HTML网页转在线链接
 
 <div class="trust-row">
 <span>单文件不超过 20MB</span>
-<span>失败不消耗卡密</span>
 <span>手机电脑均可访问</span>
+<span>无需服务器</span>
 </div>
 
 </div>
@@ -847,13 +837,6 @@ Hello
 
 <div class="form-grid">
 
-<input
-id="licenseCode"
-type="text"
-autocomplete="off"
-placeholder="请输入激活码 / 卡密"
->
-
 <button
 class="button primary"
 id="deployBtn"
@@ -862,11 +845,6 @@ type="button"
 生成链接
 </button>
 
-</div>
-
-
-<div class="hint">
-请输入购买后获得的激活码。
 </div>
 
 
@@ -982,11 +960,11 @@ HTML 单页面
 </span>
 
 <h3>
-激活码使用
+无需服务器
 </h3>
 
 <p>
-用户输入购买后获得的激活码，自助生成网页链接。
+不用购买服务器，不需要配置复杂的部署环境，上传即可使用。
 </p>
 
 </article>
@@ -1009,11 +987,11 @@ id="steps"
 <div class="section-title">
 
 <h2>
-五步完成网页发布
+四步完成网页发布
 </h2>
 
 <p>
-上传网页，输入激活码，几秒即可获得在线访问地址。
+上传网页，等待处理，几秒即可获得在线访问地址。
 </p>
 
 </div>
@@ -1022,9 +1000,9 @@ id="steps"
 <div class="steps">
 
 <div class="step">
-<strong>下单获取卡密</strong>
+<strong>准备网页</strong>
 <span>
-购买后复制激活码。
+准备一个 HTML 文件，或者复制 AI 生成的 HTML 代码。
 </span>
 </div>
 
@@ -1043,16 +1021,16 @@ id="steps"
 </div>
 
 <div class="step">
-<strong>输入激活码</strong>
+<strong>复制访问链接</strong>
 <span>
-输入购买后获得的卡密。
+生成后直接分享给别人。
 </span>
 </div>
 
 <div class="step">
-<strong>复制访问链接</strong>
+<strong>在线访问</strong>
 <span>
-生成后直接分享给别人。
+手机、电脑等设备均可以打开生成的网页。
 </span>
 </div>
 
@@ -1313,9 +1291,6 @@ const fileInput =
 const htmlCode =
   document.querySelector("#htmlCode");
 
-const licenseCode =
-  document.querySelector("#licenseCode");
-
 const deployBtn =
   document.querySelector("#deployBtn");
 
@@ -1554,28 +1529,6 @@ deployBtn.addEventListener(
 
 
     /* ---------------------------
-       检查激活码
-       --------------------------- */
-
-    const license =
-      licenseCode.value.trim();
-
-
-    if (!license) {
-
-      setMessage(
-        "请先输入激活码。",
-        true
-      );
-
-      licenseCode.focus();
-
-      return;
-
-    }
-
-
-    /* ---------------------------
        检查文件
        --------------------------- */
 
@@ -1682,16 +1635,6 @@ deployBtn.addEventListener(
 
 
       /* -------------------------
-         发送激活码
-         ------------------------- */
-
-      formData.append(
-        "license",
-        license
-      );
-
-
-      /* -------------------------
          请求 Worker
          ------------------------- */
 
@@ -1742,6 +1685,15 @@ deployBtn.addEventListener(
       /* -------------------------
          显示真实链接
          ------------------------- */
+
+      if (!data.url) {
+
+        throw new Error(
+          "服务器没有返回网页链接"
+        );
+
+      }
+
 
       resultLink.textContent =
         data.url;
@@ -1805,6 +1757,16 @@ copyBtn.addEventListener(
 
     const text =
       resultLink.textContent;
+
+
+    if (
+      !text ||
+      text === "等待生成..."
+    ) {
+
+      return;
+
+    }
 
 
     try {
