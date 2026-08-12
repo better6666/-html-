@@ -14,7 +14,7 @@ HTML Cloud - HTML网页一键发布平台
 
 
 <meta name="description"
-content="输入HTML代码或上传HTML、ZIP项目，一键生成在线网页链接">
+content="HTML网页一键发布，支持HTML代码、HTML文件、ZIP项目上传生成在线链接">
 
 
 <style>
@@ -23,6 +23,7 @@ content="输入HTML代码或上传HTML、ZIP项目，一键生成在线网页链
 :root{
 
 --primary:#087f8c;
+
 --primary2:#246bfe;
 
 --bg:#f5f8fc;
@@ -40,6 +41,7 @@ content="输入HTML代码或上传HTML、ZIP项目，一键生成在线网页链
 --danger:#c24538;
 
 }
+
 
 
 *{
@@ -63,6 +65,7 @@ linear-gradient(
 );
 
 color:var(--text);
+
 
 font-family:
 
@@ -195,8 +198,6 @@ margin:auto;
 padding:40px 20px 80px;
 
 }
-
-
 
 
 
@@ -337,10 +338,6 @@ border:1px solid var(--line);
 color:var(--text);
 
 }
-
-
-
-
 .preview{
 
 background:white;
@@ -421,8 +418,6 @@ display:block;
 
 
 
-
-
 .card{
 
 background:
@@ -462,7 +457,6 @@ font-size:25px;
 color:var(--muted);
 
 }
-
 
 
 
@@ -513,6 +507,9 @@ background:#0f172a;
 color:white;
 
 }
+
+
+
 input:focus{
 
 border-color:var(--primary);
@@ -660,14 +657,40 @@ color:var(--primary);
 }
 
 
-</style>
 
+.member-info{
+
+margin-top:15px;
+
+padding:15px;
+
+border-radius:12px;
+
+background:#f1fbfb;
+
+border:1px solid #cceff0;
+
+line-height:1.8;
+
+font-size:14px;
+
+}
+
+
+
+.member-info b{
+
+color:var(--primary);
+
+}
+
+
+</style>
 
 </head>
 
 
 <body>
-
 
 
 <div class="nav">
@@ -709,7 +732,7 @@ HTML / ZIP
 
 <div class="tag">
 
-一键发布
+秒级发布
 
 </div>
 
@@ -718,7 +741,6 @@ HTML / ZIP
 
 
 </div>
-
 
 
 
@@ -753,13 +775,9 @@ HTML网页<br>
 
 <p>
 
-支持直接输入 HTML 代码，
+上传HTML代码、网页文件或者完整ZIP项目，
 
-上传 HTML 文件，
-
-或者上传完整 ZIP 网站项目。
-
-几秒生成公网访问链接。
+自动生成公网访问链接。
 
 </p>
 
@@ -790,10 +808,7 @@ class="btn btn-light">
 </div>
 
 
-
 </div>
-
-
 
 
 
@@ -802,7 +817,7 @@ class="btn btn-light">
 
 <div class="preview-title">
 
-HTML Cloud 服务
+HTML Cloud
 
 </div>
 
@@ -822,18 +837,16 @@ HTML Cloud 服务
 
 <strong>
 
-代码发布
+快速发布
 
 </strong>
 
-直接粘贴 HTML 立即生成
+几秒生成网页链接
 
 </div>
 
 
 </div>
-
-
 
 
 
@@ -851,18 +864,16 @@ HTML Cloud 服务
 
 <strong>
 
-文件上传
+HTML文件
 
 </strong>
 
-支持 HTML 文件
+直接上传发布
 
 </div>
 
 
 </div>
-
-
 
 
 
@@ -884,7 +895,7 @@ ZIP项目
 
 </strong>
 
-支持完整网页项目
+支持完整网站
 
 </div>
 
@@ -894,20 +905,13 @@ ZIP项目
 
 
 </div>
-
 
 
 </section>
 
 
 
-
-
-
-
-<section class="card"
-
-id="service">
+<section class="card" id="service">
 
 
 <h2>
@@ -917,12 +921,9 @@ id="service">
 </h2>
 
 
-
 <p class="card-desc">
 
-输入购买的激活码，
-
-验证成功后即可发布网页。
+输入购买的激活码，验证后使用网页发布功能。
 
 </p>
 
@@ -933,7 +934,6 @@ id="service">
 id="licenseInput"
 
 placeholder="请输入激活码">
-
 
 
 <br><br>
@@ -964,13 +964,17 @@ id="licenseMsg">
 
 
 
+<div
+
+id="memberInfo"
+
+class="member-info hidden">
+
+</div>
+
+
+
 </section>
-
-
-
-
-
-
 <section
 
 class="card hidden"
@@ -989,7 +993,7 @@ id="uploadBox">
 
 <p class="card-desc">
 
-选择一种方式上传你的网页。
+选择发布方式，生成你的在线网页链接。
 
 </p>
 
@@ -1042,6 +1046,8 @@ ZIP项目
 
 
 
+
+
 <div id="codePanel">
 
 
@@ -1071,6 +1077,9 @@ id="createBtn">
 
 
 </div>
+
+
+
 
 
 
@@ -1151,6 +1160,13 @@ id="uploadBtn">
 
 
 </div>
+
+
+
+
+
+
+
 <div
 
 class="msg"
@@ -1163,7 +1179,9 @@ id="uploadMsg">
 
 
 
-<div
+
+
+<section
 
 class="card hidden"
 
@@ -1222,14 +1240,7 @@ id="copyBtn">
 
 
 
-</div>
-
-
-
 </section>
-
-
-
 
 
 
@@ -1243,6 +1254,7 @@ id="copyBtn">
 ✨ 支持内容
 
 </h2>
+
 
 
 <ul>
@@ -1271,7 +1283,7 @@ AI生成HTML网页
 
 <li>
 
-活动宣传页面
+活动宣传页
 
 </li>
 
@@ -1285,7 +1297,7 @@ HTML + CSS + JS项目
 
 <li>
 
-ZIP完整网站项目
+ZIP完整网站
 
 </li>
 
@@ -1336,7 +1348,7 @@ id="help">
 
 <li>
 
-选择代码/文件/ZIP
+选择代码或上传文件
 
 </li>
 
@@ -1366,6 +1378,7 @@ id="help">
 
 
 
+
 <script>
 
 
@@ -1375,30 +1388,10 @@ const WORKER_URL =
 
 
 
-
-
 let activated = false;
 
 
-let currentMode = "code";
-
-
-
-
-
-const savedToken =
-
-localStorage.getItem("token");
-
-
-
-if(savedToken){
-
-activated=true;
-
-}
-
-
+let licenseInfo = null;
 
 
 
@@ -1409,9 +1402,11 @@ const licenseInput =
 document.querySelector("#licenseInput");
 
 
+
 const verifyBtn =
 
 document.querySelector("#verifyBtn");
+
 
 
 const licenseMsg =
@@ -1419,9 +1414,17 @@ const licenseMsg =
 document.querySelector("#licenseMsg");
 
 
+
+const memberInfo =
+
+document.querySelector("#memberInfo");
+
+
+
 const uploadBox =
 
 document.querySelector("#uploadBox");
+
 
 
 const uploadMsg =
@@ -1435,9 +1438,11 @@ const codeMode =
 document.querySelector("#codeMode");
 
 
+
 const fileMode =
 
 document.querySelector("#fileMode");
+
 
 
 const zipMode =
@@ -1451,6 +1456,7 @@ const codePanel =
 document.querySelector("#codePanel");
 
 
+
 const filePanel =
 
 document.querySelector("#filePanel");
@@ -1462,9 +1468,11 @@ const htmlCode =
 document.querySelector("#htmlCode");
 
 
+
 const createBtn =
 
 document.querySelector("#createBtn");
+
 
 
 const fileInput =
@@ -1472,9 +1480,11 @@ const fileInput =
 document.querySelector("#fileInput");
 
 
+
 const uploadBtn =
 
 document.querySelector("#uploadBtn");
+
 
 
 const dropArea =
@@ -1488,9 +1498,11 @@ const result =
 document.querySelector("#result");
 
 
+
 const resultLink =
 
 document.querySelector("#resultLink");
+
 
 
 const copyBtn =
@@ -1499,11 +1511,56 @@ document.querySelector("#copyBtn");
 
 
 
+function showPlan(plan){
+
+
+const map={
+
+
+count:"次卡",
+
+
+hour:"小时卡",
+
+
+day:"日卡",
+
+
+week:"周卡",
+
+
+month:"月卡",
+
+
+forever:"永久卡"
+
+
+};
 
 
 
+return map[plan] || "未知";
 
 
+}
+
+
+
+function showExpire(time){
+
+
+if(!time){
+
+return "永久有效";
+
+}
+
+
+return new Date(time)
+
+.toLocaleString();
+
+}
 /*
 ========================
 模式切换
@@ -1514,10 +1571,6 @@ document.querySelector("#copyBtn");
 function changeMode(mode){
 
 
-currentMode = mode;
-
-
-
 codeMode.classList.remove("active");
 
 fileMode.classList.remove("active");
@@ -1525,12 +1578,9 @@ fileMode.classList.remove("active");
 zipMode.classList.remove("active");
 
 
-
 codePanel.classList.add("hidden");
 
 filePanel.classList.add("hidden");
-
-
 
 
 
@@ -1578,27 +1628,15 @@ filePanel.classList.remove("hidden");
 
 
 
-codeMode.onclick=()=>{
-
-changeMode("code");
-
-};
+codeMode.onclick=()=>changeMode("code");
 
 
-
-fileMode.onclick=()=>{
-
-changeMode("file");
-
-};
+fileMode.onclick=()=>changeMode("file");
 
 
+zipMode.onclick=()=>changeMode("zip");
 
-zipMode.onclick=()=>{
 
-changeMode("zip");
-
-};
 
 
 
@@ -1608,7 +1646,7 @@ changeMode("zip");
 
 /*
 ========================
-激活码验证
+激活验证
 ========================
 */
 
@@ -1616,11 +1654,9 @@ changeMode("zip");
 verifyBtn.onclick=async()=>{
 
 
-const code =
+const code=
 
 licenseInput.value.trim();
-
-
 
 
 
@@ -1639,8 +1675,8 @@ licenseMsg.className=
 
 return;
 
-}
 
+}
 
 
 
@@ -1655,11 +1691,10 @@ verifyBtn.innerText=
 
 
 
-
 try{
 
 
-const res =
+const res=
 
 await fetch(
 
@@ -1673,11 +1708,9 @@ encodeURIComponent(code)
 
 
 
-
-const data =
+const data=
 
 await res.json();
-
 
 
 
@@ -1692,6 +1725,7 @@ data.error ||
 
 );
 
+
 }
 
 
@@ -1700,21 +1734,14 @@ data.error ||
 activated=true;
 
 
+licenseInfo=data;
 
-localStorage.setItem(
-
-"token",
-
-data.token
-
-);
 
 
 
 licenseMsg.innerText=
 
-"✅ 激活成功，可以发布网页";
-
+"✅ 激活成功";
 
 
 licenseMsg.className=
@@ -1723,11 +1750,69 @@ licenseMsg.className=
 
 
 
-document.querySelector("#service")
 
-.style.display=
 
-"none";
+memberInfo.innerHTML=`
+
+会员类型：
+
+<b>
+
+${showPlan(data.plan)}
+
+</b>
+
+<br>
+
+有效期：
+
+<b>
+
+${showExpire(data.expire_at)}
+
+</b>
+
+<br>
+
+剩余次数：
+
+<b>
+
+${
+data.remaining>=999999
+
+?
+
+"不限"
+
+:
+
+data.remaining+"次"
+
+}
+
+</b>
+
+`;
+
+
+
+memberInfo.classList.remove(
+
+"hidden"
+
+);
+
+
+
+
+localStorage.setItem(
+
+"html_cloud_license",
+
+code
+
+);
 
 
 
@@ -1744,9 +1829,11 @@ uploadBox.classList.remove(
 catch(e){
 
 
+
 licenseMsg.innerText=
 
 e.message;
+
 
 
 licenseMsg.className=
@@ -1754,8 +1841,8 @@ licenseMsg.className=
 "msg error";
 
 
-}
 
+}
 
 finally{
 
@@ -1771,11 +1858,19 @@ verifyBtn.innerText=
 }
 
 
-
 };
+
+
+
+
+
+
+
+
+
 /*
 ========================
-HTML代码生成
+生成HTML
 ========================
 */
 
@@ -1798,13 +1893,16 @@ return;
 
 
 
-const code =
+
+
+const html=
 
 htmlCode.value.trim();
 
 
 
-if(!code){
+
+if(!html){
 
 
 uploadMsg.innerText=
@@ -1820,10 +1918,27 @@ return;
 
 
 
+
+const form={
+
+
+html:html,
+
+
+license:
+
+licenseInput.value.trim()
+
+
+};
+
+
+
+
 try{
 
 
-const res =
+const res=
 
 await fetch(
 
@@ -1835,32 +1950,20 @@ WORKER_URL+"/create",
 method:"POST",
 
 
-
 headers:{
 
 
 "Content-Type":
 
-"application/json",
-
-
-
-"Authorization":
-
-"Bearer "+
-
-localStorage.getItem("token")
+"application/json"
 
 
 },
 
 
+body:
 
-body:JSON.stringify({
-
-html:code
-
-})
+JSON.stringify(form)
 
 
 }
@@ -1870,9 +1973,11 @@ html:code
 
 
 
-const data =
+
+const data=
 
 await res.json();
+
 
 
 
@@ -1884,7 +1989,7 @@ throw new Error(
 
 data.error ||
 
-"生成失败"
+"发布失败"
 
 );
 
@@ -1898,7 +2003,6 @@ showResult(data.url);
 
 
 }
-
 
 catch(e){
 
@@ -1923,7 +2027,7 @@ uploadMsg.innerText=
 
 /*
 ========================
-文件上传 HTML ZIP
+文件上传
 ========================
 */
 
@@ -1946,7 +2050,8 @@ return;
 
 
 
-const file =
+
+const file=
 
 fileInput.files[0];
 
@@ -1968,14 +2073,13 @@ return;
 
 
 
-
-const formData =
+const fd=
 
 new FormData();
 
 
 
-formData.append(
+fd.append(
 
 "file",
 
@@ -1985,15 +2089,13 @@ file
 
 
 
+fd.append(
 
+"license",
 
-uploadBtn.disabled=true;
+licenseInput.value.trim()
 
-
-uploadBtn.innerText=
-
-"上传中...";
-
+);
 
 
 
@@ -2001,7 +2103,7 @@ uploadBtn.innerText=
 try{
 
 
-const res =
+const res=
 
 await fetch(
 
@@ -2013,22 +2115,7 @@ WORKER_URL+"/upload",
 method:"POST",
 
 
-
-headers:{
-
-
-"Authorization":
-
-"Bearer "+
-
-localStorage.getItem("token")
-
-
-},
-
-
-
-body:formData
+body:fd
 
 
 }
@@ -2038,7 +2125,7 @@ body:formData
 
 
 
-const data =
+const data=
 
 await res.json();
 
@@ -2068,7 +2155,6 @@ showResult(data.url);
 
 }
 
-
 catch(e){
 
 
@@ -2081,31 +2167,7 @@ uploadMsg.innerText=
 
 
 
-finally{
-
-
-uploadBtn.disabled=false;
-
-
-uploadBtn.innerText=
-
-"上传并生成链接";
-
-
-}
-
-
-
 };
-
-
-
-
-
-
-
-
-
 /*
 ========================
 拖拽上传
@@ -2140,17 +2202,16 @@ dropArea.style.borderColor="";
 
 
 
+
 dropArea.ondrop=(e)=>{
 
 
 e.preventDefault();
 
 
-
-fileInput.files =
+fileInput.files=
 
 e.dataTransfer.files;
-
 
 
 };
@@ -2190,6 +2251,7 @@ resultLink.innerText=url;
 
 
 
+
 uploadMsg.innerText=
 
 "✅ 发布成功";
@@ -2224,27 +2286,27 @@ behavior:"smooth"
 copyBtn.onclick=async()=>{
 
 
-const url =
+const url=
 
 resultLink.innerText;
 
 
 
-if(!url){
-
-return;
-
-}
+try{
 
 
+await navigator.clipboard.writeText(
 
-await navigator.clipboard.writeText(url);
+url
+
+);
 
 
 
 copyBtn.innerText=
 
 "已复制";
+
 
 
 
@@ -2260,13 +2322,66 @@ copyBtn.innerText=
 
 
 
+}
+
+catch(e){
+
+
+copyBtn.innerText=
+
+"复制失败";
+
+
+}
+
+
+
 };
+
+
+
+
+
+
+
+
+/*
+========================
+自动填充激活码
+========================
+*/
+
+
+const oldLicense=
+
+localStorage.getItem(
+
+"html_cloud_license"
+
+);
+
+
+
+if(oldLicense){
+
+
+licenseInput.value=
+
+oldLicense;
+
+
+}
+
+
+
 
 
 
 </script>
 
 
+
 </body>
+
 
 </html>
