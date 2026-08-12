@@ -5,7 +5,7 @@
 
 <meta charset="utf-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>
 HTML Cloud 激活码管理后台
@@ -18,7 +18,7 @@ HTML Cloud 激活码管理后台
 
 --bg:#f6f8fb;
 
---panel:#ffffff;
+--panel:#fff;
 
 --ink:#17202a;
 
@@ -86,9 +86,9 @@ padding:35px 20px 60px;
 
 h1{
 
-margin:0 0 10px;
-
 font-size:36px;
+
+margin:0 0 10px;
 
 }
 
@@ -126,13 +126,13 @@ box-shadow:
 
 .panel h2{
 
-margin:0;
-
 padding:18px 20px;
 
-font-size:20px;
+margin:0;
 
 border-bottom:1px solid var(--line);
+
+font-size:20px;
 
 }
 
@@ -170,9 +170,7 @@ margin-top:6px;
 
 padding:0 12px;
 
-border:
-
-1px solid var(--line);
+border:1px solid var(--line);
 
 border-radius:8px;
 
@@ -198,9 +196,7 @@ border-color:var(--teal);
 
 display:grid;
 
-grid-template-columns:
-
-repeat(2,1fr);
+grid-template-columns:repeat(2,1fr);
 
 gap:15px;
 
@@ -220,7 +216,7 @@ border-radius:8px;
 
 background:var(--teal);
 
-color:white;
+color:#fff;
 
 font-weight:900;
 
@@ -251,6 +247,8 @@ background:var(--red);
 button:disabled{
 
 opacity:.6;
+
+cursor:not-allowed;
 
 }
 
@@ -290,6 +288,8 @@ font-weight:800;
 
 color:var(--green);
 
+min-height:22px;
+
 }
 
 
@@ -310,9 +310,7 @@ height:320px;
 
 padding:15px;
 
-border:
-
-1px solid var(--line);
+border:1px solid var(--line);
 
 border-radius:8px;
 
@@ -320,7 +318,11 @@ font-family:
 
 Consolas,
 
+Monaco,
+
 monospace;
+
+resize:vertical;
 
 }
 
@@ -350,13 +352,11 @@ td{
 
 padding:10px;
 
-border-bottom:
-
-1px solid var(--line);
-
-text-align:left;
+border-bottom:1px solid var(--line);
 
 white-space:nowrap;
+
+text-align:left;
 
 }
 
@@ -384,7 +384,7 @@ font-weight:800;
 
 
 
-.green{
+.badge.green{
 
 background:#e6f5ef;
 
@@ -394,7 +394,7 @@ color:#126445;
 
 
 
-.red{
+.badge.red{
 
 background:#fbe9e7;
 
@@ -404,7 +404,7 @@ color:#8c3028;
 
 
 
-.gray{
+.badge.gray{
 
 background:#edf1f4;
 
@@ -454,7 +454,7 @@ font-size:30px;
 
 <p class="lead">
 
-HTML Cloud 卡密生成与管理系统
+HTML网页发布服务卡密管理
 
 </p>
 <section class="panel">
@@ -465,6 +465,7 @@ HTML Cloud 卡密生成与管理系统
 管理员验证
 
 </h2>
+
 
 
 <div class="body">
@@ -491,17 +492,20 @@ autocomplete="off"
 </label>
 
 
+
 <div class="small">
 
-用于调用 Worker 后台接口。
+密码对应 Cloudflare Worker 环境变量 ADMIN_PASSWORD
 
 </div>
+
 
 
 </div>
 
 
 </section>
+
 
 
 
@@ -553,6 +557,7 @@ maxlength="12"
 
 
 
+
 <label>
 
 生成数量
@@ -564,7 +569,7 @@ id="count"
 
 type="number"
 
-value="100"
+value="10"
 
 min="1"
 
@@ -574,6 +579,7 @@ max="5000"
 
 
 </label>
+
 
 
 
@@ -643,9 +649,10 @@ max="5000"
 
 
 
+
 <label>
 
-有效时长
+有效时间
 
 
 <input
@@ -663,12 +670,13 @@ min="1"
 
 <span class="small">
 
-例如：日卡1=1天，月卡3=3个月
+小时卡=小时，日卡=天，月卡=月
 
 </span>
 
 
 </label>
+
 
 
 
@@ -691,19 +699,20 @@ value="1"
 
 min="1"
 
-max="99999"
+max="999999"
 
 >
 
 
 <span class="small">
 
-仅次卡有效，时间卡默认不限次数
+次卡使用次数
 
 </span>
 
 
 </label>
+
 
 
 
@@ -726,6 +735,7 @@ value="2026-08"
 
 
 </label>
+
 
 
 
@@ -773,6 +783,7 @@ value="2026-08"
 
 
 
+
 <label>
 
 随机组数量
@@ -810,6 +821,8 @@ value="2026-08"
 
 
 
+
+
 </div>
 
 
@@ -818,8 +831,8 @@ value="2026-08"
 
 
 
-
 <div class="actions">
+
 
 
 <button
@@ -838,13 +851,14 @@ type="button"
 
 
 
-<button
 
-class="secondary"
+<button
 
 id="copyBtn"
 
 type="button"
+
+class="secondary"
 
 >
 
@@ -859,11 +873,11 @@ type="button"
 
 <button
 
-class="secondary"
-
 id="csvBtn"
 
 type="button"
+
+class="secondary"
 
 >
 
@@ -876,14 +890,13 @@ type="button"
 
 
 
-
 <button
-
-class="danger"
 
 id="clearBtn"
 
 type="button"
+
+class="danger"
 
 >
 
@@ -901,14 +914,15 @@ type="button"
 
 
 
-
 <div
 
-class="status"
+id="status"
 
-id="status">
+class="status">
 
 </div>
+
+
 
 
 
@@ -973,7 +987,6 @@ placeholder="生成成功后显示激活码">
 <div class="body">
 
 
-
 <div class="grid">
 
 
@@ -981,9 +994,7 @@ placeholder="生成成功后显示激活码">
 
 id="searchCode"
 
-placeholder="输入激活码"
-
-
+placeholder="输入完整激活码"
 
 >
 
@@ -1002,242 +1013,106 @@ type="button"
 </button>
 
 
+
 </div>
+
 
 
 
 <div
 
-class="status"
+id="searchStatus"
 
-id="searchStatus">
-
-</div>
-
-
+class="status">
 
 </div>
 
-
-</section>
-
-
-
-
-
-
-
-
-<section
-
-class="panel"
-
-id="searchResultPanel"
-
-style="display:none;"
-
->
-
-
-<h2>
-
-查询结果
-
-</h2>
-
-
-
-<div class="body">
-
-
-<div class="table-wrap">
-
-
-<table>
-
-
-<thead>
-
-
-<tr>
-
-
-<th>
-
-激活码
-
-</th>
-
-
-<th>
-
-类型
-
-</th>
-
-
-<th>
-
-剩余
-
-</th>
-
-
-<th>
-
-到期时间
-
-</th>
-
-
-<th>
-
-状态
-
-</th>
-
-
-<th>
-
-批次
-
-</th>
-
-
-</tr>
-
-
-</thead>
-
-
-
-<tbody
-
-id="searchResult">
-
-</tbody>
-
-
-
-</table>
-
-
-</div>
 
 
 </div>
 
 
 </section>
+
+</main>
+
+<script>
 /*
 ========================
 Worker地址
 ========================
 */
 
-
 const WORKER_URL =
-
 "https://html-uploader.2333333434.workers.dev";
-
-
-
 
 
 
 /*
 ========================
-DOM
+获取元素
 ========================
 */
 
-
 const adminPassword =
-
 document.querySelector("#adminPassword");
 
-
 const prefix =
-
 document.querySelector("#prefix");
 
-
 const count =
-
 document.querySelector("#count");
 
-
 const plan =
-
 document.querySelector("#plan");
 
-
 const duration =
-
 document.querySelector("#duration");
 
-
 const uses =
-
 document.querySelector("#uses");
 
-
 const batch =
-
 document.querySelector("#batch");
 
-
 const groupSize =
-
 document.querySelector("#groupSize");
 
-
 const groups =
-
 document.querySelector("#groups");
 
-
 const output =
-
 document.querySelector("#output");
 
-
 const status =
-
 document.querySelector("#status");
 
 
 
 
 
-
 /*
 ========================
-状态提示
+状态显示
 ========================
 */
 
-
-function setStatus(text,error=false){
-
+function setStatus(
+text,
+error=false
+){
 
 status.innerText=text;
 
-
-status.className=
-
+status.className =
 error
-
 ?
-
 "status error"
-
 :
-
 "status";
 
-
 }
+
 
 
 
@@ -1253,43 +1128,30 @@ error
 
 
 document
-
 .querySelector("#generateBtn")
-
-.onclick=
-
+.addEventListener(
+"click",
 async()=>{
 
 
 
-const password=
-
+const password =
 adminPassword.value.trim();
-
-
 
 
 
 if(!password){
 
 
-
 setStatus(
-
 "请输入管理员密码",
-
 true
-
 );
 
 
 return;
 
-
 }
-
-
-
 
 
 
@@ -1301,27 +1163,24 @@ const payload={
 prefix:
 
 prefix.value
-
 .trim()
-
 .toUpperCase()
-
 .replace(
-
 /[^A-Z0-9]/g,
-
-"")
-
-||"HTML",
-
+""
+)
+||
+"HTML",
 
 
 
 
 count:
 
+Math.min(
 Number(count.value)||1,
-
+5000
+),
 
 
 
@@ -1333,11 +1192,9 @@ plan.value,
 
 
 
-
 duration:
 
 Number(duration.value)||1,
-
 
 
 
@@ -1349,28 +1206,25 @@ Number(uses.value)||1,
 
 
 
-
 batch:
 
 batch.value.trim()
-
-||"default",
-
+||
+"default",
 
 
 
 
 groupSize:
 
-Number(groupSize.value),
-
+Number(groupSize.value)||4,
 
 
 
 
 groups:
 
-Number(groups.value)
+Number(groups.value)||4
 
 
 
@@ -1382,17 +1236,8 @@ Number(groups.value)
 
 
 
-
-
-const btn=
-
-document.querySelector(
-
-"#generateBtn"
-
-);
-
-
+const btn =
+document.querySelector("#generateBtn");
 
 
 
@@ -1400,21 +1245,13 @@ btn.disabled=true;
 
 
 btn.innerText=
-
 "生成中...";
 
 
 
-
-
 setStatus(
-
-"正在生成激活码..."
-
+"正在请求Worker..."
 );
-
-
-
 
 
 
@@ -1425,16 +1262,13 @@ try{
 
 
 
-const res=
-
+const response =
 await fetch(
 
 WORKER_URL+
-
 "/admin/generate",
 
 {
-
 
 method:"POST",
 
@@ -1442,30 +1276,21 @@ method:"POST",
 headers:{
 
 
-
 "Content-Type":
-
 "application/json",
 
 
-
-
 "Authorization":
-
-"Bearer "+password
-
+"Bearer "+
+password
 
 
 },
 
 
-
 body:
-
 JSON.stringify(payload)
 
-
-
 }
 
 );
@@ -1476,75 +1301,21 @@ JSON.stringify(payload)
 
 
 
-
-
-const data=
-
-await res.json();
+const text =
+await response.text();
 
 
 
 
-
-
-if(
-
-!res.ok
-
-||
-
-!data.success
-
-){
+let data;
 
 
 
-throw new Error(
-
-data.error||
-
-"生成失败"
-
-);
+try{
 
 
-}
-
-
-
-
-
-
-
-
-const codes=
-
-data.codes||[];
-
-
-
-
-
-
-output.value=
-
-codes.join("\n");
-
-
-
-
-
-
-
-setStatus(
-
-`成功生成 ${codes.length} 个激活码`
-
-);
-
-
-
-
+data =
+JSON.parse(text);
 
 
 }
@@ -1552,10 +1323,79 @@ setStatus(
 catch(e){
 
 
+throw new Error(
+"Worker返回错误："+text
+);
+
+
+}
+
+
+
+
+
+
+
+
+if(
+!response.ok
+||
+!data.success
+){
+
+
+
+throw new Error(
+data.error ||
+"生成失败"
+);
+
+
+
+}
+
+
+
+
+
+
+
+
+output.value =
+(data.codes||[])
+.join("\n");
+
+
+
+
+
+
 
 setStatus(
 
-e.message,
+"成功生成 "+
+(data.codes||[]).length+
+" 个激活码"
+
+);
+
+
+
+
+
+}
+
+catch(error){
+
+
+
+console.error(error);
+
+
+
+setStatus(
+
+error.message,
 
 true
 
@@ -1573,7 +1413,6 @@ btn.disabled=false;
 
 
 btn.innerText=
-
 "批量生成并保存KV";
 
 
@@ -1581,7 +1420,9 @@ btn.innerText=
 
 
 
-};
+}
+
+);
 
 
 
@@ -1599,24 +1440,22 @@ btn.innerText=
 
 
 document
-
 .querySelector("#copyBtn")
-
-.onclick=
-
+.addEventListener(
+"click",
 async()=>{
 
 
 
-if(!output.value.trim()){
+if(
+!output.value.trim()
+){
+
 
 
 setStatus(
-
 "没有激活码",
-
 true
-
 );
 
 
@@ -1624,352 +1463,6 @@ return;
 
 
 }
-
-
-
-
-
-
-await navigator.clipboard.writeText(
-
-output.value
-
-);
-
-
-
-
-
-
-setStatus(
-
-"复制成功"
-
-);
-
-
-
-};
-
-
-
-
-
-
-
-
-
-/*
-========================
-清空
-========================
-*/
-
-
-document
-
-.querySelector("#clearBtn")
-
-.onclick=()=>{
-
-
-output.value="";
-
-
-setStatus(
-
-"已清空"
-
-);
-
-
-};
-/*
-========================
-Worker地址
-========================
-*/
-
-
-const WORKER_URL =
-
-"https://html-uploader.2333333434.workers.dev";
-
-
-
-
-
-
-/*
-========================
-DOM
-========================
-*/
-
-
-const adminPassword =
-
-document.querySelector("#adminPassword");
-
-
-const prefix =
-
-document.querySelector("#prefix");
-
-
-const count =
-
-document.querySelector("#count");
-
-
-const plan =
-
-document.querySelector("#plan");
-
-
-const duration =
-
-document.querySelector("#duration");
-
-
-const uses =
-
-document.querySelector("#uses");
-
-
-const batch =
-
-document.querySelector("#batch");
-
-
-const groupSize =
-
-document.querySelector("#groupSize");
-
-
-const groups =
-
-document.querySelector("#groups");
-
-
-const output =
-
-document.querySelector("#output");
-
-
-const status =
-
-document.querySelector("#status");
-
-
-
-
-
-
-/*
-========================
-状态提示
-========================
-*/
-
-
-function setStatus(text,error=false){
-
-
-status.innerText=text;
-
-
-status.className=
-
-error
-
-?
-
-"status error"
-
-:
-
-"status";
-
-
-}
-
-
-
-
-
-
-
-/*
-========================
-生成激活码
-========================
-*/
-
-
-document
-
-.querySelector("#generateBtn")
-
-.onclick=
-
-async()=>{
-
-
-
-const password=
-
-adminPassword.value.trim();
-
-
-
-
-
-if(!password){
-
-
-
-setStatus(
-
-"请输入管理员密码",
-
-true
-
-);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-
-const payload={
-
-
-
-prefix:
-
-prefix.value
-
-.trim()
-
-.toUpperCase()
-
-.replace(
-
-/[^A-Z0-9]/g,
-
-"")
-
-||"HTML",
-
-
-
-
-
-count:
-
-Number(count.value)||1,
-
-
-
-
-
-plan:
-
-plan.value,
-
-
-
-
-
-duration:
-
-Number(duration.value)||1,
-
-
-
-
-
-uses:
-
-Number(uses.value)||1,
-
-
-
-
-
-batch:
-
-batch.value.trim()
-
-||"default",
-
-
-
-
-
-groupSize:
-
-Number(groupSize.value),
-
-
-
-
-
-groups:
-
-Number(groups.value)
-
-
-
-};
-
-
-
-
-
-
-
-
-
-const btn=
-
-document.querySelector(
-
-"#generateBtn"
-
-);
-
-
-
-
-
-btn.disabled=true;
-
-
-btn.innerText=
-
-"生成中...";
-
-
-
-
-
-setStatus(
-
-"正在生成激活码..."
-
-);
-
-
-
 
 
 
@@ -1980,125 +1473,17 @@ try{
 
 
 
-const res=
+await navigator.clipboard.writeText(
 
-await fetch(
-
-WORKER_URL+
-
-"/admin/generate",
-
-{
-
-
-method:"POST",
-
-
-headers:{
-
-
-
-"Content-Type":
-
-"application/json",
-
-
-
-
-"Authorization":
-
-"Bearer "+password
-
-
-
-},
-
-
-
-body:
-
-JSON.stringify(payload)
-
-
-
-}
+output.value
 
 );
-
-
-
-
-
-
-
-
-
-const data=
-
-await res.json();
-
-
-
-
-
-
-if(
-
-!res.ok
-
-||
-
-!data.success
-
-){
-
-
-
-throw new Error(
-
-data.error||
-
-"生成失败"
-
-);
-
-
-}
-
-
-
-
-
-
-
-
-const codes=
-
-data.codes||[];
-
-
-
-
-
-
-output.value=
-
-codes.join("\n");
-
-
-
-
 
 
 
 setStatus(
-
-`成功生成 ${codes.length} 个激活码`
-
+"复制成功"
 );
-
-
-
 
 
 
@@ -2109,102 +1494,19 @@ catch(e){
 
 
 setStatus(
-
-e.message,
-
+"复制失败，请手动复制",
 true
-
 );
 
 
 
 }
 
-finally{
-
-
-
-btn.disabled=false;
-
-
-btn.innerText=
-
-"批量生成并保存KV";
 
 
 }
 
-
-
-};
-
-
-
-
-
-
-
-
-
-/*
-========================
-复制
-========================
-*/
-
-
-document
-
-.querySelector("#copyBtn")
-
-.onclick=
-
-async()=>{
-
-
-
-if(!output.value.trim()){
-
-
-setStatus(
-
-"没有激活码",
-
-true
-
 );
-
-
-return;
-
-
-}
-
-
-
-
-
-
-await navigator.clipboard.writeText(
-
-output.value
-
-);
-
-
-
-
-
-
-setStatus(
-
-"复制成功"
-
-);
-
-
-
-};
 
 
 
@@ -2222,20 +1524,438 @@ setStatus(
 
 
 document
-
 .querySelector("#clearBtn")
+.addEventListener(
+"click",
+()=>{
 
-.onclick=()=>{
 
 
 output.value="";
 
 
-setStatus(
 
+setStatus(
 "已清空"
+);
+
+
+
+}
+
+);
+/*
+========================
+CSV导出
+========================
+*/
+
+
+document
+.querySelector("#csvBtn")
+.addEventListener(
+"click",
+()=>{
+
+
+const codes =
+
+output.value
+
+.split("\n")
+
+.map(
+x=>x.trim()
+)
+
+.filter(Boolean);
+
+
+
+if(!codes.length){
+
+
+setStatus(
+"没有激活码可以导出",
+true
+);
+
+
+return;
+
+
+}
+
+
+
+let rows=[
+
+[
+"code",
+"plan",
+"duration",
+"uses",
+"batch"
+]
+
+];
+
+
+
+
+for(const code of codes){
+
+
+rows.push([
+
+code,
+
+plan.value,
+
+duration.value,
+
+uses.value,
+
+batch.value
+
+]);
+
+
+}
+
+
+
+
+
+const csv =
+
+rows
+
+.map(
+
+row=>
+
+row
+.map(
+v=>
+
+`"${String(v)
+.replaceAll('"','""')}"`
+)
+
+.join(",")
+
+)
+
+.join("\n");
+
+
+
+
+
+
+const blob =
+
+new Blob(
+
+[
+
+"\ufeff"+csv
+
+],
+
+{
+
+type:
+
+"text/csv;charset=utf-8"
+
+}
 
 );
 
 
-};
+
+
+
+const url =
+
+URL.createObjectURL(blob);
+
+
+
+
+const a =
+
+document.createElement("a");
+
+
+
+a.href=url;
+
+
+a.download=
+
+"activation-codes-"+
+
+Date.now()+
+
+".csv";
+
+
+
+a.click();
+
+
+
+URL.revokeObjectURL(url);
+
+
+
+setStatus(
+"CSV导出成功"
+);
+
+
+
+}
+
+);
+
+
+
+
+
+
+
+
+
+/*
+========================
+查询激活码
+========================
+*/
+
+
+document
+.querySelector("#searchBtn")
+.addEventListener(
+"click",
+async()=>{
+
+
+
+const password =
+
+adminPassword.value.trim();
+
+
+
+const code =
+
+document
+.querySelector("#searchCode")
+.value
+.trim();
+
+
+
+
+
+if(!password){
+
+
+document
+.querySelector("#searchStatus")
+.innerText=
+"请输入管理员密码";
+
+
+return;
+
+
+}
+
+
+
+
+if(!code){
+
+
+document
+.querySelector("#searchStatus")
+.innerText=
+"请输入激活码";
+
+
+return;
+
+
+}
+
+
+
+
+
+try{
+
+
+
+const response =
+
+await fetch(
+
+WORKER_URL+
+
+"/admin/check?code="+
+
+encodeURIComponent(code),
+
+{
+
+
+headers:{
+
+
+"Authorization":
+
+"Bearer "+password
+
+
+}
+
+}
+
+);
+
+
+
+
+
+
+const text =
+
+await response.text();
+
+
+
+let data;
+
+
+
+try{
+
+
+data=JSON.parse(text);
+
+
+}
+
+catch(e){
+
+
+throw new Error(
+"Worker返回错误："+text
+);
+
+
+}
+
+
+
+
+
+
+if(
+!response.ok
+||
+!data.success
+){
+
+
+throw new Error(
+
+data.error||
+
+"查询失败"
+
+);
+
+
+}
+
+
+
+
+
+
+const item=data.data;
+
+
+
+
+document
+.querySelector("#searchStatus")
+.innerText=
+"查询成功";
+
+
+
+
+
+alert(
+
+`
+激活码：${item.code}
+
+类型：${item.plan}
+
+剩余次数：${item.remaining}
+
+到期时间：${item.expire_at || "永久"}
+
+状态：${item.status}
+
+`
+
+);
+
+
+
+
+
+
+}
+
+catch(error){
+
+
+
+document
+.querySelector("#searchStatus")
+.innerText=
+error.message;
+
+
+
+}
+
+
+
+}
+
+);
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+
+
+</html>

@@ -1561,6 +1561,38 @@ return new Date(time)
 .toLocaleString();
 
 }
+
+
+async function readJson(response){
+
+
+const text=
+
+await response.text();
+
+
+try{
+
+
+return JSON.parse(text);
+
+
+}
+
+catch(e){
+
+
+throw new Error(
+
+"Worker返回异常："+text
+
+);
+
+
+}
+
+
+}
 /*
 ========================
 模式切换
@@ -1581,6 +1613,10 @@ zipMode.classList.remove("active");
 codePanel.classList.add("hidden");
 
 filePanel.classList.add("hidden");
+
+fileInput.value="";
+
+uploadMsg.innerText="";
 
 
 
@@ -1605,6 +1641,12 @@ fileMode.classList.add("active");
 
 filePanel.classList.remove("hidden");
 
+fileInput.accept=".html,.htm";
+
+uploadBtn.disabled=false;
+
+uploadBtn.innerText="上传并生成链接";
+
 
 }
 
@@ -1617,6 +1659,14 @@ zipMode.classList.add("active");
 
 
 filePanel.classList.remove("hidden");
+
+fileInput.accept=".zip";
+
+uploadBtn.disabled=true;
+
+uploadBtn.innerText="ZIP需先升级Worker路由";
+
+uploadMsg.innerText="当前Worker还不能展示ZIP项目，请先上传HTML文件。";
 
 
 }
@@ -1710,11 +1760,11 @@ encodeURIComponent(code)
 
 const data=
 
-await res.json();
+await readJson(res);
 
 
 
-if(!data.success){
+if(!res.ok || !data.success){
 
 
 throw new Error(
@@ -1938,6 +1988,13 @@ licenseInput.value.trim()
 try{
 
 
+createBtn.disabled=true;
+
+createBtn.innerText="发布中...";
+
+uploadMsg.innerText="正在发布...";
+
+
 const res=
 
 await fetch(
@@ -1976,13 +2033,13 @@ JSON.stringify(form)
 
 const data=
 
-await res.json();
+await readJson(res);
 
 
 
 
 
-if(!data.success){
+if(!res.ok || !data.success){
 
 
 throw new Error(
@@ -2010,6 +2067,16 @@ catch(e){
 uploadMsg.innerText=
 
 "错误："+e.message;
+
+
+}
+
+finally{
+
+
+createBtn.disabled=false;
+
+createBtn.innerText="生成网页";
 
 
 }
@@ -2071,6 +2138,42 @@ return;
 }
 
 
+const ext=
+
+file.name
+.split(".")
+.pop()
+.toLowerCase();
+
+
+if(ext==="zip"){
+
+
+uploadMsg.innerText=
+
+"当前Worker还不能展示ZIP项目，请先上传HTML文件。";
+
+
+return;
+
+
+}
+
+
+if(ext!=="html" && ext!=="htm"){
+
+
+uploadMsg.innerText=
+
+"请选择 .html 或 .htm 文件";
+
+
+return;
+
+
+}
+
+
 
 
 const fd=
@@ -2103,6 +2206,13 @@ licenseInput.value.trim()
 try{
 
 
+uploadBtn.disabled=true;
+
+uploadBtn.innerText="上传中...";
+
+uploadMsg.innerText="正在上传...";
+
+
 const res=
 
 await fetch(
@@ -2127,13 +2237,13 @@ body:fd
 
 const data=
 
-await res.json();
+await readJson(res);
 
 
 
 
 
-if(!data.success){
+if(!res.ok || !data.success){
 
 
 throw new Error(
@@ -2161,6 +2271,16 @@ catch(e){
 uploadMsg.innerText=
 
 "错误："+e.message;
+
+
+}
+
+finally{
+
+
+uploadBtn.disabled=false;
+
+uploadBtn.innerText="上传并生成链接";
 
 
 }
