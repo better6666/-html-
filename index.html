@@ -1,1805 +1,2137 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HTML网页转在线链接 - 静态网页一键发布</title>
-  <meta name="description" content="上传 HTML 文件，几秒生成可访问的在线链接。无需服务器，无需部署环境。">
-
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23087f8c'/%3E%3Cpath d='M18 20h28v6H18zm0 9h21v6H18zm0 9h28v6H18z' fill='white'/%3E%3C/svg%3E">
-
-  <style>
-    :root {
-      --bg: #f7f9fb;
-      --panel: #ffffff;
-      --ink: #17202a;
-      --muted: #687383;
-      --line: #dce4ea;
-      --teal: #087f8c;
-      --teal-dark: #06606b;
-      --red: #c24538;
-      --green: #16805b;
-      --blue: #246bfe;
-      --shadow: 0 18px 50px rgba(24, 36, 50, 0.12);
-      --radius: 8px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: var(--bg);
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        "PingFang SC",
-        "Hiragino Sans GB",
-        "Microsoft YaHei",
-        Arial,
-        sans-serif;
-      line-height: 1.65;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    input,
-    textarea {
-      font: inherit;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      border-bottom: 1px solid rgba(220, 228, 234, 0.9);
-      background: rgba(255, 255, 255, 0.86);
-      backdrop-filter: blur(18px);
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1160px;
-      margin: 0 auto;
-      padding: 14px 22px;
-      gap: 18px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      font-weight: 800;
-    }
-
-    .brand-mark {
-      display: grid;
-      width: 34px;
-      height: 34px;
-      place-items: center;
-      border-radius: 8px;
-      color: #fff;
-      background: linear-gradient(135deg, var(--teal), var(--blue));
-      font-weight: 900;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      color: var(--muted);
-      font-size: 14px;
-      white-space: nowrap;
-    }
-
-    .nav-links a:hover {
-      color: var(--ink);
-    }
-
-    .shell {
-      max-width: 1160px;
-      margin: 0 auto;
-      padding: 0 22px;
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(
-          120deg,
-          rgba(8, 127, 140, 0.1),
-          rgba(36, 107, 254, 0.08) 42%,
-          rgba(245, 165, 36, 0.08)
-        ),
-        #ffffff;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns:
-        minmax(0, 0.92fr)
-        minmax(390px, 1.08fr);
-      gap: 36px;
-      align-items: center;
-      min-height: calc(100vh - 64px);
-      padding: 54px 0 46px;
-    }
-
-    .kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border: 1px solid rgba(8, 127, 140, 0.22);
-      border-radius: 999px;
-      color: var(--teal-dark);
-      background: rgba(255, 255, 255, 0.78);
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    h1 {
-      margin: 18px 0 16px;
-      font-size: clamp(38px, 6vw, 68px);
-      line-height: 1.04;
-    }
-
-    .lead {
-      max-width: 600px;
-      margin: 0;
-      color: #45515e;
-      font-size: 19px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 28px;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 46px;
-      padding: 0 18px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 800;
-      transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        background 0.18s ease;
-    }
-
-    .button:hover {
-      transform: translateY(-1px);
-    }
-
-    .button.primary {
-      color: #fff;
-      background: var(--teal);
-      box-shadow: 0 12px 26px rgba(8, 127, 140, 0.24);
-    }
-
-    .button.primary:hover {
-      background: var(--teal-dark);
-    }
-
-    .button.secondary {
-      color: var(--ink);
-      background: #fff;
-      border-color: var(--line);
-    }
-
-    .button:disabled {
-      cursor: not-allowed;
-      opacity: 0.65;
-      transform: none;
-    }
-
-    .trust-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 26px;
-      color: #52606f;
-      font-size: 14px;
-    }
-
-    .trust-row span {
-      padding: 6px 10px;
-      border: 1px solid rgba(220, 228, 234, 0.86);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.66);
-    }
-
-    .deploy-panel {
-      border: 1px solid rgba(220, 228, 234, 0.92);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.92);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .panel-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 18px;
-      border-bottom: 1px solid var(--line);
-      gap: 12px;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      color: var(--green);
-      background: rgba(22, 128, 91, 0.1);
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .panel-body {
-      padding: 18px;
-    }
-
-    .tabs {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      padding: 4px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #f2f5f8;
-      gap: 4px;
-    }
-
-    .tab {
-      min-height: 38px;
-      border: 0;
-      border-radius: 6px;
-      color: #5f6b78;
-      background: transparent;
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .tab.active {
-      color: var(--ink);
-      background: #fff;
-      box-shadow: 0 4px 14px rgba(24, 36, 50, 0.08);
-    }
-
-    .dropzone {
-      display: grid;
-      place-items: center;
-      min-height: 170px;
-      margin-top: 14px;
-      padding: 24px;
-      border: 2px dashed #b9c8d6;
-      border-radius: 8px;
-      background: #fbfcfe;
-      text-align: center;
-      cursor: pointer;
-      transition:
-        border 0.18s ease,
-        background 0.18s ease;
-    }
-
-    .dropzone.dragging {
-      border-color: var(--teal);
-      background: rgba(8, 127, 140, 0.06);
-    }
-
-    .dropzone strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 18px;
-    }
-
-    .dropzone small,
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    textarea {
-      display: none;
-      width: 100%;
-      min-height: 190px;
-      margin-top: 14px;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      resize: vertical;
-      color: #1d2733;
-      background: #fbfcfe;
-      outline: none;
-      font-family:
-        ui-monospace,
-        SFMono-Regular,
-        Menlo,
-        Monaco,
-        Consolas,
-        "Liberation Mono",
-        monospace;
-      line-height: 1.45;
-    }
-
-    textarea:focus {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(8, 127, 140, 0.13);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .result {
-      display: none;
-      margin-top: 16px;
-      padding: 14px;
-      border: 1px solid rgba(22, 128, 91, 0.24);
-      border-radius: 8px;
-      background: rgba(22, 128, 91, 0.07);
-    }
-
-    .result strong {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--green);
-    }
-
-    .result-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px;
-      border: 1px solid rgba(22, 128, 91, 0.2);
-      border-radius: 8px;
-      background: #fff;
-    }
-
-    .result-row code {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      color: #114333;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .copy-btn {
-      min-width: 72px;
-      min-height: 34px;
-      border: 0;
-      border-radius: 6px;
-      color: #fff;
-      background: var(--green);
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .message {
-      min-height: 22px;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .message.error {
-      color: var(--red);
-    }
-
-    .section {
-      padding: 70px 0;
-    }
-
-    .section.alt {
-      background: #fff;
-      border-block: 1px solid var(--line);
-    }
-
-    .section-title {
-      max-width: 720px;
-      margin-bottom: 28px;
-    }
-
-    .section-title h2 {
-      margin: 0 0 10px;
-      font-size: clamp(28px, 4vw, 42px);
-      line-height: 1.15;
-    }
-
-    .section-title p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 17px;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .feature-card,
-    .use-card,
-    .notice-box {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--panel);
-    }
-
-    .feature-card {
-      padding: 20px;
-    }
-
-    .feature-icon {
-      display: grid;
-      width: 36px;
-      height: 36px;
-      place-items: center;
-      margin-bottom: 13px;
-      border-radius: 8px;
-      color: #fff;
-      background: var(--ink);
-      font-weight: 900;
-    }
-
-    .feature-card h3 {
-      margin: 0 0 7px;
-      font-size: 18px;
-    }
-
-    .feature-card p,
-    .use-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
-      counter-reset: step;
-    }
-
-    .step {
-      position: relative;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: #fff;
-      min-height: 142px;
-    }
-
-    .step::before {
-      counter-increment: step;
-      content: counter(step);
-      display: grid;
-      width: 30px;
-      height: 30px;
-      place-items: center;
-      margin-bottom: 14px;
-      border-radius: 50%;
-      color: #fff;
-      background: var(--teal);
-      font-weight: 900;
-    }
-
-    .step strong {
-      display: block;
-      margin-bottom: 7px;
-    }
-
-    .step span {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .use-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .use-card {
-      padding: 16px;
-    }
-
-    .use-card strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .notice-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .notice-box {
-      padding: 22px;
-    }
-
-    .notice-box h3 {
-      margin: 0 0 12px;
-      font-size: 20px;
-    }
-
-    .check-list,
-    .ban-list {
-      display: grid;
-      gap: 9px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .check-list li,
-    .ban-list li {
-      display: flex;
-      gap: 9px;
-      align-items: flex-start;
-      color: #43505e;
-    }
-
-    .check-list li::before {
-      content: "";
-      flex: 0 0 9px;
-      width: 9px;
-      height: 9px;
-      margin-top: 9px;
-      border-radius: 50%;
-      background: var(--green);
-    }
-
-    .ban-list li::before {
-      content: "";
-      flex: 0 0 9px;
-      width: 9px;
-      height: 9px;
-      margin-top: 9px;
-      border-radius: 50%;
-      background: var(--red);
-    }
-
-    .keywords {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .keywords span {
-      padding: 7px 10px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: #52606f;
-      background: #fff;
-      font-size: 13px;
-    }
-
-    footer {
-      padding: 28px 0 42px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .hidden-input {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    @media (max-width: 940px) {
-      .hero-grid,
-      .notice-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-grid {
-        min-height: auto;
-      }
-
-      .feature-grid,
-      .steps,
-      .use-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .nav {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .nav-links {
-        width: 100%;
-        overflow-x: auto;
-        padding-bottom: 2px;
-      }
-
-      .hero-grid {
-        padding: 38px 0 32px;
-      }
-
-      .lead {
-        font-size: 16px;
-      }
-
-      .deploy-panel {
-        margin-inline: -4px;
-      }
-
-      .form-grid,
-      .feature-grid,
-      .steps,
-      .use-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .button {
-        width: 100%;
-      }
-
-      .result-row {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .copy-btn {
-        width: 100%;
-      }
-    }
-  </style>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>
+HTML网页转在线链接
+</title>
+
+
+<style>
+
+:root{
+
+--main:#087f8c;
+--bg:#f7f9fb;
+--line:#dce4ea;
+--text:#17202a;
+--muted:#687383;
+--green:#16805b;
+--red:#c24538;
+
+}
+
+
+*{
+
+box-sizing:border-box;
+
+}
+
+
+
+body{
+
+margin:0;
+
+background:var(--bg);
+
+color:var(--text);
+
+font-family:
+
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+"Microsoft YaHei",
+Arial;
+
+}
+
+
+
+.container{
+
+max-width:900px;
+
+margin:auto;
+
+padding:40px 20px;
+
+}
+
+
+
+h1{
+
+font-size:42px;
+
+margin-bottom:10px;
+
+}
+
+
+
+.desc{
+
+color:var(--muted);
+
+font-size:18px;
+
+}
+
+
+
+.card{
+
+background:white;
+
+border:1px solid var(--line);
+
+border-radius:12px;
+
+padding:25px;
+
+margin-top:25px;
+
+box-shadow:
+
+0 10px 30px rgba(0,0,0,.08);
+
+}
+
+
+
+label{
+
+font-weight:bold;
+
+display:block;
+
+margin-top:15px;
+
+}
+
+
+
+input,
+textarea{
+
+width:100%;
+
+margin-top:8px;
+
+padding:13px;
+
+border:
+
+1px solid var(--line);
+
+border-radius:8px;
+
+font-size:15px;
+
+}
+
+
+
+textarea{
+
+height:220px;
+
+display:none;
+
+}
+
+
+
+.tabs{
+
+display:flex;
+
+gap:10px;
+
+margin-top:20px;
+
+}
+
+
+
+button{
+
+height:44px;
+
+padding:0 20px;
+
+border:0;
+
+border-radius:8px;
+
+background:var(--main);
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+
+button.gray{
+
+background:#eee;
+
+color:#333;
+
+}
+
+
+
+.tab.active{
+
+background:var(--main);
+
+color:white;
+
+}
+
+
+
+.dropzone{
+
+height:160px;
+
+margin-top:20px;
+
+border:
+
+2px dashed #bbb;
+
+border-radius:10px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+cursor:pointer;
+
+text-align:center;
+
+}
+
+
+
+.message{
+
+margin-top:15px;
+
+color:var(--muted);
+
+}
+
+
+
+.message.error{
+
+color:var(--red);
+
+}
+
+
+
+.result{
+
+display:none;
+
+margin-top:20px;
+
+padding:20px;
+
+background:#eaf7f1;
+
+border-radius:10px;
+
+}
+
+
+
+.result a{
+
+word-break:break-all;
+
+color:var(--green);
+
+}
+
+
+
+</style>
+
 </head>
+
 
 <body>
 
-<header class="topbar">
-  <nav class="nav" aria-label="主导航">
 
-    <a class="brand" href="#top">
-      <span class="brand-mark">H</span>
-      <span>HTML网页转在线链接</span>
-    </a>
+<div class="container">
 
-    <div class="nav-links">
-      <a href="#deploy">立即部署</a>
-      <a href="#support">支持内容</a>
-      <a href="#steps">使用流程</a>
-      <a href="#notice">使用须知</a>
-    </div>
-
-  </nav>
-</header>
-
-
-<main id="top">
-
-<section class="hero">
-
-<div class="shell hero-grid">
-
-<div>
-
-<span class="kicker">
-静态网页一键发布 · 无需服务器
-</span>
 
 <h1>
 HTML网页转在线链接
 </h1>
 
-<p class="lead">
-上传 HTML 文件，或者直接粘贴 AI 生成的 HTML 代码，
-几秒即可生成专属在线访问链接。
-无需购买服务器，无需配置环境。
+
+<p class="desc">
+
+上传HTML网页，输入激活码，秒生成在线访问地址。
+
 </p>
 
-<div class="hero-actions">
-
-<a class="button primary" href="#deploy">
-开始生成链接
-</a>
-
-<a class="button secondary" href="#notice">
-查看限制说明
-</a>
-
-</div>
-
-<div class="trust-row">
-<span>单文件不超过 20MB</span>
-<span>手机电脑均可访问</span>
-<span>无需服务器</span>
-</div>
-
-</div>
 
 
-<section class="deploy-panel" id="deploy">
-
-<div class="panel-head">
-
-<strong>
-网页部署页面
-</strong>
-
-<span class="status-pill">
-<span class="status-dot"></span>
-24小时自助
-</span>
-
-</div>
+<div class="card">
 
 
-<div class="panel-body">
-
-<div class="tabs">
-
-<button
-class="tab active"
-type="button"
-data-mode="file"
->
-上传 HTML
-</button>
-
-<button
-class="tab"
-type="button"
-data-mode="code"
->
-粘贴 HTML 代码
-</button>
-
-</div>
+<h2>
+发布网页
+</h2>
 
 
-<label
-class="dropzone"
-id="dropzone"
-for="fileInput"
->
 
-<input
-class="hidden-input"
-id="fileInput"
-type="file"
-accept=".html,.htm,text/html"
->
-
-<span>
-
-<strong id="dropTitle">
-拖拽文件到这里，或点击选择文件
-</strong>
-
-<small>
-支持 .html / .htm，大小不超过 20MB
-</small>
-
-</span>
-
+<label>
+激活码
 </label>
 
 
+<input
+
+id="licenseCode"
+
+placeholder="请输入激活码">
+
+
+<div class="tabs">
+
+
+<button
+
+class="tab active"
+
+id="fileMode">
+
+上传HTML文件
+
+</button>
+
+
+
+<button
+
+class="tab gray"
+
+id="codeMode">
+
+粘贴HTML代码
+
+</button>
+
+
+</div>
+
+
+
+<div
+
+class="dropzone"
+
+id="dropzone">
+
+
+<input
+
+id="fileInput"
+
+type="file"
+
+accept=".html,.htm"
+
+style="display:none">
+
+
+<span id="dropText">
+
+点击选择HTML文件
+
+</span>
+
+
+</div>
+
+
+
+
 <textarea
+
 id="htmlCode"
-spellcheck="false"
-placeholder="在这里粘贴完整 HTML 代码，例如：
 
-<!doctype html>
-<html>
-<head>
-<title>我的网页</title>
-</head>
-<body>
-Hello
-</body>
-</html>"
-></textarea>
+placeholder="粘贴HTML代码">
+
+</textarea>
 
 
-<div class="form-grid">
+
 
 <button
-class="button primary"
-id="deployBtn"
-type="button"
->
-生成链接
+
+id="deployBtn">
+
+生成在线链接
+
 </button>
 
-</div>
 
 
 <div
+
 class="message"
-id="message"
-aria-live="polite"
-></div>
+
+id="message">
+
+</div>
+
 
 
 <div
+
 class="result"
-id="result"
->
 
-<strong>
-部署成功，链接已生成
-</strong>
+id="result">
 
-<div class="result-row">
 
-<code id="resultLink">
-等待生成...
-</code>
+<b>
+网页地址：
+</b>
+
+
+<br>
+
+
+<a
+
+id="resultLink"
+
+target="_blank">
+
+</a>
+
+
+
+<br><br>
+
 
 <button
-class="copy-btn"
-id="copyBtn"
-type="button"
->
-复制
+
+id="copyBtn">
+
+复制链接
+
 </button>
 
-</div>
-
-<div
-class="hint"
-style="margin-top:8px;"
->
-点击链接即可访问你的在线网页。
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-</div>
-
-</section>
-
-
-
-<section class="section" id="support">
-
-<div class="shell">
-
-<div class="section-title">
-
-<h2>
-适合把静态网页快速发给别人看
-</h2>
-
-<p>
-不买服务器、不碰部署命令，只要网页是静态 HTML，
-就能快速生成访问链接。
-</p>
 
 </div>
 
 
-<div class="feature-grid">
-
-<article class="feature-card">
-
-<span class="feature-icon">
-1
-</span>
-
-<h3>
-HTML 单页面
-</h3>
-
-<p>
-适合 AI 生成的活动页、表白页、生日页、邀请函、产品介绍页。
-</p>
-
-</article>
-
-
-<article class="feature-card">
-
-<span class="feature-icon">
-2
-</span>
-
-<h3>
-在线发布
-</h3>
-
-<p>
-上传 HTML 后自动保存到云端，并返回可以直接访问的公网链接。
-</p>
-
-</article>
-
-
-<article class="feature-card">
-
-<span class="feature-icon">
-3
-</span>
-
-<h3>
-无需服务器
-</h3>
-
-<p>
-不用购买服务器，不需要配置复杂的部署环境，上传即可使用。
-</p>
-
-</article>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<section
-class="section alt"
-id="steps"
->
-
-<div class="shell">
-
-<div class="section-title">
-
-<h2>
-四步完成网页发布
-</h2>
-
-<p>
-上传网页，等待处理，几秒即可获得在线访问地址。
-</p>
 
 </div>
 
 
-<div class="steps">
-
-<div class="step">
-<strong>准备网页</strong>
-<span>
-准备一个 HTML 文件，或者复制 AI 生成的 HTML 代码。
-</span>
 </div>
-
-<div class="step">
-<strong>打开部署页面</strong>
-<span>
-进入网页上传页面。
-</span>
-</div>
-
-<div class="step">
-<strong>上传网页</strong>
-<span>
-选择 HTML 文件或粘贴代码。
-</span>
-</div>
-
-<div class="step">
-<strong>复制访问链接</strong>
-<span>
-生成后直接分享给别人。
-</span>
-</div>
-
-<div class="step">
-<strong>在线访问</strong>
-<span>
-手机、电脑等设备均可以打开生成的网页。
-</span>
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<section class="section">
-
-<div class="shell">
-
-<div class="section-title">
-
-<h2>
-常见使用场景
-</h2>
-
-<p>
-适合个人、小白、学生和临时展示需求。
-</p>
-
-</div>
-
-
-<div class="use-grid">
-
-<article class="use-card">
-<strong>AI网页在线展示</strong>
-<p>把 AI 生成的 HTML 直接变成链接。</p>
-</article>
-
-<article class="use-card">
-<strong>个人主页</strong>
-<p>展示头像、介绍、联系方式和作品入口。</p>
-</article>
-
-<article class="use-card">
-<strong>作品集页面</strong>
-<p>课程作业、前端作品、设计页面在线预览。</p>
-</article>
-
-<article class="use-card">
-<strong>活动宣传页</strong>
-<p>邀请函、生日页、报名说明、产品介绍。</p>
-</article>
-
-<article class="use-card">
-<strong>表白网页</strong>
-<p>把本地网页生成手机可打开的访问地址。</p>
-</article>
-
-<article class="use-card">
-<strong>临时展示</strong>
-<p>面试、汇报、客户验收前快速分享效果。</p>
-</article>
-
-<article class="use-card">
-<strong>HTML作品展示</strong>
-<p>无需让对方下载文件或解压包。</p>
-</article>
-
-<article class="use-card">
-<strong>简单产品介绍</strong>
-<p>适合单页介绍、服务说明和展示页面。</p>
-</article>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<section
-class="section alt"
-id="notice"
->
-
-<div class="shell">
-
-<div class="section-title">
-
-<h2>
-服务边界要写清楚
-</h2>
-
-<p>
-静态网页托管和服务器部署不是一回事。
-</p>
-
-</div>
-
-
-<div class="notice-grid">
-
-<div class="notice-box">
-
-<h3>
-可以支持
-</h3>
-
-<ul class="check-list">
-
-<li>
-HTML 单页面网页
-</li>
-
-<li>
-HTML + CSS + JS 静态网页
-</li>
-
-<li>
-AI 生成的 HTML 网页代码
-</li>
-
-<li>
-个人主页、作品展示、活动介绍页面
-</li>
-
-</ul>
-
-</div>
-
-
-<div class="notice-box">
-
-<h3>
-暂不支持
-</h3>
-
-<ul class="ban-list">
-
-<li>
-PHP、Java、Python、Node 后端程序
-</li>
-
-<li>
-数据库、登录系统、动态接口
-</li>
-
-<li>
-需要服务器运行环境的完整项目
-</li>
-
-<li>
-钓鱼诈骗、仿冒登录、恶意程序等违规网页
-</li>
-
-<li>
-色情博彩、侵权盗版和其他违法违规内容
-</li>
-
-</ul>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-<section class="section">
-
-<div class="shell">
-
-<div class="section-title">
-
-<h2>
-搜索关键词
-</h2>
-
-<p>
-HTML网页、网页转链接、静态网页部署等。
-</p>
-
-</div>
-
-
-<div class="keywords">
-
-<span>HTML网页</span>
-<span>HTML转链接</span>
-<span>网页转链接</span>
-<span>网页在线链接</span>
-<span>HTML在线访问</span>
-<span>HTML网页部署</span>
-<span>网页部署</span>
-<span>静态网页部署</span>
-<span>网页托管</span>
-<span>HTML上传</span>
-<span>AI网页部署</span>
-<span>AI生成网页</span>
-<span>HTML网页发布</span>
-<span>网页作品展示</span>
-<span>网页在线预览</span>
-
-</div>
-
-</div>
-
-</section>
-
-</main>
-
-
-<footer>
-
-<div class="shell">
-
-HTML网页在线发布服务 · 仅支持静态网页内容
-
-</div>
-
-</footer>
-
-
-
 <script>
 
-/* =====================================================
-   1. Cloudflare Worker 地址
-   ===================================================== */
+
+/*
+====================================
+Worker地址
+====================================
+*/
+
 
 const WORKER_URL =
-  "https://html-uploader.2333333434.workers.dev";
+"https://html-uploader.2333333434.workers.dev";
 
 
-/* =====================================================
-   2. 当前模式
-   ===================================================== */
+
+/*
+====================================
+变量
+====================================
+*/
+
 
 let mode = "file";
 
 let selectedFile = null;
 
 
-/* =====================================================
-   3. 获取元素
-   ===================================================== */
 
-const tabs =
-  document.querySelectorAll(".tab");
+const licenseCode =
+document.querySelector("#licenseCode");
 
-const dropzone =
-  document.querySelector("#dropzone");
 
 const fileInput =
-  document.querySelector("#fileInput");
+document.querySelector("#fileInput");
+
+
+const dropzone =
+document.querySelector("#dropzone");
+
+
+const dropText =
+document.querySelector("#dropText");
+
 
 const htmlCode =
-  document.querySelector("#htmlCode");
+document.querySelector("#htmlCode");
+
+
+const fileMode =
+document.querySelector("#fileMode");
+
+
+const codeMode =
+document.querySelector("#codeMode");
+
 
 const deployBtn =
-  document.querySelector("#deployBtn");
+document.querySelector("#deployBtn");
+
 
 const message =
-  document.querySelector("#message");
+document.querySelector("#message");
+
 
 const result =
-  document.querySelector("#result");
+document.querySelector("#result");
+
 
 const resultLink =
-  document.querySelector("#resultLink");
+document.querySelector("#resultLink");
+
 
 const copyBtn =
-  document.querySelector("#copyBtn");
-
-const dropTitle =
-  document.querySelector("#dropTitle");
+document.querySelector("#copyBtn");
 
 
-/* =====================================================
-   4. 消息
-   ===================================================== */
 
-function setMessage(text, isError = false) {
-
-  message.textContent = text;
-
-  message.classList.toggle(
-    "error",
-    isError
-  );
-
-}
+/*
+====================================
+提示
+====================================
+*/
 
 
-/* =====================================================
-   5. 切换模式
-   ===================================================== */
+function setMessage(text,error=false){
 
-tabs.forEach((tab) => {
+message.textContent=text;
 
-  tab.addEventListener("click", () => {
-
-    mode =
-      tab.dataset.mode;
-
-    tabs.forEach((item) => {
-
-      const active =
-        item.dataset.mode === mode;
-
-      item.classList.toggle(
-        "active",
-        active
-      );
-
-      item.setAttribute(
-        "aria-selected",
-        String(active)
-      );
-
-    });
-
-
-    dropzone.style.display =
-      mode === "file"
-        ? "grid"
-        : "none";
-
-
-    htmlCode.style.display =
-      mode === "code"
-        ? "block"
-        : "none";
-
-
-    result.style.display =
-      "none";
-
-    setMessage("");
-
-  });
-
-});
-
-
-/* =====================================================
-   6. 文件选择
-   ===================================================== */
-
-fileInput.addEventListener(
-  "change",
-  (event) => {
-
-    handleFile(
-      event.target.files[0]
-    );
-
-  }
-);
-
-
-/* =====================================================
-   7. 文件检查
-   ===================================================== */
-
-function handleFile(file) {
-
-  if (!file) {
-    return;
-  }
-
-
-  const name =
-    file.name.toLowerCase();
-
-
-  const allowed =
-    name.endsWith(".html") ||
-    name.endsWith(".htm");
-
-
-  if (!allowed) {
-
-    selectedFile = null;
-
-    dropTitle.textContent =
-      "目前只支持 HTML / HTM 文件";
-
-    setMessage(
-      "请选择 .html 或 .htm 文件。",
-      true
-    );
-
-    return;
-
-  }
-
-
-  if (
-    file.size >
-    20 * 1024 * 1024
-  ) {
-
-    selectedFile = null;
-
-    dropTitle.textContent =
-      "文件超过 20MB";
-
-    setMessage(
-      "HTML 文件不能超过 20MB。",
-      true
-    );
-
-    return;
-
-  }
-
-
-  selectedFile = file;
-
-  dropTitle.textContent =
-    file.name;
-
-  setMessage(
-    `已选择 ${file.name}。`
-  );
+message.className=
+error
+?
+"message error"
+:
+"message";
 
 }
 
 
-/* =====================================================
-   8. 拖拽
-   ===================================================== */
 
-["dragenter", "dragover"]
-.forEach((eventName) => {
-
-  dropzone.addEventListener(
-    eventName,
-    (event) => {
-
-      event.preventDefault();
-
-      dropzone.classList.add(
-        "dragging"
-      );
-
-    }
-  );
-
-});
+/*
+====================================
+切换文件模式
+====================================
+*/
 
 
-["dragleave", "drop"]
-.forEach((eventName) => {
+fileMode.onclick=function(){
 
-  dropzone.addEventListener(
-    eventName,
-    (event) => {
-
-      event.preventDefault();
-
-      dropzone.classList.remove(
-        "dragging"
-      );
-
-    }
-  );
-
-});
+mode="file";
 
 
-dropzone.addEventListener(
-  "drop",
-  (event) => {
-
-    handleFile(
-      event.dataTransfer.files[0]
-    );
-
-  }
+fileMode.classList.add(
+"active"
 );
 
 
-/* =====================================================
-   9. 生成链接
-   ===================================================== */
-
-deployBtn.addEventListener(
-  "click",
-  async () => {
-
-    result.style.display =
-      "none";
-
-
-    /* ---------------------------
-       检查文件
-       --------------------------- */
-
-    if (mode === "file") {
-
-      if (!selectedFile) {
-
-        setMessage(
-          "请先上传 HTML 文件。",
-          true
-        );
-
-        return;
-
-      }
-
-    }
-
-
-    /* ---------------------------
-       检查代码
-       --------------------------- */
-
-    if (mode === "code") {
-
-      const code =
-        htmlCode.value.trim();
-
-
-      if (code.length < 20) {
-
-        setMessage(
-          "请粘贴完整 HTML 代码。",
-          true
-        );
-
-        htmlCode.focus();
-
-        return;
-
-      }
-
-    }
-
-
-    /* ---------------------------
-       开始上传
-       --------------------------- */
-
-    deployBtn.disabled =
-      true;
-
-    deployBtn.textContent =
-      "上传中...";
-
-    setMessage(
-      "正在上传网页，请稍等..."
-    );
-
-
-    try {
-
-      const formData =
-        new FormData();
-
-
-      /* -------------------------
-         文件模式
-         ------------------------- */
-
-      if (mode === "file") {
-
-        formData.append(
-          "file",
-          selectedFile
-        );
-
-      }
-
-
-      /* -------------------------
-         HTML代码模式
-         ------------------------- */
-
-      if (mode === "code") {
-
-        const blob =
-          new Blob(
-            [htmlCode.value],
-            {
-              type:
-                "text/html"
-            }
-          );
-
-
-        formData.append(
-          "file",
-          blob,
-          "index.html"
-        );
-
-      }
-
-
-      /* -------------------------
-         请求 Worker
-         ------------------------- */
-
-      const response =
-        await fetch(
-          WORKER_URL + "/upload",
-          {
-            method: "POST",
-            body: formData
-          }
-        );
-
-
-      let data;
-
-
-      try {
-
-        data =
-          await response.json();
-
-      } catch (e) {
-
-        throw new Error(
-          "服务器返回格式错误"
-        );
-
-      }
-
-
-      /* -------------------------
-         判断结果
-         ------------------------- */
-
-      if (
-        !response.ok ||
-        !data.success
-      ) {
-
-        throw new Error(
-          data.error ||
-          "网页上传失败"
-        );
-
-      }
-
-
-      /* -------------------------
-         显示真实链接
-         ------------------------- */
-
-      if (!data.url) {
-
-        throw new Error(
-          "服务器没有返回网页链接"
-        );
-
-      }
-
-
-      resultLink.textContent =
-        data.url;
-
-
-      result.style.display =
-        "block";
-
-
-      setMessage(
-        "部署成功！网页已经可以访问。"
-      );
-
-
-      /* 自动滚动到结果 */
-
-      result.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-
-
-    } catch (error) {
-
-      console.error(
-        "Upload error:",
-        error
-      );
-
-
-      setMessage(
-        "生成失败：" +
-        (
-          error.message ||
-          "网络错误，请稍后重试"
-        ),
-        true
-      );
-
-    } finally {
-
-      deployBtn.disabled =
-        false;
-
-      deployBtn.textContent =
-        "生成链接";
-
-    }
-
-  }
+codeMode.classList.remove(
+"active"
 );
 
 
-/* =====================================================
-   10. 复制链接
-   ===================================================== */
 
-copyBtn.addEventListener(
-  "click",
-  async () => {
-
-    const text =
-      resultLink.textContent;
+dropzone.style.display=
+"flex";
 
 
-    if (
-      !text ||
-      text === "等待生成..."
-    ) {
-
-      return;
-
-    }
+htmlCode.style.display=
+"none";
 
 
-    try {
-
-      await navigator.clipboard
-        .writeText(text);
+};
 
 
-      copyBtn.textContent =
-        "已复制";
+
+/*
+====================================
+切换代码模式
+====================================
+*/
 
 
-      setTimeout(() => {
+codeMode.onclick=function(){
 
-        copyBtn.textContent =
-          "复制";
-
-      }, 1400);
+mode="code";
 
 
-    } catch (error) {
-
-      setMessage(
-        "复制失败，请手动复制链接：" +
-        text
-      );
-
-    }
-
-  }
+codeMode.classList.add(
+"active"
 );
+
+
+fileMode.classList.remove(
+"active"
+);
+
+
+
+dropzone.style.display=
+"none";
+
+
+htmlCode.style.display=
+"block";
+
+};
+
+
+
+/*
+====================================
+选择文件
+====================================
+*/
+
+
+dropzone.onclick=function(){
+
+fileInput.click();
+
+};
+
+
+
+fileInput.onchange=function(e){
+
+const file =
+e.target.files[0];
+
+
+checkFile(file);
+
+};
+
+
+
+function checkFile(file){
+
+
+if(!file){
+
+return;
+
+}
+
+
+
+const name =
+file.name.toLowerCase();
+
+
+
+if(
+!name.endsWith(".html")
+&&
+!name.endsWith(".htm")
+){
+
+setMessage(
+"只支持HTML文件",
+true
+);
+
+
+return;
+
+}
+
+
+
+if(
+file.size >
+20*1024*1024
+){
+
+setMessage(
+"文件不能超过20MB",
+true
+);
+
+
+return;
+
+}
+
+
+
+selectedFile=file;
+
+
+dropText.textContent=
+file.name;
+
+
+
+setMessage(
+"文件选择成功"
+);
+
+
+}
+
+
+
+/*
+====================================
+生成链接
+====================================
+*/
+
+
+deployBtn.onclick=async function(){
+
+
+
+if(
+!licenseCode.value.trim()
+){
+
+setMessage(
+"请输入激活码",
+true
+);
+
+
+return;
+
+}
+
+
+
+if(
+mode==="file"
+&&
+!selectedFile
+){
+
+setMessage(
+"请选择HTML文件",
+true
+);
+
+
+return;
+
+}
+
+
+
+if(
+mode==="code"
+&&
+htmlCode.value.trim().length<20
+){
+
+setMessage(
+"请输入HTML代码",
+true
+);
+
+
+return;
+
+}
+
+
+
+deployBtn.disabled=true;
+
+
+deployBtn.textContent=
+"处理中...";
+
+
+
+try{
+
+
+/*
+
+这里下一部分加入：
+
+1. 验证激活码
+
+2. 上传HTML
+
+
+*/
+
+
+const formData =
+new FormData();
+
+
+
+if(mode==="file"){
+
+
+formData.append(
+"file",
+selectedFile
+);
+
+
+}
+
+
+
+if(mode==="code"){
+
+
+const blob =
+new Blob(
+[
+htmlCode.value
+],
+{
+type:"text/html"
+}
+);
+
+
+
+formData.append(
+"file",
+blob,
+"index.html"
+);
+
+
+
+}
+
+
+
+const response =
+await fetch(
+WORKER_URL+"/upload",
+{
+
+method:"POST",
+
+body:formData
+
+}
+
+);
+
+
+
+const data =
+await response.json();
+
+
+
+if(
+!response.ok
+||
+!data.success
+){
+
+throw new Error(
+data.error||
+"上传失败"
+);
+
+}
+
+
+
+resultLink.href=
+data.url;
+
+
+resultLink.textContent=
+data.url;
+
+
+
+result.style.display=
+"block";
+
+
+
+setMessage(
+"生成成功"
+);
+
+
+
+}
+catch(e){
+
+
+setMessage(
+e.message,
+true
+);
+
+
+}
+finally{
+
+
+deployBtn.disabled=false;
+
+
+deployBtn.textContent=
+"生成在线链接";
+
+
+}
+
+
+
+};
+
+
+
+/*
+====================================
+复制链接
+====================================
+*/
+
+
+copyBtn.onclick=async function(){
+
+
+await navigator.clipboard.writeText(
+resultLink.textContent
+);
+
+
+
+copyBtn.textContent=
+"已复制";
+
+
+setTimeout(()=>{
+
+
+copyBtn.textContent=
+"复制链接";
+
+
+},1500);
+
+
+
+};
+
+
 
 </script>
+<script>
 
-</body>
-</html>
+/* =====================================================
+   Cloudflare Worker 地址
+===================================================== */
+
+const WORKER_URL =
+"https://html-uploader.2333333434.workers.dev";
+
+
+/* =====================================================
+   状态变量
+===================================================== */
+
+let licenseOK = false;
+
+let selectedFile = null;
+
+let mode = "file";
+
+
+/* =====================================================
+   DOM
+===================================================== */
+
+const licenseBox =
+document.querySelector("#licenseBox");
+
+const licenseInput =
+document.querySelector("#licenseInput");
+
+const verifyBtn =
+document.querySelector("#verifyBtn");
+
+const licenseMessage =
+document.querySelector("#licenseMessage");
+
+const uploadArea =
+document.querySelector("#uploadArea");
+
+
+const fileInput =
+document.querySelector("#fileInput");
+
+const dropzone =
+document.querySelector("#dropzone");
+
+const htmlCode =
+document.querySelector("#htmlCode");
+
+const deployBtn =
+document.querySelector("#deployBtn");
+
+const result =
+document.querySelector("#result");
+
+const resultLink =
+document.querySelector("#resultLink");
+
+const message =
+document.querySelector("#message");
+
+const copyBtn =
+document.querySelector("#copyBtn");
+
+
+/* =====================================================
+   激活码验证
+===================================================== */
+
+verifyBtn.addEventListener(
+"click",
+async()=>{
+
+
+const code =
+licenseInput.value.trim();
+
+
+if(!code){
+
+licenseMessage.textContent =
+"请输入激活码";
+
+return;
+
+}
+
+
+verifyBtn.disabled=true;
+
+verifyBtn.textContent="验证中...";
+
+
+try{
+
+
+const response =
+await fetch(
+WORKER_URL+
+"/license/check",
+{
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify({
+code
+})
+
+});
+
+
+const data =
+await response.json();
+
+
+if(
+!response.ok ||
+!data.success
+){
+
+throw new Error(
+data.error ||
+"激活码无效"
+);
+
+}
+
+
+/*
+验证成功
+*/
+
+
+licenseOK=true;
+
+
+licenseBox.style.display=
+"none";
+
+
+uploadArea.style.display=
+"block";
+
+
+licenseMessage.textContent=
+"激活成功，可以上传网页";
+
+
+}
+catch(error){
+
+
+licenseMessage.textContent=
+error.message;
+
+
+}
+finally{
+
+
+verifyBtn.disabled=false;
+
+verifyBtn.textContent=
+"验证激活码";
+
+
+}
+
+
+});
+
+
+
+/* =====================================================
+   文件选择
+===================================================== */
+
+
+fileInput.addEventListener(
+"change",
+(e)=>{
+
+const file =
+e.target.files[0];
+
+
+if(file){
+
+selectedFile=file;
+
+
+dropzone.innerHTML=
+`
+<strong>
+${file.name}
+</strong>
+<br>
+点击重新选择
+`;
+
+}
+
+
+});
+
+
+
+/* =====================================================
+   上传生成链接
+===================================================== */
+
+
+deployBtn.addEventListener(
+"click",
+async()=>{
+
+
+if(!licenseOK){
+
+message.textContent=
+"请先激活";
+
+return;
+
+}
+
+
+
+const formData =
+new FormData();
+
+
+
+if(mode==="file"){
+
+
+if(!selectedFile){
+
+message.textContent=
+"请选择HTML文件";
+
+return;
+
+}
+
+
+formData.append(
+"file",
+selectedFile
+);
+
+
+}
+
+
+
+if(mode==="code"){
+
+
+const code =
+htmlCode.value.trim();
+
+
+if(code.length<20){
+
+message.textContent=
+"HTML代码太短";
+
+return;
+
+}
+
+
+const blob =
+new Blob(
+[code],
+{
+type:"text/html"
+}
+);
+
+
+formData.append(
+"file",
+blob,
+"index.html"
+);
+
+
+}
+
+
+
+deployBtn.disabled=true;
+
+
+deployBtn.textContent=
+"生成中...";
+
+
+try{
+
+
+const response =
+await fetch(
+WORKER_URL+
+"/upload",
+{
+
+method:"POST",
+
+body:formData
+
+});
+
+
+const data =
+await response.json();
+
+
+if(
+!response.ok ||
+!data.success
+){
+
+throw new Error(
+data.error ||
+"上传失败"
+);
+
+}
+
+
+
+resultLink.textContent=
+data.url;
+
+
+result.style.display=
+"block";
+
+
+message.textContent=
+"生成成功";
+
+
+}
+catch(error){
+
+
+message.textContent=
+error.message;
+
+
+}
+finally{
+
+
+deployBtn.disabled=false;
+
+
+deployBtn.textContent=
+"生成链接";
+
+
+}
+
+
+
+});
+
+
+
+/* =====================================================
+复制链接
+===================================================== */
+
+
+copyBtn.addEventListener(
+"click",
+async()=>{
+
+
+await navigator.clipboard.writeText(
+resultLink.textContent
+);
+
+
+copyBtn.textContent=
+"已复制";
+
+
+setTimeout(()=>{
+
+copyBtn.textContent=
+"复制";
+
+},1500);
+
+
+
+});
+
+
+</script>
+const corsHeaders = {
+
+  "Access-Control-Allow-Origin": "*",
+
+  "Access-Control-Allow-Methods":
+    "GET, POST, OPTIONS",
+
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization"
+
+};
+
+
+
+function json(data, status = 200){
+
+  return new Response(
+    JSON.stringify(data),
+    {
+      status,
+      headers:{
+        ...corsHeaders,
+        "Content-Type":
+        "application/json"
+      }
+    }
+  );
+
+}
+
+
+
+function text(data,status=200){
+
+  return new Response(
+    data,
+    {
+      status,
+      headers:corsHeaders
+    }
+  );
+
+}
+
+
+
+/*
+管理员密码
+
+不要放前端
+
+Cloudflare变量里面设置
+
+ADMIN_PASSWORD
+
+*/
+
+
+function checkAdmin(request,env){
+
+
+const auth =
+request.headers.get(
+"Authorization"
+);
+
+
+if(
+!auth ||
+auth !==
+"Bearer "+env.ADMIN_PASSWORD
+){
+
+return false;
+
+}
+
+
+return true;
+
+
+}
+
+
+
+/*
+随机生成卡密
+*/
+
+
+function randomCode(
+prefix,
+groupSize,
+groups
+){
+
+
+const chars =
+"ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+
+let result =
+prefix+"-";
+
+
+for(
+let g=0;
+g<groups;
+g++
+){
+
+let part="";
+
+
+for(
+let i=0;
+i<groupSize;
+i++
+){
+
+part +=
+chars[
+Math.floor(
+Math.random()*chars.length
+)
+];
+
+
+}
+
+
+result+=part;
+
+
+if(
+g!==groups-1
+){
+
+result+="-";
+
+}
+
+
+}
+
+
+return result;
+
+
+}
+
+
+
+
+export default {
+
+
+async fetch(
+request,
+env
+){
+
+
+const url =
+new URL(request.url);
+
+
+
+/*
+OPTIONS
+*/
+
+if(
+request.method==="OPTIONS"
+){
+
+return new Response(
+null,
+{
+status:204,
+headers:corsHeaders
+}
+);
+
+}
+
+
+
+/*
+测试
+*/
+
+if(
+request.method==="GET" &&
+url.pathname==="/"
+){
+
+return text(
+"HTML Uploader Worker OK"
+);
+
+}
+
+
+
+/*
+====================
+激活码验证
+====================
+*/
+
+
+if(
+request.method==="POST" &&
+url.pathname==="/license/check"
+){
+
+
+try{
+
+
+const body =
+await request.json();
+
+
+const code =
+(body.code||"")
+.trim()
+.toUpperCase();
+
+
+
+if(!code){
+
+return json({
+success:false,
+error:"请输入激活码"
+},400);
+
+}
+
+
+
+const key =
+"LICENSE:"+code;
+
+
+
+const value =
+await env.LICENSE_KV.get(
+key,
+{
+type:"json"
+}
+);
+
+
+
+if(!value){
+
+return json({
+success:false,
+error:"激活码不存在"
+},400);
+
+}
+
+
+
+/*
+次数判断
+*/
+
+
+if(
+value.used >= value.uses
+){
+
+return json({
+
+success:false,
+
+error:
+"激活码次数已用完"
+
+},400);
+
+
+}
+
+
+
+/*
+增加使用次数
+*/
+
+
+value.used +=1;
+
+
+await env.LICENSE_KV.put(
+key,
+JSON.stringify(value)
+);
+
+
+
+return json({
+
+success:true,
+
+message:
+"激活成功",
+
+remaining:
+value.uses-value.used
+
+});
+
+
+
+}
+catch(e){
+
+
+return json({
+
+success:false,
+
+error:e.message
+
+},500);
+
+
+}
+
+
+}
+
+
+
+
+/*
+====================
+上传HTML
+====================
+*/
+
+
+if(
+request.method==="POST" &&
+url.pathname==="/upload"
+){
+
+
+try{
+
+
+const form =
+await request.formData();
+
+
+const file =
+form.get("file");
+
+
+
+if(!file){
+
+return json({
+
+success:false,
+
+error:"没有文件"
+
+},400);
+
+}
+
+
+
+const name =
+file.name.toLowerCase();
+
+
+
+if(
+!name.endsWith(".html") &&
+!name.endsWith(".htm")
+){
+
+return json({
+
+success:false,
+
+error:
+"只支持HTML"
+
+},400);
+
+
+}
+
+
+
+
+const id =
+crypto.randomUUID()
+.replaceAll("-","")
+.slice(0,12);
+
+
+
+const html =
+await file.text();
+
+
+
+await env.HTML_BUCKET.put(
+
+`${id}.html`,
+
+html,
+
+{
+
+httpMetadata:{
+
+contentType:
+"text/html;charset=UTF-8"
+
+}
+
+}
+
+);
+
+
+
+return json({
+
+success:true,
+
+id,
+
+url:
+`${url.origin}/p/${id}`
+
+});
+
+
+
+}
+catch(e){
+
+
+return json({
+
+success:false,
+
+error:e.message
+
+},500);
+
+
+}
+
+
+}
+
+
+
+/*
+====================
+打开网页
+====================
+*/
+
+
+if(
+request.method==="GET" &&
+url.pathname.startsWith("/p/")
+){
+
+
+const id =
+url.pathname.slice(3);
+
+
+
+const obj =
+await env.HTML_BUCKET.get(
+`${id}.html`
+);
+
+
+
+if(!obj){
+
+return text(
+"网页不存在",
+404
+);
+
+}
+
+
+
+return new Response(
+obj.body,
+{
+
+headers:{
+
+"Content-Type":
+"text/html;charset=UTF-8"
+
+}
+
+}
+);
+
+
+}
+
+
+
+
+/*
+====================
+管理员生成激活码
+====================
+*/
+
+
+if(
+request.method==="POST" &&
+url.pathname==="/admin/generate"
+){
+
+
+
+if(
+!checkAdmin(request,env)
+){
+
+return json({
+
+success:false,
+
+error:"管理员密码错误"
+
+},403);
+
+}
+
+
+
+const body =
+await request.json();
+
+
+
+const count =
+Math.min(
+Number(body.count)||1,
+5000
+);
+
+
+
+const prefix =
+body.prefix||
+"HTML";
+
+
+
+const uses =
+Number(body.uses)||1;
+
+
+
+const groupSize =
+Number(body.groupSize)||4;
+
+
+
+const groups =
+Number(body.groups)||4;
+
+
+
+let codes=[];
+
+
+
+for(
+let i=0;
+i<count;
+i++
+){
+
+
+
+const code =
+randomCode(
+prefix,
+groupSize,
+groups
+);
+
+
+
+const data={
+
+code,
+
+uses,
+
+used:0,
+
+batch:
+body.batch||
+"default",
+
+created_at:
+new Date()
+.toISOString(),
+
+status:
+"active"
+
+};
+
+
+
+await env.LICENSE_KV.put(
+
+"LICENSE:"+code,
+
+JSON.stringify(data)
+
+);
+
+
+
+codes.push(code);
+
+
+}
+
+
+
+return json({
+
+success:true,
+
+codes
+
+});
+
+
+
+}
+
+
+
+
+/*
+====================
+查询激活码
+====================
+*/
+
+
+if(
+request.method==="GET" &&
+url.pathname==="/admin/check"
+){
+
+
+if(
+!checkAdmin(request,env)
+){
+
+return json({
+
+success:false,
+
+error:"无权限"
+
+},403);
+
+
+}
+
+
+const code =
+url.searchParams
+.get("code")
+?.toUpperCase();
+
+
+
+const data =
+await env.LICENSE_KV.get(
+
+"LICENSE:"+code,
+
+{
+type:"json"
+}
+
+);
+
+
+
+if(!data){
+
+return json({
+
+success:false,
+
+error:"不存在"
+
+});
+
+}
+
+
+
+return json({
+
+success:true,
+
+data
+
+});
+
+
+}
+
+
+
+return text(
+"Not Found",
+404
+);
+
+
+
+}
+
+
+};
