@@ -199,6 +199,7 @@ padding:40px 20px 80px;
 
 
 
+
 .hero{
 
 display:grid;
@@ -512,9 +513,6 @@ background:#0f172a;
 color:white;
 
 }
-
-
-
 input:focus{
 
 border-color:var(--primary);
@@ -660,9 +658,10 @@ background:#eafafa;
 color:var(--primary);
 
 }
-<!-- 页面开始 -->
+
 
 </style>
+
 
 </head>
 
@@ -670,7 +669,6 @@ color:var(--primary);
 <body>
 
 
-<!-- 顶部导航 -->
 
 <div class="nav">
 
@@ -727,9 +725,6 @@ HTML / ZIP
 
 <div class="container">
 
-
-
-<!-- 首页展示 -->
 
 
 <section class="hero">
@@ -909,8 +904,6 @@ ZIP项目
 
 
 
-<!-- 激活区域 -->
-
 
 <section class="card"
 
@@ -940,6 +933,7 @@ id="service">
 id="licenseInput"
 
 placeholder="请输入激活码">
+
 
 
 <br><br>
@@ -977,11 +971,6 @@ id="licenseMsg">
 
 
 
-
-
-<!-- 发布区域 -->
-
-
 <section
 
 class="card hidden"
@@ -1006,9 +995,6 @@ id="uploadBox">
 
 
 
-
-
-<!-- 发布模式 -->
 
 
 <div class="mode-list">
@@ -1056,11 +1042,6 @@ ZIP项目
 
 
 
-
-
-<!-- HTML代码输入 -->
-
-
 <div id="codePanel">
 
 
@@ -1068,29 +1049,7 @@ ZIP项目
 
 id="htmlCode"
 
-placeholder="
-
-请粘贴HTML代码，例如：
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<title>Hello</title>
-
-</head>
-
-<body>
-
-<h1>Hello World</h1>
-
-</body>
-
-</html>
-
-">
+placeholder="请输入HTML代码">
 
 </textarea>
 
@@ -1116,11 +1075,6 @@ id="createBtn">
 
 
 
-
-
-
-
-<!-- 文件上传 -->
 
 
 <div
@@ -1196,15 +1150,7 @@ id="uploadBtn">
 </div>
 
 
-
 </div>
-
-
-
-
-
-
-
 <div
 
 class="msg"
@@ -1215,10 +1161,6 @@ id="uploadMsg">
 
 
 
-
-
-
-<!-- 结果 -->
 
 
 <div
@@ -1292,8 +1234,6 @@ id="copyBtn">
 
 
 
-<!-- 功能介绍 -->
-
 
 <section class="card">
 
@@ -1362,9 +1302,6 @@ ZIP完整网站项目
 
 
 
-<!-- 使用流程 -->
-
-
 <section
 
 class="card"
@@ -1423,98 +1360,144 @@ id="help">
 
 
 </section>
+
+
+
+
+
+
 <script>
 
 
 const WORKER_URL =
+
 "https://html-uploader.2333333434.workers.dev";
+
+
 
 
 
 let activated = false;
 
 
-
 let currentMode = "code";
 
 
 
+
+
+const savedToken =
+
+localStorage.getItem("token");
+
+
+
+if(savedToken){
+
+activated=true;
+
+}
+
+
+
+
+
+
+
 const licenseInput =
+
 document.querySelector("#licenseInput");
 
 
 const verifyBtn =
+
 document.querySelector("#verifyBtn");
 
 
 const licenseMsg =
+
 document.querySelector("#licenseMsg");
 
 
 const uploadBox =
+
 document.querySelector("#uploadBox");
 
 
 const uploadMsg =
+
 document.querySelector("#uploadMsg");
 
 
 
 const codeMode =
+
 document.querySelector("#codeMode");
 
 
 const fileMode =
+
 document.querySelector("#fileMode");
 
 
 const zipMode =
+
 document.querySelector("#zipMode");
 
 
 
 const codePanel =
+
 document.querySelector("#codePanel");
 
 
 const filePanel =
+
 document.querySelector("#filePanel");
 
 
 
 const htmlCode =
+
 document.querySelector("#htmlCode");
 
 
-
 const createBtn =
+
 document.querySelector("#createBtn");
 
 
-
 const fileInput =
+
 document.querySelector("#fileInput");
 
 
 const uploadBtn =
+
 document.querySelector("#uploadBtn");
 
 
 const dropArea =
+
 document.querySelector("#dropArea");
 
 
 
 const result =
+
 document.querySelector("#result");
 
 
 const resultLink =
+
 document.querySelector("#resultLink");
 
 
 const copyBtn =
+
 document.querySelector("#copyBtn");
+
+
 
 
 
@@ -1546,6 +1529,8 @@ zipMode.classList.remove("active");
 codePanel.classList.add("hidden");
 
 filePanel.classList.add("hidden");
+
+
 
 
 
@@ -1591,6 +1576,8 @@ filePanel.classList.remove("hidden");
 
 
 
+
+
 codeMode.onclick=()=>{
 
 changeMode("code");
@@ -1598,11 +1585,13 @@ changeMode("code");
 };
 
 
+
 fileMode.onclick=()=>{
 
 changeMode("file");
 
 };
+
 
 
 zipMode.onclick=()=>{
@@ -1617,10 +1606,9 @@ changeMode("zip");
 
 
 
-
 /*
 ========================
-激活码
+激活码验证
 ========================
 */
 
@@ -1629,17 +1617,25 @@ verifyBtn.onclick=async()=>{
 
 
 const code =
+
 licenseInput.value.trim();
+
+
 
 
 
 if(!code){
 
-licenseMsg.innerText =
+
+licenseMsg.innerText=
+
 "请输入激活码";
 
-licenseMsg.className =
+
+licenseMsg.className=
+
 "msg error";
+
 
 return;
 
@@ -1647,10 +1643,16 @@ return;
 
 
 
+
+
 verifyBtn.disabled=true;
 
 
-verifyBtn.innerText="验证中...";
+verifyBtn.innerText=
+
+"验证中...";
+
+
 
 
 
@@ -1658,6 +1660,7 @@ try{
 
 
 const res =
+
 await fetch(
 
 WORKER_URL+
@@ -1670,12 +1673,16 @@ encodeURIComponent(code)
 
 
 
+
 const data =
+
 await res.json();
 
 
 
+
 if(!data.success){
+
 
 throw new Error(
 
@@ -1689,26 +1696,45 @@ data.error ||
 
 
 
+
 activated=true;
 
 
 
-licenseMsg.innerText =
+localStorage.setItem(
+
+"token",
+
+data.token
+
+);
+
+
+
+licenseMsg.innerText=
+
 "✅ 激活成功，可以发布网页";
 
 
-licenseMsg.className =
+
+licenseMsg.className=
+
 "msg success";
 
 
 
 document.querySelector("#service")
-.style.display="none";
+
+.style.display=
+
+"none";
 
 
 
 uploadBox.classList.remove(
+
 "hidden"
+
 );
 
 
@@ -1718,14 +1744,18 @@ uploadBox.classList.remove(
 catch(e){
 
 
-licenseMsg.innerText=e.message;
+licenseMsg.innerText=
+
+e.message;
 
 
-licenseMsg.className =
+licenseMsg.className=
+
 "msg error";
 
 
 }
+
 
 finally{
 
@@ -1733,22 +1763,16 @@ finally{
 verifyBtn.disabled=false;
 
 
-verifyBtn.innerText="立即激活";
+verifyBtn.innerText=
+
+"立即激活";
 
 
 }
 
 
+
 };
-
-
-
-
-
-
-
-
-
 /*
 ========================
 HTML代码生成
@@ -1761,26 +1785,35 @@ createBtn.onclick=async()=>{
 
 if(!activated){
 
+
 uploadMsg.innerText=
+
 "请先激活";
 
+
 return;
+
 
 }
 
 
 
 const code =
+
 htmlCode.value.trim();
 
 
 
 if(!code){
 
-uploadMsg.innerText =
+
+uploadMsg.innerText=
+
 "请输入HTML代码";
 
+
 return;
+
 
 }
 
@@ -1791,6 +1824,7 @@ try{
 
 
 const res =
+
 await fetch(
 
 WORKER_URL+"/create",
@@ -1801,14 +1835,25 @@ WORKER_URL+"/create",
 method:"POST",
 
 
+
 headers:{
 
 
 "Content-Type":
-"application/json"
+
+"application/json",
+
+
+
+"Authorization":
+
+"Bearer "+
+
+localStorage.getItem("token")
 
 
 },
+
 
 
 body:JSON.stringify({
@@ -1824,17 +1869,25 @@ html:code
 
 
 
+
 const data =
+
 await res.json();
+
 
 
 
 if(!data.success){
 
+
 throw new Error(
+
 data.error ||
+
 "生成失败"
+
 );
+
 
 }
 
@@ -1846,15 +1899,16 @@ showResult(data.url);
 
 }
 
+
 catch(e){
 
 
-uploadMsg.innerText =
+uploadMsg.innerText=
+
 "错误："+e.message;
 
 
 }
-
 
 
 };
@@ -1869,7 +1923,7 @@ uploadMsg.innerText =
 
 /*
 ========================
-文件上传
+文件上传 HTML ZIP
 ========================
 */
 
@@ -1879,33 +1933,44 @@ uploadBtn.onclick=async()=>{
 
 if(!activated){
 
+
 uploadMsg.innerText=
+
 "请先激活";
 
+
 return;
+
 
 }
 
 
 
 const file =
+
 fileInput.files[0];
 
 
 
 if(!file){
 
+
 uploadMsg.innerText=
+
 "请选择文件";
 
+
 return;
+
 
 }
 
 
 
 
+
 const formData =
+
 new FormData();
 
 
@@ -1920,10 +1985,16 @@ file
 
 
 
+
+
 uploadBtn.disabled=true;
 
 
-uploadBtn.innerText="上传中...";
+uploadBtn.innerText=
+
+"上传中...";
+
+
 
 
 
@@ -1931,6 +2002,7 @@ try{
 
 
 const res =
+
 await fetch(
 
 WORKER_URL+"/upload",
@@ -1939,6 +2011,22 @@ WORKER_URL+"/upload",
 
 
 method:"POST",
+
+
+
+headers:{
+
+
+"Authorization":
+
+"Bearer "+
+
+localStorage.getItem("token")
+
+
+},
+
+
 
 body:formData
 
@@ -1949,12 +2037,17 @@ body:formData
 
 
 
+
 const data =
+
 await res.json();
 
 
 
+
+
 if(!data.success){
+
 
 throw new Error(
 
@@ -1963,6 +2056,7 @@ data.error ||
 "上传失败"
 
 );
+
 
 }
 
@@ -1974,14 +2068,18 @@ showResult(data.url);
 
 }
 
+
 catch(e){
 
 
-uploadMsg.innerText =
+uploadMsg.innerText=
+
 "错误："+e.message;
 
 
 }
+
+
 
 finally{
 
@@ -1990,13 +2088,16 @@ uploadBtn.disabled=false;
 
 
 uploadBtn.innerText=
+
 "上传并生成链接";
 
 
 }
 
 
+
 };
+
 
 
 
@@ -2014,21 +2115,28 @@ uploadBtn.innerText=
 
 dropArea.ondragover=(e)=>{
 
+
 e.preventDefault();
 
+
 dropArea.style.borderColor=
+
 "#087f8c";
 
+
 };
+
 
 
 
 dropArea.ondragleave=()=>{
 
-dropArea.style.borderColor=
-"";
+
+dropArea.style.borderColor="";
+
 
 };
+
 
 
 
@@ -2040,7 +2148,9 @@ e.preventDefault();
 
 
 fileInput.files =
+
 e.dataTransfer.files;
+
 
 
 };
@@ -2064,19 +2174,26 @@ function showResult(url){
 
 
 result.classList.remove(
+
 "hidden"
+
 );
 
 
+
 resultLink.href=url;
+
 
 
 resultLink.innerText=url;
 
 
 
-uploadMsg.innerText =
+
+uploadMsg.innerText=
+
 "✅ 发布成功";
+
 
 
 
@@ -2095,9 +2212,11 @@ behavior:"smooth"
 
 
 
+
+
 /*
 ========================
-复制
+复制链接
 ========================
 */
 
@@ -2106,7 +2225,16 @@ copyBtn.onclick=async()=>{
 
 
 const url =
+
 resultLink.innerText;
+
+
+
+if(!url){
+
+return;
+
+}
 
 
 
@@ -2114,16 +2242,22 @@ await navigator.clipboard.writeText(url);
 
 
 
-copyBtn.innerText="已复制";
+copyBtn.innerText=
+
+"已复制";
+
 
 
 setTimeout(()=>{
 
 
-copyBtn.innerText="复制链接";
+copyBtn.innerText=
+
+"复制链接";
 
 
 },1500);
+
 
 
 };
@@ -2131,7 +2265,6 @@ copyBtn.innerText="复制链接";
 
 
 </script>
-
 
 
 </body>
