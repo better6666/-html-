@@ -7,20 +7,44 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
 <title>
-HTML网页转在线链接 - 静态网页一键发布
+HTML Cloud - HTML网页一键发布平台
 </title>
 
-
 <meta name="description"
-content="上传 HTML 文件，几秒生成在线访问链接，无需服务器。">
+content="上传HTML网页，秒生成在线访问链接，无需服务器。">
 
 
 <style>
 
+:root{
+
+--primary:#087f8c;
+--primary-dark:#05606a;
+
+--blue:#246bfe;
+
+--bg:#f5f8fc;
+
+--card:#ffffff;
+
+--text:#17202a;
+
+--muted:#667385;
+
+--line:#dce4ea;
+
+--success:#16805b;
+
+--danger:#c24538;
+
+}
+
+
 *{
+
 box-sizing:border-box;
+
 }
 
 
@@ -28,9 +52,16 @@ body{
 
 margin:0;
 
-background:#f6f8fb;
+background:
 
-color:#17202a;
+linear-gradient(
+180deg,
+#eef7ff 0%,
+#f7f9fc 45%,
+#ffffff 100%
+);
+
+color:var(--text);
 
 font-family:
 
@@ -42,17 +73,171 @@ BlinkMacSystemFont,
 Arial,
 sans-serif;
 
+line-height:1.6;
+
+}
+
+
+/* 顶部导航 */
+
+
+.nav{
+
+height:70px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+padding:0 35px;
+
+background:
+
+rgba(255,255,255,.75);
+
+backdrop-filter:blur(15px);
+
+border-bottom:
+
+1px solid rgba(220,228,234,.8);
+
+position:sticky;
+
+top:0;
+
+z-index:10;
+
+}
+
+
+.logo{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+font-size:20px;
+
+font-weight:900;
+
+}
+
+
+.logo-icon{
+
+width:42px;
+
+height:42px;
+
+border-radius:12px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+color:white;
+
+font-size:22px;
+
+background:
+
+linear-gradient(
+135deg,
+var(--primary),
+var(--blue)
+);
+
+}
+
+
+.nav-right{
+
+display:flex;
+
+gap:12px;
+
+}
+
+
+.tag{
+
+padding:6px 12px;
+
+border-radius:999px;
+
+background:#fff;
+
+border:1px solid var(--line);
+
+font-size:13px;
+
+color:var(--muted);
+
+font-weight:700;
+
 }
 
 
 
+/* 主容器 */
+
+
 .container{
 
-max-width:1100px;
+max-width:1150px;
 
 margin:auto;
 
-padding:30px 20px 60px;
+padding:40px 20px 80px;
+
+}
+
+
+
+/* 首页区域 */
+
+
+.hero{
+
+display:grid;
+
+grid-template-columns:
+
+1fr 420px;
+
+gap:50px;
+
+align-items:center;
+
+padding:60px 0;
+
+}
+
+
+
+.badge{
+
+display:inline-flex;
+
+padding:8px 15px;
+
+border-radius:999px;
+
+background:
+
+rgba(8,127,140,.1);
+
+color:var(--primary);
+
+font-weight:800;
+
+font-size:14px;
 
 }
 
@@ -60,95 +245,243 @@ padding:30px 20px 60px;
 
 h1{
 
-font-size:42px;
+font-size:
 
-margin:0 0 15px;
+clamp(38px,5vw,64px);
+
+line-height:1.1;
+
+margin:
+
+20px 0;
+
+letter-spacing:-2px;
 
 }
 
 
 
-p{
+.hero p{
 
-color:#667385;
+font-size:19px;
+
+color:var(--muted);
+
+max-width:600px;
 
 }
 
+
+
+.hero-buttons{
+
+display:flex;
+
+gap:15px;
+
+margin-top:30px;
+
+}
+
+
+
+.btn{
+
+height:48px;
+
+padding:0 25px;
+
+border-radius:10px;
+
+border:0;
+
+cursor:pointer;
+
+font-weight:900;
+
+font-size:15px;
+
+transition:.2s;
+
+}
+
+
+.btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+
+
+.btn-primary{
+
+background:
+
+linear-gradient(
+135deg,
+var(--primary),
+var(--blue)
+);
+
+color:white;
+
+box-shadow:
+
+0 12px 25px rgba(8,127,140,.25);
+
+}
+
+
+
+.btn-light{
+
+background:white;
+
+border:
+
+1px solid var(--line);
+
+color:var(--text);
+
+}
+
+
+
+/* 右侧展示 */
+
+
+.preview{
+
+background:white;
+
+border:
+
+1px solid var(--line);
+
+border-radius:20px;
+
+padding:25px;
+
+box-shadow:
+
+0 20px 50px rgba(0,0,0,.08);
+
+}
+
+
+.preview-title{
+
+font-size:18px;
+
+font-weight:900;
+
+margin-bottom:20px;
+
+}
+
+
+
+.preview-item{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:15px;
+
+border-radius:12px;
+
+background:#f7fafc;
+
+margin-bottom:12px;
+
+}
+
+
+
+.preview-icon{
+
+width:38px;
+
+height:38px;
+
+border-radius:10px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:#e8f8fa;
+
+color:var(--primary);
+
+font-weight:900;
+
+}
+
+
+
+.preview-text{
+
+font-size:14px;
+
+}
+
+
+
+.preview-text strong{
+
+display:block;
+
+}
+
+
+
+/* 卡片 */
 
 
 .card{
 
-background:#fff;
+background:
 
-border:1px solid #dce4ea;
-
-border-radius:12px;
-
-padding:25px;
-
-margin-top:20px;
-
-box-shadow:
-0 10px 30px rgba(0,0,0,.05);
-
-}
-
-
-
-button{
-
-height:44px;
-
-padding:0 20px;
-
-border:0;
-
-border-radius:8px;
-
-background:#087f8c;
-
-color:#fff;
-
-font-weight:800;
-
-cursor:pointer;
-
-}
-
-
-
-button:hover{
-
-opacity:.9;
-
-}
-
-
-
-button:disabled{
-
-opacity:.5;
-
-cursor:not-allowed;
-
-}
-
-
-
-input,
-textarea{
-
-width:100%;
-
-height:44px;
-
-padding:0 12px;
+rgba(255,255,255,.9);
 
 border:
 
-1px solid #dce4ea;
+1px solid var(--line);
 
-border-radius:8px;
+border-radius:18px;
+
+padding:30px;
+
+margin-top:25px;
+
+box-shadow:
+
+0 12px 35px rgba(0,0,0,.05);
+
+}
+
+
+
+.card h2{
+
+margin-top:0;
+
+font-size:24px;
+
+}
+
+
+
+.card-desc{
+
+color:var(--muted);
 
 font-size:15px;
 
@@ -156,16 +489,74 @@ font-size:15px;
 
 
 
-textarea{
+/* 输入框 */
 
-height:180px;
 
-padding:12px;
+input{
 
-resize:vertical;
+width:100%;
+
+height:48px;
+
+padding:0 15px;
+
+border:
+
+1px solid var(--line);
+
+border-radius:10px;
+
+font-size:15px;
+
+outline:none;
+
+transition:.2s;
 
 }
 
+
+input:focus{
+
+border-color:var(--primary);
+
+box-shadow:
+
+0 0 0 4px rgba(8,127,140,.12);
+
+}
+
+
+
+/* 状态 */
+
+
+.msg{
+
+margin-top:12px;
+
+font-size:14px;
+
+color:var(--muted);
+
+}
+
+
+.msg.success{
+
+color:var(--success);
+
+}
+
+
+.msg.error{
+
+color:var(--danger);
+
+}
+
+
+
+/* 隐藏 */
 
 
 .hidden{
@@ -175,170 +566,285 @@ display:none;
 }
 
 
-
-.msg{
-
-margin-top:10px;
-
-font-size:14px;
-
-color:#667385;
-
-}
+/* 上传区域 */
 
 
-
-.success{
-
-color:#16805b;
-
-}
-
-
-
-.error{
-
-color:#c24538;
-
-}
-
-
-
-.drop{
-
-margin-top:15px;
-
-padding:40px 20px;
-
-border:
-
-2px dashed #b9c8d6;
-
-border-radius:10px;
-
-text-align:center;
-
-cursor:pointer;
-
-background:#fbfcfe;
-
-}
-
-
-
-.drop:hover{
-
-border-color:#087f8c;
-
-}
-
-
-
-.result{
+.upload-area{
 
 margin-top:20px;
 
-padding:15px;
+border:
 
-border-radius:10px;
+2px dashed #b8c8d8;
 
-background:#eafaf3;
+border-radius:16px;
 
-border:1px solid #bde8d5;
+padding:45px 20px;
 
-display:none;
+text-align:center;
+
+background:#fbfdff;
+
+}
+
+
+.upload-area:hover{
+
+border-color:var(--primary);
 
 }
 
 
 
-.result a{
+.upload-icon{
 
-word-break:break-all;
-
-color:#087f8c;
+font-size:42px;
 
 }
 
 
 
-.nav{
+.upload-title{
 
-background:white;
-
-border-bottom:
-
-1px solid #dce4ea;
-
-padding:15px 20px;
+font-size:20px;
 
 font-weight:900;
 
+margin:10px;
+
 }
 
 
 
-.nav span{
+.upload-desc{
 
-color:#087f8c;
+color:var(--muted);
 
 }
 
 
 
 </style>
-
-</head>
-
-
 <body>
 
 
+<!-- 顶部导航 -->
+
 <div class="nav">
 
-<span>HTML</span>
-网页转在线链接
+<div class="logo">
+
+<div class="logo-icon">
+H
+</div>
+
+HTML Cloud
 
 </div>
+
+
+<div class="nav-right">
+
+<div class="tag">
+无需服务器
+</div>
+
+<div class="tag">
+秒级部署
+</div>
+
+<div class="tag">
+自动生成链接
+</div>
+
+</div>
+
+</div>
+
 
 
 
 <div class="container">
 
 
+<!-- 首页 -->
+
+<section class="hero">
+
+
+<div>
+
+
+<div class="badge">
+⚡ HTML网页一键发布平台
+</div>
+
+
 <h1>
-HTML网页转在线链接
+
+HTML网页<br>
+
+秒变在线链接
+
 </h1>
 
 
+
 <p>
-上传 HTML 文件，几秒生成可访问链接。
-无需服务器，无需部署。
+
+上传你的 HTML 文件，
+几秒生成公网访问地址。
+
+无需购买服务器，
+无需配置环境。
+
 </p>
 
 
 
-<!-- 激活码区域 -->
+<div class="hero-buttons">
 
-<div class="card"
-id="licenseBox">
+
+<a href="#service"
+class="btn btn-primary">
+
+立即开始
+
+</a>
+
+
+<a href="#help"
+class="btn btn-light">
+
+查看说明
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="preview">
+
+
+<div class="preview-title">
+
+HTML Cloud 服务
+
+</div>
+
+
+<div class="preview-item">
+
+
+<div class="preview-icon">
+⚡
+</div>
+
+
+<div class="preview-text">
+
+<strong>
+快速发布
+</strong>
+
+上传即可生成链接
+
+</div>
+
+
+</div>
+
+
+
+<div class="preview-item">
+
+
+<div class="preview-icon">
+🌎
+</div>
+
+
+<div class="preview-text">
+
+<strong>
+全球访问
+</strong>
+
+手机电脑均可打开
+
+</div>
+
+
+</div>
+
+
+
+<div class="preview-item">
+
+
+<div class="preview-icon">
+🔒
+</div>
+
+
+<div class="preview-text">
+
+<strong>
+安全稳定
+</strong>
+
+云端保存网页
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+<!-- 激活区域 -->
+
+
+<section class="card"
+id="service">
 
 
 <h2>
-输入激活码
+
+🔐 激活使用权限
+
 </h2>
 
 
-<p>
-购买激活码后，在这里激活使用。
+<p class="card-desc">
+
+购买激活码后输入，
+验证成功即可使用网页发布功能。
+
 </p>
+
 
 
 <input
 
 id="licenseInput"
 
-placeholder="请输入激活码">
+placeholder="请输入你的激活码">
 
 
 <br><br>
@@ -346,31 +852,39 @@ placeholder="请输入激活码">
 
 <button
 
+class="btn btn-primary"
+
 id="verifyBtn">
 
-验证激活码
+立即激活
 
 </button>
 
 
+
 <div
 
-id="licenseMsg"
+class="msg"
 
-class="msg">
+id="licenseMsg">
 
-未验证
-
-</div>
-
+等待验证
 
 </div>
+
+
+
+</section>
+
+
+
 
 
 
 <!-- 上传区域 -->
 
-<div
+
+<section
 
 class="card hidden"
 
@@ -378,8 +892,53 @@ id="uploadBox">
 
 
 <h2>
-上传网页
+
+☁ 发布你的 HTML 网页
+
 </h2>
+
+
+
+<p class="card-desc">
+
+支持 HTML / HTM 静态网页文件。
+
+上传后自动生成访问链接。
+
+</p>
+
+
+
+
+<div class="upload-area">
+
+
+<div class="upload-icon">
+
+📄
+
+</div>
+
+
+
+<div class="upload-title">
+
+选择 HTML 文件
+
+</div>
+
+
+
+<div class="upload-desc">
+
+支持 .html / .htm
+
+</div>
+
+
+
+<br>
+
 
 
 <input
@@ -391,56 +950,85 @@ id="fileInput"
 accept=".html,.htm">
 
 
+
 <br><br>
+
 
 
 <button
 
+class="btn btn-primary"
+
 id="uploadBtn">
 
-生成链接
+生成在线链接
 
 </button>
 
-
-<div
-
-id="uploadMsg"
-
-class="msg">
 
 </div>
 
 
 
+
 <div
 
-class="result"
+class="msg"
+
+id="uploadMsg">
+
+</div>
+
+
+
+
+
+
+<div
+
+class="card hidden"
 
 id="result">
 
 
-<strong>
-生成成功
-</strong>
+<h2>
+
+🎉 发布成功
+
+</h2>
 
 
-<br><br>
+
+<p>
+
+你的网页已经上线：
+
+</p>
 
 
 <a
 
 id="resultLink"
 
-target="_blank">
+target="_blank"
+
+style="
+color:#087f8c;
+font-weight:800;
+word-break:break-all;
+">
 
 </a>
+
 
 
 <br><br>
 
 
+
 <button
+
+class="btn btn-primary"
 
 id="copyBtn">
 
@@ -449,107 +1037,171 @@ id="copyBtn">
 </button>
 
 
+
 </div>
 
 
-</div>
+
+</section>
+
+
+
+
+
+
 <!-- 功能介绍 -->
 
-<div class="card">
+
+<section class="card">
+
 
 <h2>
-支持内容
+
+✨ 支持内容
+
 </h2>
-
-
-<p>
-适合 AI 生成网页、个人主页、作品展示、活动页面等静态 HTML。
-</p>
 
 
 <ul>
 
-<li>
-HTML 单页面网页
-</li>
 
 <li>
-HTML + CSS + JS 静态网页
+AI生成 HTML 网页在线展示
 </li>
 
-<li>
-AI生成网页在线展示
-</li>
 
 <li>
-个人作品集展示
+个人主页、作品集
 </li>
+
+
+<li>
+活动宣传页面
+</li>
+
+
+<li>
+生日、表白、邀请网页
+</li>
+
+
+<li>
+HTML + CSS + JS 静态项目
+</li>
+
 
 </ul>
 
 
-</div>
+</section>
 
 
 
 
-<div class="card">
+
+
+<!-- 使用流程 -->
+
+
+<section class="card"
+id="help">
 
 
 <h2>
-使用流程
+
+📌 使用流程
+
 </h2>
+
 
 
 <ol>
 
+
 <li>
+
 购买激活码
+
 </li>
 
+
 <li>
+
 输入激活码验证
+
 </li>
 
+
 <li>
+
 上传 HTML 文件
+
 </li>
 
+
 <li>
+
 复制生成的网址
+
 </li>
+
+
+<li>
+
+分享给别人访问
+
+</li>
+
 
 </ol>
 
 
-</div>
+</section>
 
 
 
 
-<div class="card">
+
+
+<!-- 限制说明 -->
+
+
+<section class="card">
 
 
 <h2>
-使用说明
+
+⚠️ 使用限制
+
 </h2>
 
 
+
 <p>
 
-目前仅支持静态网页。
+目前只支持静态网页。
 
 </p>
 
 
 <p>
 
-不支持 PHP、数据库、后台程序等动态项目。
+不支持 PHP、Java、Python、
+数据库等需要服务器运行的程序。
 
 </p>
 
 
-</div>
+<p>
+
+禁止违法违规、诈骗、
+恶意代码等内容。
+
+</p>
+
+
+</section>
+
 
 
 
@@ -557,27 +1209,23 @@ AI生成网页在线展示
 <footer
 
 style="
-margin-top:40px;
 text-align:center;
-color:#888;
+margin-top:50px;
+color:#8993a1;
 font-size:14px;
 ">
 
-HTML网页在线发布服务
+HTML Cloud · 静态网页在线发布服务
 
 </footer>
 
 
 
 </div>
-
-
-
 <script>
 
 
 const WORKER_URL =
-
 "https://html-uploader.2333333434.workers.dev";
 
 
@@ -586,68 +1234,43 @@ let activated = false;
 
 
 
-const licenseBox =
-
-document.querySelector("#licenseBox");
-
-
-
 const licenseInput =
-
 document.querySelector("#licenseInput");
 
 
-
 const verifyBtn =
-
 document.querySelector("#verifyBtn");
 
 
-
 const licenseMsg =
-
 document.querySelector("#licenseMsg");
 
 
-
 const uploadBox =
-
 document.querySelector("#uploadBox");
 
 
-
 const fileInput =
-
 document.querySelector("#fileInput");
 
 
-
 const uploadBtn =
-
 document.querySelector("#uploadBtn");
 
 
-
 const uploadMsg =
-
 document.querySelector("#uploadMsg");
 
 
-
 const result =
-
 document.querySelector("#result");
 
 
-
 const resultLink =
-
 document.querySelector("#resultLink");
 
 
-
 const copyBtn =
-
 document.querySelector("#copyBtn");
 
 
@@ -665,34 +1288,27 @@ verifyBtn.onclick = async()=>{
 
 
 const code =
-
 licenseInput.value.trim();
 
 
 
 if(!code){
 
-
 licenseMsg.innerText =
-
 "请输入激活码";
 
-
-licenseMsg.className="msg error";
-
+licenseMsg.className =
+"msg error";
 
 return;
-
 
 }
 
 
 
-verifyBtn.disabled=true;
+verifyBtn.disabled = true;
 
-
-verifyBtn.innerText=
-
+verifyBtn.innerText =
 "验证中...";
 
 
@@ -700,53 +1316,24 @@ verifyBtn.innerText=
 try{
 
 
-const res =
+const res = await fetch(
 
-await fetch(
+WORKER_URL +
 
-WORKER_URL+
+"/license/check?code=" +
 
-"/license/check",
-
-{
-
-
-method:"POST",
-
-
-headers:{
-
-
-"Content-Type":
-
-"application/json"
-
-
-},
-
-
-body:JSON.stringify({
-
-code
-
-})
-
-
-}
+encodeURIComponent(code)
 
 );
 
 
 
 const data =
-
 await res.json();
 
 
 
-
 if(!data.success){
-
 
 throw new Error(
 
@@ -756,56 +1343,52 @@ data.error ||
 
 );
 
-
 }
 
 
 
-activated=true;
+
+activated = true;
 
 
 
-licenseMsg.innerText=
+licenseMsg.innerText =
+"✅ 激活成功，可以发布网页";
 
-"激活成功，可以上传网页";
 
-
-licenseMsg.className=
-
+licenseMsg.className =
 "msg success";
 
 
 
-licenseBox.style.display=
-
+document.querySelector("#service")
+.style.display =
 "none";
 
 
 
 uploadBox.classList.remove(
-
 "hidden"
-
 );
 
 
 
 }
 
+
 catch(e){
 
 
-licenseMsg.innerText=
-
+licenseMsg.innerText =
 e.message;
 
 
-licenseMsg.className=
-
+licenseMsg.className =
 "msg error";
 
 
 }
+
 
 finally{
 
@@ -813,16 +1396,16 @@ finally{
 verifyBtn.disabled=false;
 
 
-verifyBtn.innerText=
-
-"验证激活码";
+verifyBtn.innerText =
+"立即激活";
 
 
 }
 
 
-
 };
+
+
 
 
 
@@ -841,9 +1424,8 @@ uploadBtn.onclick = async()=>{
 if(!activated){
 
 
-uploadMsg.innerText=
-
-"请先激活";
+uploadMsg.innerText =
+"请先激活使用权限";
 
 
 return;
@@ -854,7 +1436,6 @@ return;
 
 
 const file =
-
 fileInput.files[0];
 
 
@@ -862,9 +1443,8 @@ fileInput.files[0];
 if(!file){
 
 
-uploadMsg.innerText=
-
-"请选择HTML文件";
+uploadMsg.innerText =
+"请选择 HTML 文件";
 
 
 return;
@@ -874,18 +1454,37 @@ return;
 
 
 
-const formData =
+if(
 
+!file.name.toLowerCase().endsWith(".html")
+
+&&
+
+!file.name.toLowerCase().endsWith(".htm")
+
+){
+
+
+uploadMsg.innerText =
+"只支持 HTML 文件";
+
+
+return;
+
+
+}
+
+
+
+
+const formData =
 new FormData();
 
 
 
 formData.append(
-
 "file",
-
 file
-
 );
 
 
@@ -893,24 +1492,30 @@ file
 uploadBtn.disabled=true;
 
 
-uploadBtn.innerText=
-
+uploadBtn.innerText =
 "上传中...";
+
+
+
+uploadMsg.innerText =
+"正在生成网页链接...";
+
+
 
 
 try{
 
 
 const res =
-
 await fetch(
 
-WORKER_URL+"/upload",
+WORKER_URL + "/upload",
 
 {
 
 
 method:"POST",
+
 
 body:formData
 
@@ -921,14 +1526,20 @@ body:formData
 
 
 
-const data =
 
+const data =
 await res.json();
 
 
 
 
-if(!data.success){
+if(
+
+!res.ok ||
+
+!data.success
+
+){
 
 
 throw new Error(
@@ -944,27 +1555,39 @@ data.error ||
 
 
 
-result.style.display=
 
+result.classList.remove(
+"hidden"
+);
+
+
+
+result.style.display =
 "block";
 
 
 
-resultLink.href=
-
+resultLink.href =
 data.url;
 
 
 
-resultLink.innerText=
-
+resultLink.innerText =
 data.url;
 
 
 
-uploadMsg.innerText=
+uploadMsg.innerText =
+"✅ 网页生成成功";
 
-"生成成功";
+
+
+result.scrollIntoView({
+
+behavior:"smooth"
+
+});
+
 
 
 }
@@ -972,12 +1595,12 @@ uploadMsg.innerText=
 catch(e){
 
 
-uploadMsg.innerText=
-
-e.message;
+uploadMsg.innerText =
+"错误：" + e.message;
 
 
 }
+
 
 finally{
 
@@ -985,26 +1608,32 @@ finally{
 uploadBtn.disabled=false;
 
 
-uploadBtn.innerText=
-
-"生成链接";
+uploadBtn.innerText =
+"生成在线链接";
 
 
 }
 
 
-
 };
-// ========================
-// 复制链接
-// ========================
+
+
+
+
+
+
+
+/*
+========================
+复制链接
+========================
+*/
 
 
 copyBtn.onclick = async()=>{
 
 
 const url =
-
 resultLink.innerText;
 
 
@@ -1024,16 +1653,14 @@ await navigator.clipboard.writeText(url);
 
 
 
-copyBtn.innerText=
-
+copyBtn.innerText =
 "已复制";
 
 
 setTimeout(()=>{
 
 
-copyBtn.innerText=
-
+copyBtn.innerText =
 "复制链接";
 
 
@@ -1043,18 +1670,15 @@ copyBtn.innerText=
 
 }
 
-catch(e){
+catch{
 
 
 alert(
-
 "复制失败，请手动复制"
-
 );
 
 
 }
-
 
 
 };
