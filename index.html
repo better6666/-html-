@@ -281,6 +281,12 @@ margin-top:30px;
 
 .btn{
 
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
 height:48px;
 
 padding:0 25px;
@@ -296,6 +302,14 @@ font-weight:900;
 cursor:pointer;
 
 transition:.2s;
+
+line-height:1;
+
+text-align:center;
+
+text-decoration:none;
+
+white-space:nowrap;
 
 }
 
@@ -681,6 +695,273 @@ font-size:14px;
 .member-info b{
 
 color:var(--primary);
+
+}
+
+
+@media(max-width:900px){
+
+.nav{
+
+height:auto;
+
+align-items:flex-start;
+
+gap:14px;
+
+padding:14px 18px;
+
+}
+
+.nav-right{
+
+flex-wrap:wrap;
+
+justify-content:flex-start;
+
+}
+
+.container{
+
+padding:24px 16px 56px;
+
+}
+
+.hero{
+
+grid-template-columns:1fr;
+
+gap:24px;
+
+padding:28px 0;
+
+}
+
+h1{
+
+letter-spacing:0;
+
+}
+
+.preview{
+
+border-radius:14px;
+
+}
+
+}
+
+
+@media(max-width:560px){
+
+.nav{
+
+position:static;
+
+padding:12px 14px;
+
+}
+
+.logo{
+
+font-size:18px;
+
+}
+
+.logo-icon{
+
+width:34px;
+
+height:34px;
+
+border-radius:9px;
+
+font-size:18px;
+
+}
+
+.tag{
+
+padding:5px 9px;
+
+font-size:12px;
+
+}
+
+.container{
+
+padding:18px 12px 44px;
+
+}
+
+.badge{
+
+font-size:12px;
+
+line-height:1.35;
+
+}
+
+h1{
+
+font-size:36px;
+
+line-height:1.12;
+
+margin:14px 0;
+
+}
+
+.hero p{
+
+font-size:16px;
+
+line-height:1.7;
+
+}
+
+.hero-buttons{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:10px;
+
+margin-top:20px;
+
+}
+
+.btn{
+
+width:100%;
+
+min-width:0;
+
+height:46px;
+
+padding:0 12px;
+
+font-size:14px;
+
+border-radius:9px;
+
+}
+
+.preview{
+
+padding:16px;
+
+}
+
+.preview-item{
+
+padding:12px;
+
+gap:12px;
+
+}
+
+.preview-icon{
+
+width:34px;
+
+height:34px;
+
+flex:0 0 34px;
+
+}
+
+.card{
+
+padding:18px;
+
+border-radius:12px;
+
+margin-top:16px;
+
+}
+
+.card h2{
+
+font-size:21px;
+
+line-height:1.35;
+
+}
+
+input{
+
+height:46px;
+
+font-size:16px;
+
+}
+
+textarea{
+
+height:230px;
+
+font-size:13px;
+
+}
+
+.mode-list{
+
+display:grid;
+
+grid-template-columns:1fr;
+
+gap:10px;
+
+}
+
+.mode{
+
+padding:13px 10px;
+
+}
+
+.upload-area{
+
+padding:28px 14px;
+
+}
+
+.upload-title{
+
+font-size:18px;
+
+}
+
+.upload-icon{
+
+font-size:36px;
+
+}
+
+}
+
+
+@media(max-width:360px){
+
+.hero-buttons{
+
+grid-template-columns:1fr;
+
+}
+
+h1{
+
+font-size:32px;
+
+}
+
+.nav-right{
+
+display:none;
+
+}
 
 }
 
@@ -1546,7 +1827,14 @@ return map[plan] || "未知";
 
 
 
-function showExpire(time){
+function showExpire(time, plan){
+
+
+if(plan==="count"){
+
+return "按次数有效";
+
+}
 
 
 if(!time){
@@ -1818,7 +2106,7 @@ ${showPlan(data.plan)}
 
 <b>
 
-${showExpire(data.expire_at)}
+${showExpire(data.expire_at,data.plan)}
 
 </b>
 
