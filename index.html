@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML网页转在线链接 - 静态网页一键发布</title>
+  <meta name="description" content="上传 HTML 文件或 ZIP 静态网页包，输入激活码后生成可访问的在线链接。适合 AI 生成网页、作品展示、个人主页和临时展示页面。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23087f8c'/%3E%3Cpath d='M18 20h28v6H18zm0 9h21v6H18zm0 9h28v6H18z' fill='white'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #f7f9fb;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #687383;
+      --line: #dce4ea;
+      --teal: #087f8c;
+      --teal-dark: #06606b;
+      --amber: #f5a524;
+      --red: #c24538;
+      --green: #16805b;
+      --blue: #246bfe;
+      --shadow: 0 18px 50px rgba(24, 36, 50, 0.12);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(220, 228, 234, 0.9);
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 14px 22px;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+    }
+
+    .shell {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 22px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(120deg, rgba(8, 127, 140, 0.1), rgba(36, 107, 254, 0.08) 42%, rgba(245, 165, 36, 0.08)),
+        #ffffff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(390px, 1.08fr);
+      gap: 36px;
+      align-items: center;
+      min-height: calc(100vh - 64px);
+      padding: 54px 0 46px;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(8, 127, 140, 0.22);
+      border-radius: 999px;
+      color: var(--teal-dark);
+      background: rgba(255, 255, 255, 0.78);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 18px 0 16px;
+      font-size: clamp(38px, 6vw, 68px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 600px;
+      margin: 0;
+      color: #45515e;
+      font-size: 19px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button.primary {
+      color: #fff;
+      background: var(--teal);
+      box-shadow: 0 12px 26px rgba(8, 127, 140, 0.24);
+    }
+
+    .button.primary:hover {
+      background: var(--teal-dark);
+    }
+
+    .button.secondary {
+      color: var(--ink);
+      background: #fff;
+      border-color: var(--line);
+    }
+
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+      color: #52606f;
+      font-size: 14px;
+    }
+
+    .trust-row span {
+      padding: 6px 10px;
+      border: 1px solid rgba(220, 228, 234, 0.86);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.66);
+    }
+
+    .deploy-panel {
+      border: 1px solid rgba(220, 228, 234, 0.92);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      gap: 12px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: var(--green);
+      background: rgba(22, 128, 91, 0.1);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f2f5f8;
+      gap: 4px;
+    }
+
+    .tab {
+      min-height: 38px;
+      border: 0;
+      border-radius: 6px;
+      color: #5f6b78;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .tab.active {
+      color: var(--ink);
+      background: #fff;
+      box-shadow: 0 4px 14px rgba(24, 36, 50, 0.08);
+    }
+
+    .dropzone {
+      display: grid;
+      place-items: center;
+      min-height: 170px;
+      margin-top: 14px;
+      padding: 24px;
+      border: 2px dashed #b9c8d6;
+      border-radius: 8px;
+      background: #fbfcfe;
+      text-align: center;
+      cursor: pointer;
+      transition: border 0.18s ease, background 0.18s ease;
+    }
+
+    .dropzone.dragging {
+      border-color: var(--teal);
+      background: rgba(8, 127, 140, 0.06);
+    }
+
+    .dropzone strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 18px;
+    }
+
+    .dropzone small,
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    textarea {
+      display: none;
+      width: 100%;
+      min-height: 190px;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      resize: vertical;
+      color: #1d2733;
+      background: #fbfcfe;
+      outline: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      line-height: 1.45;
+    }
+
+    textarea:focus,
+    input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(8, 127, 140, 0.13);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    input {
+      min-height: 46px;
+      width: 100%;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      outline: none;
+      background: #fff;
+    }
+
+    .result {
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid rgba(22, 128, 91, 0.24);
+      border-radius: 8px;
+      background: rgba(22, 128, 91, 0.07);
+    }
+
+    .result strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--green);
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid rgba(22, 128, 91, 0.2);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .result-row code {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      color: #114333;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .copy-btn {
+      min-width: 72px;
+      min-height: 34px;
+      border: 0;
+      border-radius: 6px;
+      color: #fff;
+      background: var(--green);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .message {
+      min-height: 22px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .message.error {
+      color: var(--red);
+    }
+
+    .section {
+      padding: 70px 0;
+    }
+
+    .section.alt {
+      background: #fff;
+      border-block: 1px solid var(--line);
+    }
+
+    .section-title {
+      max-width: 720px;
+      margin-bottom: 28px;
+    }
+
+    .section-title h2 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .feature-card,
+    .use-card,
+    .notice-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .feature-card {
+      padding: 20px;
+    }
+
+    .feature-icon {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      margin-bottom: 13px;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--ink);
+      font-weight: 900;
+    }
+
+    .feature-card h3 {
+      margin: 0 0 7px;
+      font-size: 18px;
+    }
+
+    .feature-card p,
+    .use-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      min-height: 142px;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      margin-bottom: 14px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--teal);
+      font-weight: 900;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .use-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .use-card {
+      padding: 16px;
+    }
+
+    .use-card strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .notice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .notice-box {
+      padding: 22px;
+    }
+
+    .notice-box h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .check-list,
+    .ban-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .check-list li,
+    .ban-list li {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      color: #43505e;
+    }
+
+    .check-list li::before {
+      content: "";
+      flex: 0 0 9px;
+      width: 9px;
+      height: 9px;
+      margin-top: 9px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .ban-list li::before {
+      content: "";
+      flex: 0 0 9px;
+      width: 9px;
+      height: 9px;
+      margin-top: 9px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .keywords span {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #52606f;
+      background: #fff;
+      font-size: 13px;
+    }
+
+    footer {
+      padding: 28px 0 42px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hidden-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (max-width: 940px) {
+      .hero-grid,
+      .notice-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-grid {
+        min-height: auto;
+      }
+
+      .feature-grid,
+      .steps,
+      .use-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .hero-grid {
+        padding: 38px 0 32px;
+      }
+
+      .lead {
+        font-size: 16px;
+      }
+
+      .deploy-panel {
+        margin-inline: -4px;
+      }
+
+      .form-grid,
+      .feature-grid,
+      .steps,
+      .use-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .result-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .copy-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="HTML网页转在线链接">
+        <span class="brand-mark">H</span>
+        <span>HTML网页转在线链接</span>
+      </a>
+      <div class="nav-links">
+        <a href="#deploy">立即部署</a>
+        <a href="#support">支持内容</a>
+        <a href="#steps">使用流程</a>
+        <a href="#notice">使用须知</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <span class="kicker">静态网页一键发布 · 激活码自助使用</span>
+          <h1>HTML网页转在线链接</h1>
+          <p class="lead">上传 HTML 文件、ZIP 网页包，或者直接粘贴 AI 生成的 HTML 代码，输入激活码后即可生成专属访问链接。无需购买服务器，无需配置环境。</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#deploy">开始生成链接</a>
+            <a class="button secondary" href="#notice">查看限制说明</a>
+          </div>
+          <div class="trust-row" aria-label="服务特点">
+            <span>单文件不超过 20MB</span>
+            <span>失败不消耗卡密</span>
+            <span>手机电脑均可访问</span>
+          </div>
+        </div>
+
+        <section class="deploy-panel" id="deploy" aria-label="网页部署面板">
+          <div class="panel-head">
+            <strong>网页部署页面</strong>
+            <span class="status-pill"><span class="status-dot"></span> 24小时自助</span>
+          </div>
+          <div class="panel-body">
+            <div class="tabs" role="tablist" aria-label="部署方式">
+              <button class="tab active" type="button" role="tab" aria-selected="true" data-mode="file">上传 HTML / ZIP</button>
+              <button class="tab" type="button" role="tab" aria-selected="false" data-mode="code">粘贴 HTML 代码</button>
+            </div>
+
+            <label class="dropzone" id="dropzone" for="fileInput">
+              <input class="hidden-input" id="fileInput" type="file" accept=".html,.htm,.zip,text/html,application/zip">
+              <span>
+                <strong id="dropTitle">拖拽文件到这里，或点击选择文件</strong>
+                <small>支持 .html / .htm / .zip，静态资源请打包为 ZIP，大小不超过 20MB</small>
+              </span>
+            </label>
+
+            <textarea id="htmlCode" spellcheck="false" placeholder="在这里粘贴完整 HTML 代码，例如：&#10;&lt;!doctype html&gt;&#10;&lt;html&gt;&#10;&lt;head&gt;&lt;title&gt;我的网页&lt;/title&gt;&lt;/head&gt;&#10;&lt;body&gt;Hello&lt;/body&gt;&#10;&lt;/html&gt;"></textarea>
+
+            <div class="form-grid">
+              <input id="licenseCode" type="text" autocomplete="off" placeholder="请输入激活码 / 卡密">
+              <button class="button primary" id="deployBtn" type="button">生成链接</button>
+            </div>
+            <div class="hint">请输入购买后获得的激活码。当前为前端校验版本，后续可接入真实卡密核销接口。</div>
+            <div class="message" id="message" aria-live="polite"></div>
+
+            <div class="result" id="result">
+              <strong>部署成功，链接已生成</strong>
+              <div class="result-row">
+                <code id="resultLink">https://html.example.com/p/demo</code>
+                <button class="copy-btn" id="copyBtn" type="button">复制</button>
+              </div>
+              <div class="hint" style="margin-top: 8px;">当前为前端演示链接格式；接入后端后可返回真实公网地址。</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="section" id="support">
+      <div class="shell">
+        <div class="section-title">
+          <h2>适合把静态网页快速发给别人看</h2>
+          <p>卖点要让小白一眼明白：不买服务器、不碰部署命令，只要网页是静态 HTML，就能通过上传生成访问链接。</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-icon">1</span>
+            <h3>HTML 单页面</h3>
+            <p>适合 AI 生成的活动页、表白页、生日页、邀请函、产品介绍页。</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon">2</span>
+            <h3>ZIP 网页包</h3>
+            <p>支持 HTML、CSS、JS、图片等资源一起打包上传，保留原网页结构。</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon">3</span>
+            <h3>激活码核销</h3>
+            <p>用户下单后输入卡密，自助生成链接；生成失败不扣除使用次数。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="steps">
+      <div class="shell">
+        <div class="section-title">
+          <h2>五步完成网页发布</h2>
+          <p>流程适合放在商品详情页，也适合直接作为用户操作说明。</p>
+        </div>
+        <div class="steps">
+          <div class="step"><strong>下单获取卡密</strong><span>购买后复制激活码，作为本次部署凭证。</span></div>
+          <div class="step"><strong>打开部署页面</strong><span>进入网页上传页面，无需注册复杂账号。</span></div>
+          <div class="step"><strong>上传或粘贴</strong><span>选择 HTML / ZIP 文件，或粘贴完整 HTML 代码。</span></div>
+          <div class="step"><strong>输入激活码</strong><span>系统校验卡密状态、文件大小和内容类型。</span></div>
+          <div class="step"><strong>复制访问链接</strong><span>生成后直接发给朋友、客户、老师或同学查看。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class="section-title">
+          <h2>常见使用场景</h2>
+          <p>面向个人、小白、学生和临时展示需求，不承诺后端运行能力。</p>
+        </div>
+        <div class="use-grid">
+          <article class="use-card"><strong>AI网页在线展示</strong><p>把 AI 生成的 HTML 直接变成链接。</p></article>
+          <article class="use-card"><strong>个人主页</strong><p>展示头像、介绍、联系方式和作品入口。</p></article>
+          <article class="use-card"><strong>作品集页面</strong><p>课程作业、前端作品、设计页面在线预览。</p></article>
+          <article class="use-card"><strong>活动宣传页</strong><p>邀请函、生日页、报名说明、产品介绍。</p></article>
+          <article class="use-card"><strong>表白网页</strong><p>把本地网页生成手机可打开的访问地址。</p></article>
+          <article class="use-card"><strong>临时展示</strong><p>面试、汇报、客户验收前快速分享效果。</p></article>
+          <article class="use-card"><strong>HTML作品展示</strong><p>无需让对方下载文件或解压包。</p></article>
+          <article class="use-card"><strong>简单产品介绍</strong><p>适合单页介绍、服务说明和引流页面。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="notice">
+      <div class="shell">
+        <div class="section-title">
+          <h2>服务边界要写清楚</h2>
+          <p>静态网页托管和服务器部署不是一回事。提前写清楚限制，售后会少很多。</p>
+        </div>
+        <div class="notice-grid">
+          <div class="notice-box">
+            <h3>可以支持</h3>
+            <ul class="check-list">
+              <li>HTML 单页面网页</li>
+              <li>HTML + CSS + JS 静态网页</li>
+              <li>带图片、CSS、JS 资源的 ZIP 网页包</li>
+              <li>AI 生成的 HTML 网页代码</li>
+              <li>个人主页、作品展示、活动介绍页面</li>
+            </ul>
+          </div>
+          <div class="notice-box">
+            <h3>暂不支持</h3>
+            <ul class="ban-list">
+              <li>PHP、Java、Python、Node 后端程序</li>
+              <li>数据库、登录系统、动态接口</li>
+              <li>需要服务器运行环境的完整项目</li>
+              <li>钓鱼诈骗、仿冒登录、恶意程序等违规网页</li>
+              <li>色情博彩、侵权盗版和其他违法违规内容</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class="section-title">
+          <h2>搜索关键词</h2>
+          <p>这些词可以放在商品详情底部，方便覆盖用户搜索习惯。</p>
+        </div>
+        <div class="keywords" aria-label="搜索关键词">
+          <span>HTML网页</span><span>HTML转链接</span><span>网页转链接</span><span>网页在线链接</span><span>HTML在线访问</span><span>HTML网页部署</span><span>网页部署</span><span>静态网页部署</span><span>网页托管</span><span>HTML上传</span><span>ZIP网页部署</span><span>AI网页部署</span><span>AI生成网页</span><span>HTML网页发布</span><span>网页作品展示</span><span>网页在线预览</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">本页面为静态前端成品。真实“上传生成公网链接”需要后端接口、对象存储/CDN、卡密核销和内容审核配合。</div>
+  </footer>
+
+  <script>
+    const VALID_LICENSE_CODES = new Set([
+      "HTML-SA9A-6TC8-EKG6-E8K4",
+      "HTML-MH47-Y4YV-7FZ7-BH9D",
+      "HTML-G5S3-6L5Y-35LB-B3QA",
+      "HTML-83MQ-Y8VU-S9W7-QA8L",
+      "HTML-G7QL-EJAF-FNFU-JHHE",
+      "HTML-JRS4-8H5U-ZB4V-86SJ",
+      "HTML-2TZN-7WCL-BDWY-WYWP",
+      "HTML-BRNZ-UVHZ-F4VH-JTNE",
+      "HTML-UB9R-7FQD-CRZL-HE2N",
+      "HTML-6VNZ-Z932-XCJX-RNV5",
+      "HTML-E2SS-DF6Z-36XR-UZRK",
+      "HTML-FVXR-746G-MXYE-PYR6",
+      "HTML-XUDZ-GS4W-6MQR-7KUZ",
+      "HTML-UTG2-GJWS-E35E-KWRX",
+      "HTML-UWKM-2JFX-3RD8-XUXU",
+      "HTML-FPZJ-VLSJ-6EHQ-35J7",
+      "HTML-ASSY-4B4H-XL7Q-BTXQ",
+      "HTML-68L2-NC5L-AJFR-Q9QH",
+      "HTML-74ZG-Y85F-UD4D-RMBZ",
+      "HTML-ZCH5-SP5L-MB7H-PXFE",
+      "HTML-GQBH-44XC-E3F6-WAZY",
+      "HTML-77YP-NNZF-T4C3-A9UQ",
+      "HTML-SFT4-UTP2-KFSP-9BDA",
+      "HTML-RZGE-S8UW-TG3K-3C59",
+      "HTML-K2SS-K6Y5-3BES-UMHS",
+      "HTML-VK6Q-KJR5-B264-WBQZ",
+      "HTML-8ACV-FYL7-6ESK-6PVS",
+      "HTML-AQ36-TA7S-5D44-DX5L",
+      "HTML-PHN8-HE8H-Y5EE-82PT",
+      "HTML-Z6LQ-LDQF-7GVR-BG99",
+      "HTML-D7YL-8WJ6-WWXX-MDTF",
+      "HTML-87YV-TWK6-TC98-YXDP",
+      "HTML-QE9B-4G6C-SF8R-4VYR",
+      "HTML-MSKM-HHR3-QD5B-LA82",
+      "HTML-5BJV-C88Z-EM4T-WNM2",
+      "HTML-CJA8-GSCB-CEVR-C93H",
+      "HTML-8RAG-UCK4-ZR99-HUH3",
+      "HTML-ZMFU-NBWA-QDZK-AG9Y",
+      "HTML-45ZJ-YD3Z-JLY3-MF6X",
+      "HTML-WWFL-UK7R-YCM6-3DBR",
+      "HTML-KXXS-NZHT-JAZ6-52YK",
+      "HTML-KDEG-UCMC-TLNA-CNJQ",
+      "HTML-6YKX-PHM4-VEEQ-RFDG",
+      "HTML-752S-JR6Q-XKC9-NJPT",
+      "HTML-CJFD-UWGW-VMGS-HNFH",
+      "HTML-WZL4-M8S6-C2Q6-FD7N",
+      "HTML-QVAU-TC2R-ZFV4-YM4A",
+      "HTML-CRH6-8ZCK-TRE6-WHRE",
+      "HTML-Y9K9-2HPJ-MT9K-J3RY",
+      "HTML-799V-3B59-T2ZE-D8ZS",
+      "HTML-HEMW-U92Q-RK6E-6NUD",
+      "HTML-PYJA-BQNU-9HYY-MUC7",
+      "HTML-2RL6-5DM2-D8WE-EM8V",
+      "HTML-6CHA-VC4E-46DH-TWV6",
+      "HTML-QSG6-LCYA-GSDL-ER8E",
+      "HTML-VBBM-9YAG-LF5P-BGPS",
+      "HTML-Z5EQ-2G3N-RAT7-3U8J",
+      "HTML-EJQG-HAVQ-QCF6-X36N",
+      "HTML-9W94-B33G-P7R6-M9G3",
+      "HTML-Q32H-3S7R-YEP8-ZS6P",
+      "HTML-KY8Q-BV3R-39GL-7WN2",
+      "HTML-UYLM-TWCZ-SJYZ-QJFE",
+      "HTML-JSV7-69Q4-8TGG-3PF9",
+      "HTML-FK3G-ZGLW-NWAG-AB6W",
+      "HTML-F8TP-F5P7-KMWM-YF4S",
+      "HTML-78QN-CM6Z-WUPG-CHAB",
+      "HTML-VWQ6-ER6C-Z39K-HGLF",
+      "HTML-HVDU-F8U6-BNDR-J4VY",
+      "HTML-8P2J-EHBR-BJD4-XLQA",
+      "HTML-JFED-XNNM-ZZHP-UB2J",
+      "HTML-KW74-T4JH-CBZ9-S5NH",
+      "HTML-Z97P-NM96-RDGX-UCVC",
+      "HTML-GB5Y-NS4Q-TYJL-Y3SJ",
+      "HTML-8X6K-5H8J-6KTW-436F",
+      "HTML-3U5Q-6MA8-K65Y-KCDP",
+      "HTML-6G46-SJRY-PLHC-NUVU",
+      "HTML-6GUU-D34L-WMUR-VF49",
+      "HTML-EDQ6-2MRR-UUDU-ETJW",
+      "HTML-RYZ8-CP3G-KLH2-6HXC",
+      "HTML-6B7T-3P44-J2QF-RUTA",
+      "HTML-EMCJ-4TDS-TEHR-9NBQ",
+      "HTML-6ZTW-GS4E-EAJC-6CG2",
+      "HTML-T4WT-B96L-JWPA-JGUH",
+      "HTML-NZ28-2NAW-ZYWP-PU2P",
+      "HTML-5JHL-MT4U-QD6F-UUR4",
+      "HTML-V68H-GUWL-M85Z-GNCS",
+      "HTML-YACL-FDNC-4XEG-77LP",
+      "HTML-EJ2D-94UA-NFJ4-MXUA",
+      "HTML-WKK5-48HC-7N37-R5RE",
+      "HTML-T2KM-WGCK-MZLV-DZGS",
+      "HTML-RDU6-CQ4K-M5ZR-3PEQ",
+      "HTML-8NF7-GA94-RW88-KDWG",
+      "HTML-LFVB-CPAT-UCTY-TPLL",
+      "HTML-CHC9-8CUG-J6B4-84B9",
+      "HTML-4PK6-SHA3-F5EM-TSHJ",
+      "HTML-A7QF-ZVT6-7TAM-DTVR",
+      "HTML-U949-MFNV-N6VL-CQM5",
+      "HTML-F97D-YSNE-4A5X-QFAN",
+      "HTML-B25H-ZDVA-AQDB-QAHS",
+      "HTML-MGQ4-KFL8-5A4P-MTTJ"
+    ]);
+
+    const tabs = document.querySelectorAll(".tab");
+    const dropzone = document.querySelector("#dropzone");
+    const fileInput = document.querySelector("#fileInput");
+    const htmlCode = document.querySelector("#htmlCode");
+    const licenseCode = document.querySelector("#licenseCode");
+    const deployBtn = document.querySelector("#deployBtn");
+    const message = document.querySelector("#message");
+    const result = document.querySelector("#result");
+    const resultLink = document.querySelector("#resultLink");
+    const copyBtn = document.querySelector("#copyBtn");
+    const dropTitle = document.querySelector("#dropTitle");
+
+    let mode = "file";
+    let selectedFile = null;
+
+    function setMessage(text, isError = false) {
+      message.textContent = text;
+      message.classList.toggle("error", isError);
+    }
+
+    function switchMode(nextMode) {
+      mode = nextMode;
+      tabs.forEach((tab) => {
+        const active = tab.dataset.mode === mode;
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-selected", String(active));
+      });
+      dropzone.style.display = mode === "file" ? "grid" : "none";
+      htmlCode.style.display = mode === "code" ? "block" : "none";
+      result.style.display = "none";
+      setMessage("");
+    }
+
+    function fileIsAllowed(file) {
+      const name = file.name.toLowerCase();
+      return name.endsWith(".html") || name.endsWith(".htm") || name.endsWith(".zip");
+    }
+
+    function handleFile(file) {
+      if (!file) return;
+      if (!fileIsAllowed(file)) {
+        selectedFile = null;
+        dropTitle.textContent = "文件格式不支持，请上传 HTML 或 ZIP";
+        setMessage("目前只支持 .html、.htm、.zip 静态网页文件。", true);
+        return;
+      }
+      if (file.size > 20 * 1024 * 1024) {
+        selectedFile = null;
+        dropTitle.textContent = "文件超过 20MB，请压缩后再上传";
+        setMessage("单个文件或网页包大小不能超过 20MB。", true);
+        return;
+      }
+      selectedFile = file;
+      dropTitle.textContent = file.name;
+      setMessage(`已选择 ${file.name}，输入激活码后即可生成链接。`);
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => switchMode(tab.dataset.mode));
+    });
+
+    fileInput.addEventListener("change", (event) => {
+      handleFile(event.target.files[0]);
+    });
+
+    ["dragenter", "dragover"].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        dropzone.classList.add("dragging");
+      });
+    });
+
+    ["dragleave", "drop"].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        dropzone.classList.remove("dragging");
+      });
+    });
+
+    dropzone.addEventListener("drop", (event) => {
+      handleFile(event.dataTransfer.files[0]);
+    });
+
+    deployBtn.addEventListener("click", () => {
+      const code = licenseCode.value.trim().toUpperCase();
+      result.style.display = "none";
+
+      if (!code) {
+        setMessage("请先输入激活码。", true);
+        licenseCode.focus();
+        return;
+      }
+
+      if (!VALID_LICENSE_CODES.has(code)) {
+        setMessage("激活码无效，请检查是否输入完整。正式版接入后端后可自动识别已用、过期或不存在的卡密。", true);
+        return;
+      }
+
+      if (mode === "file" && !selectedFile) {
+        setMessage("请先上传 HTML 文件或 ZIP 网页包。", true);
+        return;
+      }
+
+      if (mode === "code" && htmlCode.value.trim().length < 20) {
+        setMessage("请粘贴完整 HTML 代码后再生成链接。", true);
+        htmlCode.focus();
+        return;
+      }
+
+      setMessage("正在校验文件和激活码...");
+      deployBtn.disabled = true;
+      deployBtn.textContent = "生成中";
+
+      window.setTimeout(() => {
+        const seed = mode === "file" && selectedFile ? selectedFile.name : htmlCode.value;
+        const slug = btoa(unescape(encodeURIComponent(seed))).replace(/[^a-z0-9]/gi, "").slice(0, 8).toLowerCase() || "demo2026";
+        resultLink.textContent = `https://html.example.com/p/${slug}`;
+        result.style.display = "block";
+        setMessage("演示部署完成。真实上线时由后端返回公网链接，并在成功后核销卡密。");
+        deployBtn.disabled = false;
+        deployBtn.textContent = "生成链接";
+      }, 700);
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const text = resultLink.textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = "已复制";
+        window.setTimeout(() => {
+          copyBtn.textContent = "复制";
+        }, 1400);
+      } catch (error) {
+        setMessage(`请手动复制链接：${text}`);
+      }
+    });
+  </script>
+</body>
+</html>
