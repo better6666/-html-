@@ -1,1961 +1,315 @@
 <!doctype html>
 <html lang="zh-CN">
-
 <head>
-
-<meta charset="utf-8">
-
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>
-HTML Cloud 激活码管理后台
-</title>
-
-
-<style>
-
-:root{
-
---bg:#f6f8fb;
-
---panel:#fff;
-
---ink:#17202a;
-
---muted:#667385;
-
---line:#dbe4ec;
-
---teal:#087f8c;
-
---red:#c24538;
-
---green:#16805b;
-
-}
-
-
-
-*{
-
-box-sizing:border-box;
-
-}
-
-
-
-body{
-
-margin:0;
-
-background:var(--bg);
-
-color:var(--ink);
-
-font-family:
-
--apple-system,
-
-BlinkMacSystemFont,
-
-"Segoe UI",
-
-"PingFang SC",
-
-"Microsoft YaHei",
-
-Arial,
-
-sans-serif;
-
-}
-
-
-
-main{
-
-max-width:1100px;
-
-margin:auto;
-
-padding:35px 20px 60px;
-
-}
-
-
-
-h1{
-
-font-size:36px;
-
-margin:0 0 10px;
-
-}
-
-
-
-.lead{
-
-color:var(--muted);
-
-margin-bottom:25px;
-
-}
-
-
-
-.panel{
-
-background:var(--panel);
-
-border:1px solid var(--line);
-
-border-radius:12px;
-
-margin-bottom:18px;
-
-overflow:hidden;
-
-box-shadow:
-
-0 10px 30px rgba(0,0,0,.06);
-
-}
-
-
-
-.panel h2{
-
-padding:18px 20px;
-
-margin:0;
-
-border-bottom:1px solid var(--line);
-
-font-size:20px;
-
-}
-
-
-
-.body{
-
-padding:20px;
-
-}
-
-
-
-label{
-
-display:block;
-
-font-weight:800;
-
-margin-bottom:15px;
-
-}
-
-
-
-input,
-
-select{
-
-width:100%;
-
-height:45px;
-
-margin-top:6px;
-
-padding:0 12px;
-
-border:1px solid var(--line);
-
-border-radius:8px;
-
-font-size:15px;
-
-outline:none;
-
-}
-
-
-
-input:focus,
-
-select:focus{
-
-border-color:var(--teal);
-
-}
-
-
-
-.grid{
-
-display:grid;
-
-grid-template-columns:repeat(2,1fr);
-
-gap:15px;
-
-}
-
-
-
-button{
-
-height:45px;
-
-padding:0 18px;
-
-border:0;
-
-border-radius:8px;
-
-background:var(--teal);
-
-color:#fff;
-
-font-weight:900;
-
-cursor:pointer;
-
-}
-
-
-
-button.secondary{
-
-background:#eef3f7;
-
-color:var(--ink);
-
-}
-
-
-
-button.danger{
-
-background:var(--red);
-
-}
-
-
-
-button:disabled{
-
-opacity:.6;
-
-cursor:not-allowed;
-
-}
-
-
-
-.actions{
-
-display:flex;
-
-gap:10px;
-
-flex-wrap:wrap;
-
-margin-top:20px;
-
-}
-
-
-
-.small{
-
-font-size:13px;
-
-color:var(--muted);
-
-font-weight:400;
-
-}
-
-
-
-.status{
-
-margin-top:15px;
-
-font-weight:800;
-
-color:var(--green);
-
-min-height:22px;
-
-}
-
-
-
-.status.error{
-
-color:var(--red);
-
-}
-
-
-
-textarea{
-
-width:100%;
-
-height:320px;
-
-padding:15px;
-
-border:1px solid var(--line);
-
-border-radius:8px;
-
-font-family:
-
-Consolas,
-
-Monaco,
-
-monospace;
-
-resize:vertical;
-
-}
-
-
-
-.table-wrap{
-
-overflow-x:auto;
-
-}
-
-
-
-table{
-
-width:100%;
-
-border-collapse:collapse;
-
-}
-
-
-
-th,
-
-td{
-
-padding:10px;
-
-border-bottom:1px solid var(--line);
-
-white-space:nowrap;
-
-text-align:left;
-
-}
-
-
-
-th{
-
-background:#f7f9fb;
-
-}
-
-
-
-.badge{
-
-padding:4px 10px;
-
-border-radius:999px;
-
-font-size:12px;
-
-font-weight:800;
-
-}
-
-
-
-.badge.green{
-
-background:#e6f5ef;
-
-color:#126445;
-
-}
-
-
-
-.badge.red{
-
-background:#fbe9e7;
-
-color:#8c3028;
-
-}
-
-
-
-.badge.gray{
-
-background:#edf1f4;
-
-color:#5d6875;
-
-}
-
-
-
-@media(max-width:700px){
-
-
-.grid{
-
-grid-template-columns:1fr;
-
-}
-
-
-h1{
-
-font-size:30px;
-
-}
-
-
-}
-
-
-</style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML Cloud - 激活码管理</title>
+  <style>
+    :root {
+      --teal: #087f8c;
+      --teal-dark: #06616b;
+      --ink: #17202a;
+      --muted: #667385;
+      --line: #d9e2e9;
+      --surface: #fff;
+      --bg: #f4f7f9;
+      --success: #147554;
+      --danger: #b83b31;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif; line-height: 1.55; }
+    button, input, select, textarea { font: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(8, 127, 140, 0.22); outline-offset: 2px; }
+    header { border-bottom: 1px solid var(--line); background: #fff; }
+    .bar { display: flex; align-items: center; justify-content: space-between; width: min(1120px, calc(100% - 32px)); min-height: 64px; margin: auto; }
+    .brand { display: flex; gap: 10px; align-items: center; font-weight: 850; }
+    .mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 7px; color: #fff; background: var(--teal); }
+    .env { color: var(--muted); font-size: 12px; }
+    main { width: min(1120px, calc(100% - 32px)); margin: 30px auto 60px; }
+    .heading { margin-bottom: 24px; }
+    h1 { margin: 0 0 4px; font-size: 30px; letter-spacing: 0; }
+    .heading p { margin: 0; color: var(--muted); }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr); gap: 18px; align-items: start; }
+    .panel { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); overflow: hidden; }
+    .panel + .panel { margin-top: 18px; }
+    .panel-head { padding: 17px 19px; border-bottom: 1px solid var(--line); }
+    .panel-head h2 { margin: 0; font-size: 18px; }
+    .panel-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .panel-body { padding: 19px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { display: grid; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font-size: 13px; font-weight: 800; }
+    input, select, textarea { width: 100%; border: 1px solid #cdd8e0; border-radius: 7px; color: var(--ink); background: #fff; }
+    input, select { height: 44px; padding: 0 11px; }
+    textarea { min-height: 245px; padding: 12px; resize: vertical; font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; }
+    .hint { color: var(--muted); font-size: 11px; }
+    .actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; }
+    button { min-height: 42px; padding: 0 15px; border: 1px solid transparent; border-radius: 7px; cursor: pointer; font-weight: 800; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; }
+    .primary { color: #fff; background: var(--teal); }
+    .primary:hover { background: var(--teal-dark); }
+    .secondary { color: var(--ink); border-color: var(--line); background: #fff; }
+    .danger { color: #fff; background: var(--danger); }
+    .status { min-height: 23px; margin-top: 12px; color: var(--muted); font-size: 13px; }
+    .status.success { color: var(--success); font-weight: 700; }
+    .status.error { color: var(--danger); font-weight: 700; }
+    .record { margin-top: 16px; padding: 13px; border: 1px solid var(--line); border-radius: 7px; background: #f8fafb; }
+    .record.hidden { display: none; }
+    dl { display: grid; grid-template-columns: 105px 1fr; gap: 8px 12px; margin: 0; font-size: 13px; }
+    dt { color: var(--muted); }
+    dd { margin: 0; overflow-wrap: anywhere; font-weight: 700; }
+    .record .actions { padding-top: 12px; border-top: 1px solid var(--line); }
+    .page-list { display: grid; gap: 8px; margin-top: 14px; }
+    .page-row { padding: 10px; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
+    .page-row strong, .page-row a { display: block; overflow-wrap: anywhere; }
+    .page-row a { color: var(--teal-dark); font-size: 12px; }
+    .page-row time { color: var(--muted); font-size: 11px; }
+    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { main, .bar { width: min(100% - 24px, 1120px); } .grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; } h1 { font-size: 25px; } button { flex: 1; } dl { grid-template-columns: 90px 1fr; } }
+  </style>
 </head>
-
-
 <body>
-
-
-<main>
-
-
-<h1>
-
-激活码管理后台
-
-</h1>
-
-
-<p class="lead">
-
-HTML网页发布服务卡密管理
-
-</p>
-<section class="panel">
-
-
-<h2>
-
-管理员验证
-
-</h2>
-
-
-
-<div class="body">
-
-
-<label>
-
-管理员密码
-
-
-<input
-
-id="adminPassword"
-
-type="password"
-
-placeholder="请输入管理员密码"
-
-autocomplete="off"
-
->
-
-
-</label>
-
-
-
-<div class="small">
-
-密码对应 Cloudflare Worker 环境变量 ADMIN_PASSWORD
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<section class="panel">
-
-
-<h2>
-
-生成激活码
-
-</h2>
-
-
-
-<div class="body">
-
-
-<div class="grid">
-
-
-
-
-
-<label>
-
-卡密前缀
-
-
-<input
-
-id="prefix"
-
-value="HTML"
-
-maxlength="12"
-
->
-
-
-</label>
-
-
-
-
-
-
-
-
-<label>
-
-生成数量
-
-
-<input
-
-id="count"
-
-type="number"
-
-value="10"
-
-min="1"
-
-max="5000"
-
->
-
-
-</label>
-
-
-
-
-
-
-
-
-<label>
-
-卡类型
-
-
-<select id="plan">
-
-
-<option value="count">
-
-次卡
-
-</option>
-
-
-<option value="hour">
-
-小时卡
-
-</option>
-
-
-<option value="day">
-
-日卡
-
-</option>
-
-
-<option value="week">
-
-周卡
-
-</option>
-
-
-<option value="month">
-
-月卡
-
-</option>
-
-
-<option value="forever">
-
-永久卡
-
-</option>
-
-
-</select>
-
-
-</label>
-
-
-
-
-
-
-
-
-
-<label>
-
-有效时间
-
-
-<input
-
-id="duration"
-
-type="number"
-
-value="1"
-
-min="1"
-
->
-
-
-<span class="small">
-
-小时卡=小时，日卡=天，月卡=月
-
-</span>
-
-
-</label>
-
-
-
-
-
-
-
-
-<label>
-
-使用次数
-
-
-<input
-
-id="uses"
-
-type="number"
-
-value="1"
-
-min="1"
-
-max="999999"
-
->
-
-
-<span class="small">
-
-次卡使用次数
-
-</span>
-
-
-</label>
-
-
-
-
-
-
-
-
-<label>
-
-批次
-
-
-<input
-
-id="batch"
-
-value="2026-08"
-
->
-
-
-</label>
-
-
-
-
-
-
-
-
-<label>
-
-随机组长度
-
-
-<select id="groupSize">
-
-
-<option value="4">
-
-4位
-
-</option>
-
-
-<option value="5">
-
-5位
-
-</option>
-
-
-<option value="6">
-
-6位
-
-</option>
-
-
-</select>
-
-
-</label>
-
-
-
-
-
-
-
-
-<label>
-
-随机组数量
-
-
-<select id="groups">
-
-
-<option value="3">
-
-3组
-
-</option>
-
-
-<option value="4" selected>
-
-4组
-
-</option>
-
-
-<option value="5">
-
-5组
-
-</option>
-
-
-</select>
-
-
-</label>
-
-
-
-
-
-
-</div>
-
-
-
-
-
-
-
-<div class="actions">
-
-
-
-<button
-
-id="generateBtn"
-
-type="button"
-
->
-
-批量生成并保存KV
-
-</button>
-
-
-
-
-
-
-<button
-
-id="copyBtn"
-
-type="button"
-
-class="secondary"
-
->
-
-复制卡密
-
-</button>
-
-
-
-
-
-
-<button
-
-id="csvBtn"
-
-type="button"
-
-class="secondary"
-
->
-
-下载CSV
-
-</button>
-
-
-
-
-
-
-<button
-
-id="clearBtn"
-
-type="button"
-
-class="danger"
-
->
-
-清空显示
-
-</button>
-
-
-
-</div>
-
-
-
-
-
-
-
-<div
-
-id="status"
-
-class="status">
-
-</div>
-
-
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<section class="panel">
-
-
-<h2>
-
-生成结果
-
-</h2>
-
-
-
-<div class="body">
-
-
-<textarea
-
-id="output"
-
-placeholder="生成成功后显示激活码">
-
-</textarea>
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-
-<section class="panel">
-
-
-<h2>
-
-查询激活码
-
-</h2>
-
-
-
-<div class="body">
-
-
-<div class="grid">
-
-
-<input
-
-id="searchCode"
-
-placeholder="输入完整激活码"
-
->
-
-
-
-<button
-
-id="searchBtn"
-
-type="button"
-
->
-
-查询
-
-</button>
-
-
-
-</div>
-
-
-
-
-<div
-
-id="searchStatus"
-
-class="status">
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-</main>
-
-<script>
-/*
-========================
-Worker地址
-========================
-*/
-
-const WORKER_URL =
-"https://html-uploader.2333333434.workers.dev";
-
-
-
-/*
-========================
-获取元素
-========================
-*/
-
-const adminPassword =
-document.querySelector("#adminPassword");
-
-const prefix =
-document.querySelector("#prefix");
-
-const count =
-document.querySelector("#count");
-
-const plan =
-document.querySelector("#plan");
-
-const duration =
-document.querySelector("#duration");
-
-const uses =
-document.querySelector("#uses");
-
-const batch =
-document.querySelector("#batch");
-
-const groupSize =
-document.querySelector("#groupSize");
-
-const groups =
-document.querySelector("#groups");
-
-const output =
-document.querySelector("#output");
-
-const status =
-document.querySelector("#status");
-
-
-
-
-
-/*
-========================
-状态显示
-========================
-*/
-
-function setStatus(
-text,
-error=false
-){
-
-status.innerText=text;
-
-status.className =
-error
-?
-"status error"
-:
-"status";
-
-}
-
-
-
-
-
-
-
-
-/*
-========================
-生成激活码
-========================
-*/
-
-
-document
-.querySelector("#generateBtn")
-.addEventListener(
-"click",
-async()=>{
-
-
-
-const password =
-adminPassword.value.trim();
-
-
-
-if(!password){
-
-
-setStatus(
-"请输入管理员密码",
-true
-);
-
-
-return;
-
-}
-
-
-
-
-const payload={
-
-
-
-prefix:
-
-prefix.value
-.trim()
-.toUpperCase()
-.replace(
-/[^A-Z0-9]/g,
-""
-)
-||
-"HTML",
-
-
-
-
-count:
-
-Math.min(
-Number(count.value)||1,
-5000
-),
-
-
-
-
-plan:
-
-plan.value,
-
-
-
-
-duration:
-
-Number(duration.value)||1,
-
-
-
-
-uses:
-
-Number(uses.value)||1,
-
-
-
-
-batch:
-
-batch.value.trim()
-||
-"default",
-
-
-
-
-groupSize:
-
-Number(groupSize.value)||4,
-
-
-
-
-groups:
-
-Number(groups.value)||4
-
-
-
-};
-
-
-
-
-
-
-
-const btn =
-document.querySelector("#generateBtn");
-
-
-
-btn.disabled=true;
-
-
-btn.innerText=
-"生成中...";
-
-
-
-setStatus(
-"正在请求Worker..."
-);
-
-
-
-
-
-
-try{
-
-
-
-const response =
-await fetch(
-
-WORKER_URL+
-"/admin/generate",
-
-{
-
-method:"POST",
-
-
-headers:{
-
-
-"Content-Type":
-"application/json",
-
-
-"Authorization":
-"Bearer "+
-password
-
-
-},
-
-
-body:
-JSON.stringify(payload)
-
-}
-
-);
-
-
-
-
-
-
-
-const text =
-await response.text();
-
-
-
-
-let data;
-
-
-
-try{
-
-
-data =
-JSON.parse(text);
-
-
-}
-
-catch(e){
-
-
-throw new Error(
-"Worker返回错误："+text
-);
-
-
-}
-
-
-
-
-
-
-
-
-if(
-!response.ok
-||
-!data.success
-){
-
-
-
-throw new Error(
-data.error ||
-"生成失败"
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-output.value =
-(data.codes||[])
-.join("\n");
-
-
-
-
-
-
-
-setStatus(
-
-"成功生成 "+
-(data.codes||[]).length+
-" 个激活码"
-
-);
-
-
-
-
-
-}
-
-catch(error){
-
-
-
-console.error(error);
-
-
-
-setStatus(
-
-error.message,
-
-true
-
-);
-
-
-
-}
-
-finally{
-
-
-
-btn.disabled=false;
-
-
-btn.innerText=
-"批量生成并保存KV";
-
-
-}
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-
-
-/*
-========================
-复制
-========================
-*/
-
-
-document
-.querySelector("#copyBtn")
-.addEventListener(
-"click",
-async()=>{
-
-
-
-if(
-!output.value.trim()
-){
-
-
-
-setStatus(
-"没有激活码",
-true
-);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-try{
-
-
-
-await navigator.clipboard.writeText(
-
-output.value
-
-);
-
-
-
-setStatus(
-"复制成功"
-);
-
-
-
-}
-
-catch(e){
-
-
-
-setStatus(
-"复制失败，请手动复制",
-true
-);
-
-
-
-}
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-
-
-/*
-========================
-清空
-========================
-*/
-
-
-document
-.querySelector("#clearBtn")
-.addEventListener(
-"click",
-()=>{
-
-
-
-output.value="";
-
-
-
-setStatus(
-"已清空"
-);
-
-
-
-}
-
-);
-/*
-========================
-CSV导出
-========================
-*/
-
-
-document
-.querySelector("#csvBtn")
-.addEventListener(
-"click",
-()=>{
-
-
-const codes =
-
-output.value
-
-.split("\n")
-
-.map(
-x=>x.trim()
-)
-
-.filter(Boolean);
-
-
-
-if(!codes.length){
-
-
-setStatus(
-"没有激活码可以导出",
-true
-);
-
-
-return;
-
-
-}
-
-
-
-let rows=[
-
-[
-"code",
-"plan",
-"duration",
-"uses",
-"batch"
-]
-
-];
-
-
-
-
-for(const code of codes){
-
-
-rows.push([
-
-code,
-
-plan.value,
-
-duration.value,
-
-uses.value,
-
-batch.value
-
-]);
-
-
-}
-
-
-
-
-
-const csv =
-
-rows
-
-.map(
-
-row=>
-
-row
-.map(
-v=>
-
-`"${String(v)
-.replaceAll('"','""')}"`
-)
-
-.join(",")
-
-)
-
-.join("\n");
-
-
-
-
-
-
-const blob =
-
-new Blob(
-
-[
-
-"\ufeff"+csv
-
-],
-
-{
-
-type:
-
-"text/csv;charset=utf-8"
-
-}
-
-);
-
-
-
-
-
-const url =
-
-URL.createObjectURL(blob);
-
-
-
-
-const a =
-
-document.createElement("a");
-
-
-
-a.href=url;
-
-
-a.download=
-
-"activation-codes-"+
-
-Date.now()+
-
-".csv";
-
-
-
-a.click();
-
-
-
-URL.revokeObjectURL(url);
-
-
-
-setStatus(
-"CSV导出成功"
-);
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-
-
-/*
-========================
-查询激活码
-========================
-*/
-
-
-document
-.querySelector("#searchBtn")
-.addEventListener(
-"click",
-async()=>{
-
-
-
-const password =
-
-adminPassword.value.trim();
-
-
-
-const code =
-
-document
-.querySelector("#searchCode")
-.value
-.trim();
-
-
-
-
-
-if(!password){
-
-
-document
-.querySelector("#searchStatus")
-.innerText=
-"请输入管理员密码";
-
-
-return;
-
-
-}
-
-
-
-
-if(!code){
-
-
-document
-.querySelector("#searchStatus")
-.innerText=
-"请输入激活码";
-
-
-return;
-
-
-}
-
-
-
-
-
-try{
-
-
-
-const response =
-
-await fetch(
-
-WORKER_URL+
-
-"/admin/check?code="+
-
-encodeURIComponent(code),
-
-{
-
-
-headers:{
-
-
-"Authorization":
-
-"Bearer "+password
-
-
-}
-
-}
-
-);
-
-
-
-
-
-
-const text =
-
-await response.text();
-
-
-
-let data;
-
-
-
-try{
-
-
-data=JSON.parse(text);
-
-
-}
-
-catch(e){
-
-
-throw new Error(
-"Worker返回错误："+text
-);
-
-
-}
-
-
-
-
-
-
-if(
-!response.ok
-||
-!data.success
-){
-
-
-throw new Error(
-
-data.error||
-
-"查询失败"
-
-);
-
-
-}
-
-
-
-
-
-
-const item=data.data;
-
-
-
-
-document
-.querySelector("#searchStatus")
-.innerText=
-"查询成功";
-
-
-
-
-
-alert(
-
-`
-激活码：${item.code}
-
-类型：${item.plan}
-
-剩余次数：${item.remaining}
-
-到期时间：${item.expire_at || "永久"}
-
-状态：${item.status}
-
-`
-
-);
-
-
-
-
-
-
-}
-
-catch(error){
-
-
-
-document
-.querySelector("#searchStatus")
-.innerText=
-error.message;
-
-
-
-}
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-</script>
-
-
+  <header><div class="bar"><div class="brand"><span class="mark">H</span><span>HTML Cloud 管理台</span></div><span class="env">Cloudflare Worker</span></div></header>
+  <main>
+    <div class="heading"><h1>激活码与账号管理</h1><p>生成卡密、处理状态并查询账号发布记录。</p></div>
+    <div class="layout">
+      <div>
+        <section class="panel">
+          <div class="panel-head"><h2>生成激活码</h2><p>单次最多 50 个，降低 Worker 批量写入失败风险。</p></div>
+          <div class="panel-body">
+            <div class="grid">
+              <div class="field full"><label for="adminPassword">管理员密码</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="ADMIN_PASSWORD"></div>
+              <div class="field"><label for="prefix">卡密前缀</label><input id="prefix" value="HTML" maxlength="12"></div>
+              <div class="field"><label for="count">生成数量</label><input id="count" type="number" value="10" min="1" max="50"></div>
+              <div class="field"><label for="plan">卡类型</label><select id="plan"><option value="count">次卡</option><option value="hour">小时卡</option><option value="day">日卡</option><option value="week">周卡</option><option value="month">月卡</option><option value="forever">永久卡</option></select></div>
+              <div class="field"><label for="duration">有效时长</label><input id="duration" type="number" value="1" min="1" max="3650"><span class="hint">时间卡从账号注册成功开始计时</span></div>
+              <div class="field"><label for="uses">可用次数</label><input id="uses" type="number" value="10" min="1" max="100000"><span class="hint">仅次卡使用此设置</span></div>
+              <div class="field"><label for="batch">批次</label><input id="batch" value="default" maxlength="80"></div>
+              <div class="field"><label for="groupSize">每组字符</label><input id="groupSize" type="number" value="4" min="3" max="8"></div>
+              <div class="field"><label for="groups">分组数量</label><input id="groups" type="number" value="4" min="3" max="8"></div>
+            </div>
+            <div class="actions"><button class="primary" id="generateBtn" type="button">生成并保存</button></div>
+            <div class="status" id="generateStatus" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+      </div>
+
+      <div>
+        <section class="panel">
+          <div class="panel-head"><h2>生成结果</h2><p>只展示本次生成的激活码。</p></div>
+          <div class="panel-body">
+            <textarea id="output" readonly aria-label="生成的激活码"></textarea>
+            <div class="actions"><button class="primary" id="copyBtn" type="button">复制</button><button class="secondary" id="csvBtn" type="button">导出 CSV</button><button class="secondary" id="clearBtn" type="button">清空</button></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>查询与售后处理</h2><p>绑定账号不可转移；可作废或恢复卡密。</p></div>
+          <div class="panel-body">
+            <div class="field"><label for="searchCode">激活码</label><input id="searchCode" autocomplete="off" autocapitalize="characters" placeholder="输入完整激活码"></div>
+            <div class="actions"><button class="primary" id="searchBtn" type="button">查询</button></div>
+            <div class="status" id="searchStatus" role="status" aria-live="polite"></div>
+            <div class="record hidden" id="record">
+              <dl>
+                <dt>激活码</dt><dd id="rCode">-</dd>
+                <dt>状态</dt><dd id="rStatus">-</dd>
+                <dt>类型</dt><dd id="rPlan">-</dd>
+                <dt>剩余/已用</dt><dd id="rUsage">-</dd>
+                <dt>到期时间</dt><dd id="rExpire">-</dd>
+                <dt>绑定账号</dt><dd id="rAccount">-</dd>
+                <dt>账号绑定时间</dt><dd id="rAccountAt">-</dd>
+              </dl>
+              <div class="actions"><button class="danger" id="revokeBtn" type="button">作废</button><button class="secondary" id="activateBtn" type="button">恢复</button></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>账号与网页记录</h2><p>可输入账号名或已经绑定的激活码。</p></div>
+          <div class="panel-body">
+            <div class="field"><label for="accountQuery">账号或激活码</label><input id="accountQuery" autocomplete="off" placeholder="username / HTML-..."></div>
+            <div class="actions"><button class="primary" id="accountBtn" type="button">查询账号</button></div>
+            <div class="status" id="accountStatus" role="status" aria-live="polite"></div>
+            <div class="record hidden" id="accountRecord">
+              <dl>
+                <dt>账号</dt><dd id="aUsername">-</dd>
+                <dt>激活码</dt><dd id="aLicense">-</dd>
+                <dt>注册时间</dt><dd id="aCreated">-</dd>
+                <dt>最后登录</dt><dd id="aLastLogin">-</dd>
+                <dt>最近设备</dt><dd id="aDevice">-</dd>
+                <dt>IP 哈希</dt><dd id="aIp">-</dd>
+              </dl>
+              <div class="page-list" id="accountPages"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const WORKER_URL = "https://api.better666.dpdns.org";
+    const $ = (selector) => document.querySelector(selector);
+    const fields = ["prefix", "count", "plan", "duration", "uses", "batch", "groupSize", "groups"].reduce((all, id) => ({ ...all, [id]: $(`#${id}`) }), {});
+    const adminPassword = $("#adminPassword");
+    const output = $("#output");
+    const generateStatus = $("#generateStatus");
+    const searchStatus = $("#searchStatus");
+    const record = $("#record");
+    const accountStatus = $("#accountStatus");
+    const accountRecord = $("#accountRecord");
+    let currentRecord = null;
+
+    function setStatus(element, text, type = "") {
+      element.textContent = text;
+      element.className = `status${type ? ` ${type}` : ""}`;
+    }
+
+    async function request(path, body) {
+      const password = adminPassword.value.trim();
+      if (!password) throw new Error("请输入管理员密码");
+      const response = await fetch(`${WORKER_URL}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${password}` },
+        body: JSON.stringify(body)
+      });
+      const text = await response.text();
+      let data;
+      try { data = JSON.parse(text); } catch { throw new Error("服务返回了无法识别的内容"); }
+      if (!response.ok || !data.success) throw new Error(data.error || "操作失败");
+      return data;
+    }
+
+    $("#generateBtn").addEventListener("click", async () => {
+      const button = $("#generateBtn");
+      const payload = {
+        prefix: fields.prefix.value.trim(), count: Number(fields.count.value), plan: fields.plan.value,
+        duration: Number(fields.duration.value), uses: Number(fields.uses.value), batch: fields.batch.value.trim(),
+        groupSize: Number(fields.groupSize.value), groups: Number(fields.groups.value)
+      };
+      button.disabled = true;
+      button.textContent = "生成中...";
+      setStatus(generateStatus, "正在创建激活码...");
+      try {
+        const data = await request("/admin/generate", payload);
+        output.value = data.codes.join("\n");
+        setStatus(generateStatus, `已生成 ${data.codes.length} 个激活码`, "success");
+      } catch (error) { setStatus(generateStatus, error.message, "error"); }
+      finally { button.disabled = false; button.textContent = "生成并保存"; }
+    });
+
+    $("#copyBtn").addEventListener("click", async () => {
+      if (!output.value.trim()) return setStatus(generateStatus, "没有可复制的激活码", "error");
+      try { await navigator.clipboard.writeText(output.value); setStatus(generateStatus, "已复制", "success"); }
+      catch { setStatus(generateStatus, "复制失败，请手动复制", "error"); }
+    });
+
+    $("#clearBtn").addEventListener("click", () => { output.value = ""; setStatus(generateStatus, "已清空"); });
+
+    $("#csvBtn").addEventListener("click", () => {
+      const codes = output.value.split("\n").map((value) => value.trim()).filter(Boolean);
+      if (!codes.length) return setStatus(generateStatus, "没有可导出的激活码", "error");
+      const rows = [["code", "plan", "duration", "uses", "batch"], ...codes.map((code) => [code, fields.plan.value, fields.duration.value, fields.uses.value, fields.batch.value])];
+      const csv = rows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(",")).join("\n");
+      const url = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `activation-codes-${Date.now()}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+      setStatus(generateStatus, "CSV 已导出", "success");
+    });
+
+    function dateText(value) { return value ? new Date(value).toLocaleString("zh-CN") : "-"; }
+    function renderRecord(item) {
+      currentRecord = item;
+      $("#rCode").textContent = item.code;
+      $("#rStatus").textContent = item.status === "revoked" ? "已作废" : "正常";
+      $("#rPlan").textContent = item.plan;
+      $("#rUsage").textContent = item.plan === "count" ? `${item.remaining} / ${item.used || 0}` : "不限";
+      $("#rExpire").textContent = item.plan === "count" ? "按次数" : (item.expire_at ? dateText(item.expire_at) : "注册后起算");
+      $("#rAccount").textContent = item.account_username || "未绑定";
+      $("#rAccountAt").textContent = dateText(item.account_bound_at);
+      $("#revokeBtn").disabled = item.status === "revoked";
+      $("#activateBtn").disabled = item.status !== "revoked";
+      record.classList.remove("hidden");
+    }
+
+    async function search() {
+      const code = $("#searchCode").value.trim().toUpperCase();
+      if (!code) throw new Error("请输入激活码");
+      const data = await request("/admin/check", { code });
+      renderRecord(data.data);
+      setStatus(searchStatus, "查询成功", "success");
+    }
+
+    $("#searchBtn").addEventListener("click", async () => {
+      record.classList.add("hidden");
+      setStatus(searchStatus, "正在查询...");
+      try { await search(); } catch (error) { setStatus(searchStatus, error.message, "error"); }
+    });
+
+    async function adminAction(operation, pendingText) {
+      if (!currentRecord) return;
+      setStatus(searchStatus, pendingText);
+      try {
+        const data = await request("/admin/action", { code: currentRecord.code, operation });
+        renderRecord(data.data);
+        setStatus(searchStatus, "操作成功", "success");
+      } catch (error) { setStatus(searchStatus, error.message, "error"); }
+    }
+
+    $("#revokeBtn").addEventListener("click", () => adminAction("revoke", "正在作废..."));
+    $("#activateBtn").addEventListener("click", () => adminAction("activate", "正在恢复..."));
+
+    function renderAccount(data) {
+      const account = data.account;
+      $("#aUsername").textContent = account.username;
+      $("#aLicense").textContent = account.license_code;
+      $("#aCreated").textContent = dateText(account.created_at);
+      $("#aLastLogin").textContent = dateText(account.last_login_at);
+      $("#aDevice").textContent = account.last_device || "-";
+      $("#aIp").textContent = account.last_ip_hash || "-";
+      const pages = $("#accountPages");
+      pages.replaceChildren();
+      if (!data.pages.length) {
+        const empty = document.createElement("div");
+        empty.className = "page-row";
+        empty.textContent = "该账号还没有发布网页";
+        pages.append(empty);
+      } else {
+        for (const page of data.pages) {
+          const row = document.createElement("article");
+          row.className = "page-row";
+          const title = document.createElement("strong");
+          title.textContent = page.title;
+          const link = document.createElement("a");
+          link.href = page.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = page.url;
+          const time = document.createElement("time");
+          time.dateTime = page.created_at;
+          time.textContent = dateText(page.created_at);
+          row.append(title, link, time);
+          pages.append(row);
+        }
+      }
+      accountRecord.classList.remove("hidden");
+    }
+
+    $("#accountBtn").addEventListener("click", async () => {
+      const query = $("#accountQuery").value.trim();
+      accountRecord.classList.add("hidden");
+      if (!query) return setStatus(accountStatus, "请输入账号或激活码", "error");
+      setStatus(accountStatus, "正在查询...");
+      try {
+        const data = await request("/admin/account", { query });
+        renderAccount(data);
+        setStatus(accountStatus, `查询成功，共 ${data.pages.length} 个网页`, "success");
+      } catch (error) { setStatus(accountStatus, error.message, "error"); }
+    });
+  </script>
 </body>
-
-
 </html>

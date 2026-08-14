@@ -1,2795 +1,514 @@
 <!doctype html>
 <html lang="zh-CN">
-
 <head>
-
-<meta charset="utf-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-<title>
-HTML Cloud - HTML网页一键发布平台
-</title>
-
-
-<meta name="description"
-content="HTML网页一键发布，支持HTML代码、HTML文件、ZIP项目上传生成在线链接">
-
-
-<style>
-
-
-:root{
-
---primary:#087f8c;
-
---primary2:#246bfe;
-
---bg:#f5f8fc;
-
---card:#ffffff;
-
---text:#17202a;
-
---muted:#667385;
-
---line:#dce4ea;
-
---success:#16805b;
-
---danger:#c24538;
-
-}
-
-
-
-*{
-
-box-sizing:border-box;
-
-}
-
-
-
-body{
-
-margin:0;
-
-background:
-
-linear-gradient(
-180deg,
-#eef7ff 0%,
-#ffffff 100%
-);
-
-color:var(--text);
-
-
-font-family:
-
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
-"PingFang SC",
-"Microsoft YaHei",
-Arial,
-sans-serif;
-
-}
-
-
-
-.nav{
-
-height:70px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-padding:0 35px;
-
-background:
-
-rgba(255,255,255,.8);
-
-backdrop-filter:blur(15px);
-
-border-bottom:
-
-1px solid var(--line);
-
-position:sticky;
-
-top:0;
-
-z-index:10;
-
-}
-
-
-
-.logo{
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-font-size:21px;
-
-font-weight:900;
-
-}
-
-
-
-.logo-icon{
-
-width:42px;
-
-height:42px;
-
-border-radius:12px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-background:
-
-linear-gradient(
-135deg,
-var(--primary),
-var(--primary2)
-);
-
-color:white;
-
-font-size:22px;
-
-}
-
-
-
-.nav-right{
-
-display:flex;
-
-gap:10px;
-
-}
-
-
-
-.tag{
-
-padding:6px 12px;
-
-border-radius:999px;
-
-background:#fff;
-
-border:1px solid var(--line);
-
-font-size:13px;
-
-font-weight:700;
-
-color:var(--muted);
-
-}
-
-
-
-.container{
-
-max-width:1150px;
-
-margin:auto;
-
-padding:40px 20px 80px;
-
-}
-
-
-
-.hero{
-
-display:grid;
-
-grid-template-columns:
-
-1fr 420px;
-
-gap:50px;
-
-align-items:center;
-
-padding:60px 0;
-
-}
-
-
-
-.badge{
-
-display:inline-flex;
-
-padding:8px 15px;
-
-border-radius:999px;
-
-background:
-
-rgba(8,127,140,.1);
-
-color:var(--primary);
-
-font-weight:800;
-
-font-size:14px;
-
-}
-
-
-
-h1{
-
-font-size:
-
-clamp(38px,5vw,64px);
-
-line-height:1.1;
-
-letter-spacing:-2px;
-
-margin:20px 0;
-
-}
-
-
-
-.hero p{
-
-font-size:19px;
-
-color:var(--muted);
-
-}
-
-
-
-.hero-buttons{
-
-display:flex;
-
-gap:15px;
-
-margin-top:30px;
-
-}
-
-
-
-.btn{
-
-display:inline-flex;
-
-align-items:center;
-
-justify-content:center;
-
-height:48px;
-
-padding:0 25px;
-
-border:none;
-
-border-radius:10px;
-
-font-size:15px;
-
-font-weight:900;
-
-cursor:pointer;
-
-transition:.2s;
-
-line-height:1;
-
-text-align:center;
-
-text-decoration:none;
-
-white-space:nowrap;
-
-}
-
-
-
-.btn:hover{
-
-transform:translateY(-2px);
-
-}
-
-
-
-.btn-primary{
-
-background:
-
-linear-gradient(
-135deg,
-var(--primary),
-var(--primary2)
-);
-
-color:white;
-
-box-shadow:
-
-0 12px 30px rgba(8,127,140,.25);
-
-}
-
-
-
-.btn-light{
-
-background:white;
-
-border:1px solid var(--line);
-
-color:var(--text);
-
-}
-.preview{
-
-background:white;
-
-border:
-
-1px solid var(--line);
-
-border-radius:20px;
-
-padding:25px;
-
-box-shadow:
-
-0 20px 50px rgba(0,0,0,.08);
-
-}
-
-
-
-.preview-title{
-
-font-size:20px;
-
-font-weight:900;
-
-margin-bottom:20px;
-
-}
-
-
-
-.preview-item{
-
-display:flex;
-
-gap:15px;
-
-align-items:center;
-
-padding:15px;
-
-border-radius:12px;
-
-background:#f7fafc;
-
-margin-bottom:12px;
-
-}
-
-
-
-.preview-icon{
-
-width:40px;
-
-height:40px;
-
-border-radius:10px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-background:#e8f8fa;
-
-}
-
-
-
-.preview-text strong{
-
-display:block;
-
-}
-
-
-
-.card{
-
-background:
-
-rgba(255,255,255,.95);
-
-border:
-
-1px solid var(--line);
-
-border-radius:18px;
-
-padding:30px;
-
-margin-top:25px;
-
-box-shadow:
-
-0 12px 35px rgba(0,0,0,.05);
-
-}
-
-
-
-.card h2{
-
-margin-top:0;
-
-font-size:25px;
-
-}
-
-
-
-.card-desc{
-
-color:var(--muted);
-
-}
-
-
-
-input,
-textarea{
-
-width:100%;
-
-border:
-
-1px solid var(--line);
-
-border-radius:12px;
-
-font-size:15px;
-
-outline:none;
-
-}
-
-
-
-input{
-
-height:48px;
-
-padding:0 15px;
-
-}
-
-
-
-textarea{
-
-height:300px;
-
-padding:15px;
-
-resize:vertical;
-
-font-family:
-
-Consolas,
-monospace;
-
-background:#0f172a;
-
-color:white;
-
-}
-
-
-
-input:focus{
-
-border-color:var(--primary);
-
-}
-
-
-
-.msg{
-
-margin-top:12px;
-
-font-size:14px;
-
-color:var(--muted);
-
-}
-
-
-
-.success{
-
-color:var(--success)!important;
-
-}
-
-
-
-.error{
-
-color:var(--danger)!important;
-
-}
-
-
-
-.hidden{
-
-display:none;
-
-}
-
-
-
-.upload-area{
-
-border:
-
-2px dashed #b8c8d8;
-
-border-radius:16px;
-
-padding:45px 20px;
-
-text-align:center;
-
-background:#fbfdff;
-
-cursor:pointer;
-
-transition:.2s;
-
-}
-
-
-
-.upload-area:hover{
-
-border-color:var(--primary);
-
-background:#f5ffff;
-
-}
-
-
-
-.upload-icon{
-
-font-size:45px;
-
-}
-
-
-
-.upload-title{
-
-font-size:20px;
-
-font-weight:900;
-
-margin:10px;
-
-}
-
-
-
-.upload-desc{
-
-color:var(--muted);
-
-}
-
-
-
-.mode-list{
-
-display:flex;
-
-gap:15px;
-
-margin-bottom:20px;
-
-}
-
-
-
-.mode{
-
-flex:1;
-
-padding:15px;
-
-border-radius:12px;
-
-border:1px solid var(--line);
-
-text-align:center;
-
-cursor:pointer;
-
-font-weight:800;
-
-}
-
-
-
-.mode.active{
-
-border-color:var(--primary);
-
-background:#eafafa;
-
-color:var(--primary);
-
-}
-
-
-
-.member-info{
-
-margin-top:15px;
-
-padding:15px;
-
-border-radius:12px;
-
-background:#f1fbfb;
-
-border:1px solid #cceff0;
-
-line-height:1.8;
-
-font-size:14px;
-
-}
-
-
-
-.member-info b{
-
-color:var(--primary);
-
-}
-
-
-@media(max-width:900px){
-
-.nav{
-
-height:auto;
-
-align-items:flex-start;
-
-gap:14px;
-
-padding:14px 18px;
-
-}
-
-.nav-right{
-
-flex-wrap:wrap;
-
-justify-content:flex-start;
-
-}
-
-.container{
-
-padding:24px 16px 56px;
-
-}
-
-.hero{
-
-grid-template-columns:1fr;
-
-gap:24px;
-
-padding:28px 0;
-
-}
-
-h1{
-
-letter-spacing:0;
-
-}
-
-.preview{
-
-border-radius:14px;
-
-}
-
-}
-
-
-@media(max-width:560px){
-
-.nav{
-
-position:static;
-
-padding:12px 14px;
-
-}
-
-.logo{
-
-font-size:18px;
-
-}
-
-.logo-icon{
-
-width:34px;
-
-height:34px;
-
-border-radius:9px;
-
-font-size:18px;
-
-}
-
-.tag{
-
-padding:5px 9px;
-
-font-size:12px;
-
-}
-
-.container{
-
-padding:18px 12px 44px;
-
-}
-
-.badge{
-
-font-size:12px;
-
-line-height:1.35;
-
-}
-
-h1{
-
-font-size:36px;
-
-line-height:1.12;
-
-margin:14px 0;
-
-}
-
-.hero p{
-
-font-size:16px;
-
-line-height:1.7;
-
-}
-
-.hero-buttons{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:10px;
-
-margin-top:20px;
-
-}
-
-.btn{
-
-width:100%;
-
-min-width:0;
-
-height:46px;
-
-padding:0 12px;
-
-font-size:14px;
-
-border-radius:9px;
-
-}
-
-.preview{
-
-padding:16px;
-
-}
-
-.preview-item{
-
-padding:12px;
-
-gap:12px;
-
-}
-
-.preview-icon{
-
-width:34px;
-
-height:34px;
-
-flex:0 0 34px;
-
-}
-
-.card{
-
-padding:18px;
-
-border-radius:12px;
-
-margin-top:16px;
-
-}
-
-.card h2{
-
-font-size:21px;
-
-line-height:1.35;
-
-}
-
-input{
-
-height:46px;
-
-font-size:16px;
-
-}
-
-textarea{
-
-height:230px;
-
-font-size:13px;
-
-}
-
-.mode-list{
-
-display:grid;
-
-grid-template-columns:1fr;
-
-gap:10px;
-
-}
-
-.mode{
-
-padding:13px 10px;
-
-}
-
-.upload-area{
-
-padding:28px 14px;
-
-}
-
-.upload-title{
-
-font-size:18px;
-
-}
-
-.upload-icon{
-
-font-size:36px;
-
-}
-
-}
-
-
-@media(max-width:360px){
-
-.hero-buttons{
-
-grid-template-columns:1fr;
-
-}
-
-h1{
-
-font-size:32px;
-
-}
-
-.nav-right{
-
-display:none;
-
-}
-
-}
-
-
-</style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML Cloud - HTML 网页发布</title>
+  <meta name="description" content="粘贴 HTML 代码或上传 HTML 文件，生成可分享的在线访问链接。">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23087f8c'/%3E%3Cpath d='M18 17h9v11h10V17h9v30h-9V36H27v11h-9z' fill='white'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --teal: #087f8c;
+      --teal-dark: #06616b;
+      --blue: #246bfe;
+      --ink: #17202a;
+      --muted: #667385;
+      --line: #d9e2e9;
+      --surface: #ffffff;
+      --soft: #f2f7f9;
+      --success: #147554;
+      --danger: #b83b31;
+      --shadow: 0 16px 42px rgba(23, 32, 42, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #f7f9fb;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    button, input, textarea { font: inherit; }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(36, 107, 254, 0.25);
+      outline-offset: 2px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 64px;
+      padding: 10px max(20px, calc((100vw - 1160px) / 2));
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 850; font-size: 19px; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 8px; color: #fff; background: var(--teal); }
+    .top-meta { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill { padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: #fff; font-size: 12px; font-weight: 700; }
+
+    main { width: min(1160px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 64px; }
+
+    .workspace { display: grid; grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1.35fr); gap: 32px; align-items: start; }
+    .intro { padding: 26px 4px 0; }
+    .eyebrow { color: var(--teal); font-size: 13px; font-weight: 800; }
+    h1 { margin: 12px 0 16px; max-width: 620px; font-size: clamp(38px, 4.5vw, 56px); line-height: 1.08; letter-spacing: 0; }
+    .intro-copy { margin: 0; max-width: 540px; color: var(--muted); font-size: 17px; }
+    .facts { display: grid; gap: 12px; margin: 28px 0 0; padding: 0; list-style: none; }
+    .facts li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
+    .fact-no { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 7px; color: #fff; background: var(--ink); font-size: 12px; font-weight: 800; }
+    .facts strong { display: block; font-size: 14px; }
+    .facts span:last-child { color: var(--muted); font-size: 13px; }
+
+    .tool { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+    .tool-head { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 20px 22px; border-bottom: 1px solid var(--line); }
+    .tool-head h2, .section-title { margin: 0; font-size: 20px; }
+    .live-badge { color: var(--success); background: #e9f7f1; border-radius: 999px; padding: 4px 9px; font-size: 12px; font-weight: 800; }
+    .tool-body { padding: 22px; }
+    .field { display: grid; gap: 7px; margin-bottom: 16px; }
+    .field label { font-size: 13px; font-weight: 800; }
+    .field small { color: var(--muted); }
+    input, textarea {
+      width: 100%;
+      border: 1px solid #cdd8e0;
+      border-radius: 7px;
+      color: var(--ink);
+      background: #fff;
+    }
+    input { height: 46px; padding: 0 12px; }
+    textarea { min-height: 270px; padding: 14px; resize: vertical; color: #e8eef7; background: #111a27; font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; line-height: 1.55; }
+    input:focus, textarea:focus { border-color: var(--teal); }
+
+    .button-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 17px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 800;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+    .button:hover { transform: translateY(-1px); }
+    .button:disabled { cursor: not-allowed; opacity: 0.58; transform: none; }
+    .primary { color: #fff; background: var(--teal); }
+    .primary:hover { background: var(--teal-dark); }
+    .secondary { color: var(--ink); border-color: var(--line); background: #fff; }
+
+    .status { min-height: 24px; margin-top: 12px; color: var(--muted); font-size: 13px; }
+    .status.success { color: var(--success); font-weight: 700; }
+    .status.error { color: var(--danger); font-weight: 700; }
+    .member { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 16px; padding: 12px; border: 1px solid #bfe2dc; border-radius: 7px; background: #eef9f6; }
+    .metric { min-width: 0; }
+    .metric span { display: block; color: var(--muted); font-size: 11px; }
+    .metric strong { display: block; overflow-wrap: anywhere; font-size: 13px; }
+
+    .hidden { display: none !important; }
+    .divider { height: 1px; margin: 22px 0; background: var(--line); }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 7px; background: #edf2f5; margin-bottom: 18px; }
+    .tab { min-height: 40px; border: 0; border-radius: 5px; color: var(--muted); background: transparent; cursor: pointer; font-weight: 800; }
+    .tab[aria-selected="true"] { color: var(--ink); background: #fff; box-shadow: 0 1px 5px rgba(23, 32, 42, 0.1); }
+
+    .drop-zone { padding: 30px 18px; border: 2px dashed #b7c7d2; border-radius: 7px; text-align: center; background: #fbfcfd; }
+    .drop-zone.dragging { border-color: var(--teal); background: #f0fbfb; }
+    .drop-zone strong { display: block; margin-bottom: 5px; }
+    .drop-zone p { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+    input[type="file"] { height: auto; padding: 10px; background: #fff; }
+
+    .result { margin-top: 18px; padding: 16px; border-left: 4px solid var(--success); background: #edf8f3; }
+    .result h3 { margin: 0 0 7px; font-size: 16px; }
+    .result-link { display: block; margin-bottom: 12px; color: var(--teal-dark); overflow-wrap: anywhere; font-weight: 700; }
+    .account-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 7px; background: #f8fafb; }
+    .account-bar strong { display: block; }
+    .account-bar span { color: var(--muted); font-size: 12px; }
+    .pages-list { display: grid; gap: 9px; margin-top: 14px; }
+    .page-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
+    .page-item strong, .page-item a { display: block; overflow-wrap: anywhere; }
+    .page-item a { color: var(--teal-dark); font-size: 12px; }
+    .page-item time { color: var(--muted); font-size: 11px; }
+    .empty { padding: 24px; color: var(--muted); border: 1px dashed var(--line); border-radius: 7px; text-align: center; }
+
+    .details { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 46px; padding-top: 32px; border-top: 1px solid var(--line); }
+    .detail-block h2 { margin: 0 0 10px; font-size: 22px; }
+    .detail-block p { margin: 0; color: var(--muted); }
+    .steps { display: grid; gap: 9px; margin: 16px 0 0; padding: 0; list-style: none; }
+    .steps li { padding: 11px 12px; border: 1px solid var(--line); border-radius: 7px; background: #fff; font-size: 14px; }
+    .boundary { margin: 16px 0 0; padding: 14px 16px 14px 34px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--muted); font-size: 14px; }
+    .boundary li + li { margin-top: 6px; }
+    footer { margin-top: 44px; color: var(--muted); font-size: 12px; text-align: center; }
+
+    @media (max-width: 860px) {
+      main { padding-top: 24px; }
+      .workspace { grid-template-columns: 1fr; gap: 22px; }
+      .intro { padding-top: 4px; }
+      .facts { grid-template-columns: repeat(3, 1fr); }
+      .details { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .topbar { align-items: flex-start; padding: 10px 14px; }
+      .top-meta .pill:first-child { display: none; }
+      main { width: min(100% - 24px, 1160px); padding-bottom: 38px; }
+      h1 { font-size: 39px; }
+      .intro-copy { font-size: 15px; }
+      .facts { grid-template-columns: 1fr; }
+      .tool-head, .tool-body { padding: 16px; }
+      .member { grid-template-columns: 1fr 1fr; }
+      .button-row .button { flex: 1; min-width: 120px; }
+      .details { margin-top: 32px; }
+    }
+  </style>
 </head>
-
-
 <body>
-
-
-<div class="nav">
-
-
-<div class="logo">
-
-
-<div class="logo-icon">
-
-H
-
-</div>
-
-
-HTML Cloud
-
-
-</div>
-
-
-
-<div class="nav-right">
-
-
-<div class="tag">
-
-无需服务器
-
-</div>
-
-
-<div class="tag">
-
-HTML / ZIP
-
-</div>
-
-
-<div class="tag">
-
-秒级发布
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-
-<div class="container">
-
-
-
-<section class="hero">
-
-
-<div>
-
-
-<div class="badge">
-
-⚡ HTML网页一键发布平台
-
-</div>
-
-
-
-<h1>
-
-HTML网页<br>
-
-秒变在线链接
-
-</h1>
-
-
-
-<p>
-
-上传HTML代码、网页文件或者完整ZIP项目，
-
-自动生成公网访问链接。
-
-</p>
-
-
-
-<div class="hero-buttons">
-
-
-<a href="#service"
-
-class="btn btn-primary">
-
-立即开始
-
-</a>
-
-
-
-<a href="#help"
-
-class="btn btn-light">
-
-使用说明
-
-</a>
-
-
-</div>
-
-
-</div>
-
-
-
-<div class="preview">
-
-
-<div class="preview-title">
-
-HTML Cloud
-
-</div>
-
-
-
-<div class="preview-item">
-
-
-<div class="preview-icon">
-
-⚡
-
-</div>
-
-
-<div class="preview-text">
-
-<strong>
-
-快速发布
-
-</strong>
-
-几秒生成网页链接
-
-</div>
-
-
-</div>
-
-
-
-<div class="preview-item">
-
-
-<div class="preview-icon">
-
-📄
-
-</div>
-
-
-<div class="preview-text">
-
-<strong>
-
-HTML文件
-
-</strong>
-
-直接上传发布
-
-</div>
-
-
-</div>
-
-
-
-<div class="preview-item">
-
-
-<div class="preview-icon">
-
-📦
-
-</div>
-
-
-<div class="preview-text">
-
-<strong>
-
-ZIP项目
-
-</strong>
-
-支持完整网站
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-
-
-<section class="card" id="service">
-
-
-<h2>
-
-🔐 激活使用权限
-
-</h2>
-
-
-<p class="card-desc">
-
-输入购买的激活码，验证后使用网页发布功能。
-
-</p>
-
-
-
-<input
-
-id="licenseInput"
-
-placeholder="请输入激活码">
-
-
-<br><br>
-
-
-
-<button
-
-class="btn btn-primary"
-
-id="verifyBtn">
-
-立即激活
-
-</button>
-
-
-
-<div
-
-class="msg"
-
-id="licenseMsg">
-
-等待验证
-
-</div>
-
-
-
-<div
-
-id="memberInfo"
-
-class="member-info hidden">
-
-</div>
-
-
-
-</section>
-<section
-
-class="card hidden"
-
-id="uploadBox">
-
-
-
-<h2>
-
-🚀 发布网页
-
-</h2>
-
-
-
-<p class="card-desc">
-
-选择发布方式，生成你的在线网页链接。
-
-</p>
-
-
-
-
-
-<div class="mode-list">
-
-
-<div
-
-class="mode active"
-
-id="codeMode">
-
-HTML代码
-
-</div>
-
-
-
-<div
-
-class="mode"
-
-id="fileMode">
-
-HTML文件
-
-</div>
-
-
-
-<div
-
-class="mode"
-
-id="zipMode">
-
-ZIP项目
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-<div id="codePanel">
-
-
-<textarea
-
-id="htmlCode"
-
-placeholder="请输入HTML代码">
-
-</textarea>
-
-
-
-<br><br>
-
-
-
-<button
-
-class="btn btn-primary"
-
-id="createBtn">
-
-生成网页
-
-</button>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<div
-
-id="filePanel"
-
-class="hidden">
-
-
-
-<div
-
-class="upload-area"
-
-id="dropArea">
-
-
-
-<div class="upload-icon">
-
-📂
-
-</div>
-
-
-
-<div class="upload-title">
-
-拖入 HTML / ZIP 文件
-
-</div>
-
-
-
-<div class="upload-desc">
-
-支持 .html / .htm / .zip
-
-</div>
-
-
-
-<br>
-
-
-
-<input
-
-type="file"
-
-id="fileInput"
-
-accept=".html,.htm,.zip">
-
-
-
-<br><br>
-
-
-
-<button
-
-class="btn btn-primary"
-
-id="uploadBtn">
-
-上传并生成链接
-
-</button>
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-<div
-
-class="msg"
-
-id="uploadMsg">
-
-</div>
-
-
-
-
-
-
-
-<section
-
-class="card hidden"
-
-id="result">
-
-
-<h2>
-
-🎉 发布成功
-
-</h2>
-
-
-
-<p>
-
-你的网页地址：
-
-</p>
-
-
-
-<a
-
-id="resultLink"
-
-target="_blank"
-
-style="
-
-color:#087f8c;
-
-font-weight:800;
-
-word-break:break-all;
-
-">
-
-</a>
-
-
-
-<br><br>
-
-
-
-<button
-
-class="btn btn-primary"
-
-id="copyBtn">
-
-复制链接
-
-</button>
-
-
-
-</section>
-
-
-
-
-
-<section class="card">
-
-
-<h2>
-
-✨ 支持内容
-
-</h2>
-
-
-
-<ul>
-
-
-<li>
-
-AI生成HTML网页
-
-</li>
-
-
-<li>
-
-个人主页
-
-</li>
-
-
-<li>
-
-作品展示
-
-</li>
-
-
-<li>
-
-活动宣传页
-
-</li>
-
-
-<li>
-
-HTML + CSS + JS项目
-
-</li>
-
-
-<li>
-
-ZIP完整网站
-
-</li>
-
-
-</ul>
-
-
-
-</section>
-
-
-
-
-
-
-
-<section
-
-class="card"
-
-id="help">
-
-
-<h2>
-
-📌 使用流程
-
-</h2>
-
-
-
-<ol>
-
-
-<li>
-
-购买激活码
-
-</li>
-
-
-<li>
-
-输入激活码
-
-</li>
-
-
-<li>
-
-选择代码或上传文件
-
-</li>
-
-
-<li>
-
-生成网页链接
-
-</li>
-
-
-<li>
-
-分享访问
-
-</li>
-
-
-</ol>
-
-
-
-</section>
-
-
-
-
-
-
-
-<script>
-
-
-const WORKER_URL =
-
-"https://api.better666.dpdns.org";
-
-
-
-let activated = false;
-
-
-let licenseInfo = null;
-
-
-
-
-
-const licenseInput =
-
-document.querySelector("#licenseInput");
-
-
-
-const verifyBtn =
-
-document.querySelector("#verifyBtn");
-
-
-
-const licenseMsg =
-
-document.querySelector("#licenseMsg");
-
-
-
-const memberInfo =
-
-document.querySelector("#memberInfo");
-
-
-
-const uploadBox =
-
-document.querySelector("#uploadBox");
-
-
-
-const uploadMsg =
-
-document.querySelector("#uploadMsg");
-
-
-
-const codeMode =
-
-document.querySelector("#codeMode");
-
-
-
-const fileMode =
-
-document.querySelector("#fileMode");
-
-
-
-const zipMode =
-
-document.querySelector("#zipMode");
-
-
-
-const codePanel =
-
-document.querySelector("#codePanel");
-
-
-
-const filePanel =
-
-document.querySelector("#filePanel");
-
-
-
-const htmlCode =
-
-document.querySelector("#htmlCode");
-
-
-
-const createBtn =
-
-document.querySelector("#createBtn");
-
-
-
-const fileInput =
-
-document.querySelector("#fileInput");
-
-
-
-const uploadBtn =
-
-document.querySelector("#uploadBtn");
-
-
-
-const dropArea =
-
-document.querySelector("#dropArea");
-
-
-
-const result =
-
-document.querySelector("#result");
-
-
-
-const resultLink =
-
-document.querySelector("#resultLink");
-
-
-
-const copyBtn =
-
-document.querySelector("#copyBtn");
-
-
-
-function showPlan(plan){
-
-
-const map={
-
-
-count:"次卡",
-
-
-hour:"小时卡",
-
-
-day:"日卡",
-
-
-week:"周卡",
-
-
-month:"月卡",
-
-
-forever:"永久卡"
-
-
-};
-
-
-
-return map[plan] || "未知";
-
-
-}
-
-
-
-function showExpire(time, plan){
-
-
-if(plan==="count"){
-
-return "按次数有效";
-
-}
-
-
-if(!time){
-
-return "永久有效";
-
-}
-
-
-return new Date(time)
-
-.toLocaleString();
-
-}
-
-
-async function readJson(response){
-
-
-const text=
-
-await response.text();
-
-
-try{
-
-
-return JSON.parse(text);
-
-
-}
-
-catch(e){
-
-
-throw new Error(
-
-"Worker返回异常："+text
-
-);
-
-
-}
-
-
-}
-/*
-========================
-模式切换
-========================
-*/
-
-
-function changeMode(mode){
-
-
-codeMode.classList.remove("active");
-
-fileMode.classList.remove("active");
-
-zipMode.classList.remove("active");
-
-
-codePanel.classList.add("hidden");
-
-filePanel.classList.add("hidden");
-
-fileInput.value="";
-
-uploadMsg.innerText="";
-
-
-
-if(mode==="code"){
-
-
-codeMode.classList.add("active");
-
-
-codePanel.classList.remove("hidden");
-
-
-}
-
-
-
-if(mode==="file"){
-
-
-fileMode.classList.add("active");
-
-
-filePanel.classList.remove("hidden");
-
-fileInput.accept=".html,.htm";
-
-uploadBtn.disabled=false;
-
-uploadBtn.innerText="上传并生成链接";
-
-
-}
-
-
-
-if(mode==="zip"){
-
-
-zipMode.classList.add("active");
-
-
-filePanel.classList.remove("hidden");
-
-fileInput.accept=".zip";
-
-uploadBtn.disabled=true;
-
-uploadBtn.innerText="ZIP需先升级Worker路由";
-
-uploadMsg.innerText="当前Worker还不能展示ZIP项目，请先上传HTML文件。";
-
-
-}
-
-
-}
-
-
-
-
-
-codeMode.onclick=()=>changeMode("code");
-
-
-fileMode.onclick=()=>changeMode("file");
-
-
-zipMode.onclick=()=>changeMode("zip");
-
-
-
-
-
-
-
-
-
-/*
-========================
-激活验证
-========================
-*/
-
-
-verifyBtn.onclick=async()=>{
-
-
-const code=
-
-licenseInput.value.trim();
-
-
-
-if(!code){
-
-
-licenseMsg.innerText=
-
-"请输入激活码";
-
-
-licenseMsg.className=
-
-"msg error";
-
-
-return;
-
-
-}
-
-
-
-
-verifyBtn.disabled=true;
-
-
-verifyBtn.innerText=
-
-"验证中...";
-
-
-
-
-try{
-
-
-const res=
-
-await fetch(
-
-WORKER_URL+
-
-"/license/check?code="+
-
-encodeURIComponent(code)
-
-);
-
-
-
-const data=
-
-await readJson(res);
-
-
-
-if(!res.ok || !data.success){
-
-
-throw new Error(
-
-data.error ||
-
-"激活失败"
-
-);
-
-
-}
-
-
-
-
-activated=true;
-
-
-licenseInfo=data;
-
-
-
-
-licenseMsg.innerText=
-
-"✅ 激活成功";
-
-
-licenseMsg.className=
-
-"msg success";
-
-
-
-
-
-memberInfo.innerHTML=`
-
-会员类型：
-
-<b>
-
-${showPlan(data.plan)}
-
-</b>
-
-<br>
-
-有效期：
-
-<b>
-
-${showExpire(data.expire_at,data.plan)}
-
-</b>
-
-<br>
-
-剩余次数：
-
-<b>
-
-${
-data.remaining>=999999
-
-?
-
-"不限"
-
-:
-
-data.remaining+"次"
-
-}
-
-</b>
-
-`;
-
-
-
-memberInfo.classList.remove(
-
-"hidden"
-
-);
-
-
-
-
-localStorage.setItem(
-
-"html_cloud_license",
-
-code
-
-);
-
-
-
-uploadBox.classList.remove(
-
-"hidden"
-
-);
-
-
-
-}
-
-catch(e){
-
-
-
-licenseMsg.innerText=
-
-e.message;
-
-
-
-licenseMsg.className=
-
-"msg error";
-
-
-
-}
-
-finally{
-
-
-verifyBtn.disabled=false;
-
-
-verifyBtn.innerText=
-
-"立即激活";
-
-
-}
-
-
-};
-
-
-
-
-
-
-
-
-
-/*
-========================
-生成HTML
-========================
-*/
-
-
-createBtn.onclick=async()=>{
-
-
-if(!activated){
-
-
-uploadMsg.innerText=
-
-"请先激活";
-
-
-return;
-
-
-}
-
-
-
-
-
-const html=
-
-htmlCode.value.trim();
-
-
-
-
-if(!html){
-
-
-uploadMsg.innerText=
-
-"请输入HTML代码";
-
-
-return;
-
-
-}
-
-
-
-
-
-const form={
-
-
-html:html,
-
-
-license:
-
-licenseInput.value.trim()
-
-
-};
-
-
-
-
-try{
-
-
-createBtn.disabled=true;
-
-createBtn.innerText="发布中...";
-
-uploadMsg.innerText="正在发布...";
-
-
-const res=
-
-await fetch(
-
-WORKER_URL+"/create",
-
-{
-
-
-method:"POST",
-
-
-headers:{
-
-
-"Content-Type":
-
-"application/json"
-
-
-},
-
-
-body:
-
-JSON.stringify(form)
-
-
-}
-
-);
-
-
-
-
-
-const data=
-
-await readJson(res);
-
-
-
-
-
-if(!res.ok || !data.success){
-
-
-throw new Error(
-
-data.error ||
-
-"发布失败"
-
-);
-
-
-}
-
-
-
-showResult(data.url);
-
-
-
-}
-
-catch(e){
-
-
-uploadMsg.innerText=
-
-"错误："+e.message;
-
-
-}
-
-finally{
-
-
-createBtn.disabled=false;
-
-createBtn.innerText="生成网页";
-
-
-}
-
-
-};
-
-
-
-
-
-
-
-
-
-/*
-========================
-文件上传
-========================
-*/
-
-
-uploadBtn.onclick=async()=>{
-
-
-if(!activated){
-
-
-uploadMsg.innerText=
-
-"请先激活";
-
-
-return;
-
-
-}
-
-
-
-
-const file=
-
-fileInput.files[0];
-
-
-
-if(!file){
-
-
-uploadMsg.innerText=
-
-"请选择文件";
-
-
-return;
-
-
-}
-
-
-const ext=
-
-file.name
-.split(".")
-.pop()
-.toLowerCase();
-
-
-if(ext==="zip"){
-
-
-uploadMsg.innerText=
-
-"当前Worker还不能展示ZIP项目，请先上传HTML文件。";
-
-
-return;
-
-
-}
-
-
-if(ext!=="html" && ext!=="htm"){
-
-
-uploadMsg.innerText=
-
-"请选择 .html 或 .htm 文件";
-
-
-return;
-
-
-}
-
-
-
-
-const fd=
-
-new FormData();
-
-
-
-fd.append(
-
-"file",
-
-file
-
-);
-
-
-
-fd.append(
-
-"license",
-
-licenseInput.value.trim()
-
-);
-
-
-
-
-try{
-
-
-uploadBtn.disabled=true;
-
-uploadBtn.innerText="上传中...";
-
-uploadMsg.innerText="正在上传...";
-
-
-const res=
-
-await fetch(
-
-WORKER_URL+"/upload",
-
-{
-
-
-method:"POST",
-
-
-body:fd
-
-
-}
-
-);
-
-
-
-
-const data=
-
-await readJson(res);
-
-
-
-
-
-if(!res.ok || !data.success){
-
-
-throw new Error(
-
-data.error ||
-
-"上传失败"
-
-);
-
-
-}
-
-
-
-showResult(data.url);
-
-
-
-}
-
-catch(e){
-
-
-uploadMsg.innerText=
-
-"错误："+e.message;
-
-
-}
-
-finally{
-
-
-uploadBtn.disabled=false;
-
-uploadBtn.innerText="上传并生成链接";
-
-
-}
-
-
-
-};
-/*
-========================
-拖拽上传
-========================
-*/
-
-
-dropArea.ondragover=(e)=>{
-
-
-e.preventDefault();
-
-
-dropArea.style.borderColor=
-
-"#087f8c";
-
-
-};
-
-
-
-
-dropArea.ondragleave=()=>{
-
-
-dropArea.style.borderColor="";
-
-
-};
-
-
-
-
-
-dropArea.ondrop=(e)=>{
-
-
-e.preventDefault();
-
-
-fileInput.files=
-
-e.dataTransfer.files;
-
-
-};
-
-
-
-
-
-
-
-
-
-/*
-========================
-显示结果
-========================
-*/
-
-
-function showResult(url){
-
-
-result.classList.remove(
-
-"hidden"
-
-);
-
-
-
-resultLink.href=url;
-
-
-
-resultLink.innerText=url;
-
-
-
-
-
-uploadMsg.innerText=
-
-"✅ 发布成功";
-
-
-
-
-result.scrollIntoView({
-
-behavior:"smooth"
-
-});
-
-
-}
-
-
-
-
-
-
-
-
-
-/*
-========================
-复制链接
-========================
-*/
-
-
-copyBtn.onclick=async()=>{
-
-
-const url=
-
-resultLink.innerText;
-
-
-
-try{
-
-
-await navigator.clipboard.writeText(
-
-url
-
-);
-
-
-
-copyBtn.innerText=
-
-"已复制";
-
-
-
-
-setTimeout(()=>{
-
-
-copyBtn.innerText=
-
-"复制链接";
-
-
-},1500);
-
-
-
-}
-
-catch(e){
-
-
-copyBtn.innerText=
-
-"复制失败";
-
-
-}
-
-
-
-};
-
-
-
-
-
-
-
-
-/*
-========================
-自动填充激活码
-========================
-*/
-
-
-const oldLicense=
-
-localStorage.getItem(
-
-"html_cloud_license"
-
-);
-
-
-
-if(oldLicense){
-
-
-licenseInput.value=
-
-oldLicense;
-
-
-}
-
-
-
-
-
-
-</script>
-
-
-
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">H</span><span>HTML Cloud</span></div>
+    <div class="top-meta" aria-label="服务特性">
+      <span class="pill">HTML / HTM</span>
+      <span class="pill">一卡一账号</span>
+      <span class="pill">5MB 上限</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="workspace" aria-labelledby="page-title">
+      <div class="intro">
+        <div class="eyebrow">静态网页发布工具</div>
+        <h1 id="page-title">把 HTML 变成可访问链接</h1>
+        <p class="intro-copy">用激活码注册账号，登录后粘贴代码或上传单个 HTML 文件。发布记录会保存在账号中，随时可以回来查看。</p>
+        <ul class="facts">
+          <li><span class="fact-no">1</span><span><strong>一卡一账号</strong><span>激活码注册成功后不能再绑定其他账号。</span></span></li>
+          <li><span class="fact-no">2</span><span><strong>按发布次数核销</strong><span>只有页面保存成功后才扣减次卡余量。</span></span></li>
+          <li><span class="fact-no">3</span><span><strong>单会话登录</strong><span>新设备登录会让此前的登录自动失效。</span></span></li>
+        </ul>
+      </div>
+
+      <div class="tool">
+        <div class="tool-head">
+          <h2>账号与网页</h2>
+          <span class="live-badge">单账号单会话</span>
+        </div>
+        <div class="tool-body">
+          <section id="authSection" aria-labelledby="authTitle">
+            <h3 id="authTitle" class="section-title">登录账号</h3>
+            <div class="tabs" role="tablist" aria-label="账号操作">
+              <button class="tab" id="loginTab" type="button" role="tab" aria-selected="true" aria-controls="authForm">登录</button>
+              <button class="tab" id="registerTab" type="button" role="tab" aria-selected="false" aria-controls="authForm">激活码注册</button>
+            </div>
+            <div id="authForm">
+              <div class="field">
+                <label for="usernameInput">账号</label>
+                <input id="usernameInput" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="4-32 位字母、数字或下划线">
+              </div>
+              <div class="field">
+                <label for="passwordInput">密码</label>
+                <input id="passwordInput" type="password" autocomplete="current-password" placeholder="8-72 位">
+              </div>
+              <div class="field hidden" id="licenseField">
+                <label for="licenseInput">激活码</label>
+                <input id="licenseInput" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="例如 HTML-XXXX-XXXX-XXXX-XXXX">
+                <small>一个激活码只能注册一个账号，绑定后不可转移。</small>
+              </div>
+              <div class="button-row"><button class="button primary" id="authBtn" type="button">登录</button></div>
+              <div class="status" id="authMsg" role="status" aria-live="polite">请输入账号和密码</div>
+            </div>
+          </section>
+
+          <section class="hidden" id="accountSection" aria-labelledby="publishTitle">
+            <div class="account-bar">
+              <div><strong id="accountName">-</strong><span id="accountMeta">-</span></div>
+              <button class="button secondary" id="logoutBtn" type="button">退出</button>
+            </div>
+            <div class="field">
+              <div class="member" id="memberInfo" aria-label="账号激活状态">
+                <div class="metric"><span>类型</span><strong id="planValue">-</strong></div>
+                <div class="metric"><span>有效期</span><strong id="expireValue">-</strong></div>
+                <div class="metric"><span>剩余次数</span><strong id="remainingValue">-</strong></div>
+                <div class="metric"><span>绑定</span><strong>当前账号</strong></div>
+              </div>
+            </div>
+            <div class="tabs" role="tablist" aria-label="账号功能">
+              <button class="tab" id="publishTab" type="button" role="tab" aria-selected="true" aria-controls="publishView">发布网页</button>
+              <button class="tab" id="pagesTab" type="button" role="tab" aria-selected="false" aria-controls="pagesView">我的网页</button>
+            </div>
+            <div id="publishView" role="tabpanel" aria-labelledby="publishTab">
+              <h3 id="publishTitle" class="section-title">选择发布方式</h3>
+              <div class="tabs" role="tablist" aria-label="发布方式">
+                <button class="tab" id="codeTab" type="button" role="tab" aria-selected="true" aria-controls="codePanel">粘贴 HTML</button>
+                <button class="tab" id="fileTab" type="button" role="tab" aria-selected="false" aria-controls="filePanel">上传文件</button>
+              </div>
+              <div id="codePanel" role="tabpanel" aria-labelledby="codeTab">
+                <div class="field"><label for="htmlCode">HTML 代码</label><textarea id="htmlCode" spellcheck="false" placeholder="<!doctype html>&#10;<html>...</html>"></textarea></div>
+                <div class="button-row"><button class="button primary" id="createBtn" type="button">发布代码</button></div>
+              </div>
+              <div class="hidden" id="filePanel" role="tabpanel" aria-labelledby="fileTab">
+                <div class="drop-zone" id="dropArea"><label for="fileInput"><strong>选择或拖入 HTML 文件</strong></label><p>支持 .html、.htm，单文件不超过 5MB。</p><input type="file" id="fileInput" accept=".html,.htm,text/html"></div>
+                <div class="button-row" style="margin-top: 14px;"><button class="button primary" id="uploadBtn" type="button">上传并发布</button></div>
+              </div>
+              <div class="status" id="uploadMsg" role="status" aria-live="polite"></div>
+              <div class="result hidden" id="result" aria-live="polite">
+                <h3>发布成功</h3><a class="result-link" id="resultLink" target="_blank" rel="noopener noreferrer"></a>
+                <div class="button-row"><button class="button primary" id="copyBtn" type="button">复制链接</button><a class="button secondary" id="openBtn" target="_blank" rel="noopener noreferrer">打开页面</a></div>
+              </div>
+            </div>
+            <div class="hidden" id="pagesView" role="tabpanel" aria-labelledby="pagesTab">
+              <div class="button-row"><h3 class="section-title" style="margin-right:auto">我的网页</h3><button class="button secondary" id="refreshPagesBtn" type="button">刷新</button></div>
+              <div class="status" id="pagesMsg" role="status" aria-live="polite"></div>
+              <div class="pages-list" id="pagesList"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="details" id="help" aria-label="使用说明">
+      <div class="detail-block">
+        <h2>使用流程</h2>
+        <p>整个过程不需要安装软件。</p>
+        <ol class="steps">
+          <li>使用激活码注册唯一账号</li>
+          <li>登录后粘贴 HTML 代码或选择 HTML 文件</li>
+          <li>在“我的网页”中查看和分享历史记录</li>
+        </ol>
+      </div>
+      <div class="detail-block">
+        <h2>服务边界</h2>
+        <p>当前版本面向单文件静态页面。</p>
+        <ul class="boundary">
+          <li>支持内联 HTML、CSS、JavaScript</li>
+          <li>不支持 ZIP、多文件目录和后端程序</li>
+          <li>页面脚本采用浏览器沙箱隔离</li>
+          <li>同一账号只保留一个有效登录会话</li>
+        </ul>
+      </div>
+    </section>
+    <footer>HTML Cloud · 静态页面发布服务</footer>
+  </main>
+
+  <script>
+    const WORKER_URL = "https://api.better666.dpdns.org";
+    const MAX_FILE_BYTES = 5 * 1024 * 1024;
+    const SESSION_KEY = "html_cloud_session";
+    const $ = (selector) => document.querySelector(selector);
+    const elements = {
+      authSection: $("#authSection"), authTitle: $("#authTitle"), loginTab: $("#loginTab"), registerTab: $("#registerTab"),
+      username: $("#usernameInput"), password: $("#passwordInput"), licenseField: $("#licenseField"), license: $("#licenseInput"),
+      authBtn: $("#authBtn"), authMsg: $("#authMsg"), accountSection: $("#accountSection"), accountName: $("#accountName"),
+      accountMeta: $("#accountMeta"), logoutBtn: $("#logoutBtn"), planValue: $("#planValue"), expireValue: $("#expireValue"),
+      remainingValue: $("#remainingValue"), publishTab: $("#publishTab"), pagesTab: $("#pagesTab"), publishView: $("#publishView"),
+      pagesView: $("#pagesView"), pagesMsg: $("#pagesMsg"), pagesList: $("#pagesList"), refreshPagesBtn: $("#refreshPagesBtn"),
+      codeTab: $("#codeTab"), fileTab: $("#fileTab"), codePanel: $("#codePanel"), filePanel: $("#filePanel"),
+      htmlCode: $("#htmlCode"), createBtn: $("#createBtn"), fileInput: $("#fileInput"), uploadBtn: $("#uploadBtn"),
+      dropArea: $("#dropArea"), uploadMsg: $("#uploadMsg"), result: $("#result"), resultLink: $("#resultLink"),
+      copyBtn: $("#copyBtn"), openBtn: $("#openBtn")
+    };
+    let registerMode = false;
+    let sessionToken = localStorage.getItem(SESSION_KEY) || "";
+
+    function setStatus(element, message, type = "") {
+      element.textContent = message;
+      element.className = `status${type ? ` ${type}` : ""}`;
+    }
+
+    async function request(path, options = {}, authenticated = false) {
+      const headers = new Headers(options.headers || {});
+      if (authenticated && sessionToken) headers.set("Authorization", `Bearer ${sessionToken}`);
+      const response = await fetch(`${WORKER_URL}${path}`, { ...options, headers });
+      const text = await response.text();
+      let data;
+      try { data = JSON.parse(text); } catch { throw new Error("服务返回了无法识别的内容"); }
+      if (!response.ok || !data.success) {
+        if (response.status === 401 && authenticated) clearSession();
+        throw new Error(data.error || "请求失败");
+      }
+      return data;
+    }
+
+    function planName(plan) {
+      return ({ count: "次卡", hour: "小时卡", day: "日卡", week: "周卡", month: "月卡", forever: "永久卡" })[plan] || "未知";
+    }
+
+    function showAccount(user) {
+      elements.authSection.classList.add("hidden");
+      elements.accountSection.classList.remove("hidden");
+      elements.accountName.textContent = user.username;
+      elements.accountMeta.textContent = "激活码已绑定此账号";
+      elements.planValue.textContent = planName(user.license.plan);
+      elements.expireValue.textContent = user.license.plan === "count" ? "按次数" : (user.license.expire_at ? new Date(user.license.expire_at).toLocaleString("zh-CN") : "永久");
+      elements.remainingValue.textContent = user.license.plan === "count" ? `${user.license.remaining} 次` : "不限";
+    }
+
+    function clearSession() {
+      sessionToken = "";
+      localStorage.removeItem(SESSION_KEY);
+      elements.accountSection.classList.add("hidden");
+      elements.authSection.classList.remove("hidden");
+    }
+
+    function switchAuth(mode) {
+      registerMode = mode === "register";
+      elements.loginTab.setAttribute("aria-selected", String(!registerMode));
+      elements.registerTab.setAttribute("aria-selected", String(registerMode));
+      elements.licenseField.classList.toggle("hidden", !registerMode);
+      elements.authTitle.textContent = registerMode ? "使用激活码注册" : "登录账号";
+      elements.authBtn.textContent = registerMode ? "注册并绑定" : "登录";
+      elements.password.autocomplete = registerMode ? "new-password" : "current-password";
+      setStatus(elements.authMsg, registerMode ? "激活码绑定后不能注册其他账号" : "请输入账号和密码");
+    }
+
+    elements.loginTab.addEventListener("click", () => switchAuth("login"));
+    elements.registerTab.addEventListener("click", () => switchAuth("register"));
+    elements.authBtn.addEventListener("click", async () => {
+      const username = elements.username.value.trim().toLowerCase();
+      const password = elements.password.value;
+      const license = elements.license.value.trim().toUpperCase();
+      if (!username || !password) return setStatus(elements.authMsg, "请输入账号和密码", "error");
+      if (registerMode && !license) return setStatus(elements.authMsg, "请输入激活码", "error");
+      elements.authBtn.disabled = true;
+      const original = elements.authBtn.textContent;
+      elements.authBtn.textContent = registerMode ? "注册中..." : "登录中...";
+      try {
+        const data = await request(registerMode ? "/auth/register" : "/auth/login", {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password, license })
+        });
+        sessionToken = data.token;
+        localStorage.setItem(SESSION_KEY, sessionToken);
+        showAccount(data.user);
+        elements.password.value = "";
+      } catch (error) { setStatus(elements.authMsg, error.message, "error"); }
+      finally { elements.authBtn.disabled = false; elements.authBtn.textContent = original; }
+    });
+
+    elements.logoutBtn.addEventListener("click", async () => {
+      try { await request("/auth/logout", { method: "POST" }, true); } catch {}
+      clearSession();
+      setStatus(elements.authMsg, "已退出登录", "success");
+    });
+
+    function switchWorkspace(mode) {
+      const publishing = mode === "publish";
+      elements.publishTab.setAttribute("aria-selected", String(publishing));
+      elements.pagesTab.setAttribute("aria-selected", String(!publishing));
+      elements.publishView.classList.toggle("hidden", !publishing);
+      elements.pagesView.classList.toggle("hidden", publishing);
+      if (!publishing) loadPages();
+    }
+
+    elements.publishTab.addEventListener("click", () => switchWorkspace("publish"));
+    elements.pagesTab.addEventListener("click", () => switchWorkspace("pages"));
+    elements.refreshPagesBtn.addEventListener("click", () => loadPages());
+
+    function switchPublishMode(mode) {
+      const code = mode === "code";
+      elements.codeTab.setAttribute("aria-selected", String(code));
+      elements.fileTab.setAttribute("aria-selected", String(!code));
+      elements.codePanel.classList.toggle("hidden", !code);
+      elements.filePanel.classList.toggle("hidden", code);
+      setStatus(elements.uploadMsg, "");
+    }
+
+    elements.codeTab.addEventListener("click", () => switchPublishMode("code"));
+    elements.fileTab.addEventListener("click", () => switchPublishMode("file"));
+
+    async function publish(endpoint, options, button, pendingText) {
+      if (!sessionToken) return setStatus(elements.uploadMsg, "请先登录", "error");
+      button.disabled = true;
+      const original = button.textContent;
+      button.textContent = pendingText;
+      elements.result.classList.add("hidden");
+      setStatus(elements.uploadMsg, "正在保存页面...");
+      try {
+        const data = await request(endpoint, options, true);
+        showResult(data.url);
+        if (typeof data.remaining === "number") elements.remainingValue.textContent = `${data.remaining} 次`;
+      } catch (error) { setStatus(elements.uploadMsg, error.message, "error"); }
+      finally { button.disabled = false; button.textContent = original; }
+    }
+
+    elements.createBtn.addEventListener("click", () => {
+      const html = elements.htmlCode.value.trim();
+      if (!html) return setStatus(elements.uploadMsg, "请输入 HTML 代码", "error");
+      if (new Blob([html]).size > MAX_FILE_BYTES) return setStatus(elements.uploadMsg, "HTML 超过 5MB", "error");
+      publish("/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ html }) }, elements.createBtn, "发布中...");
+    });
+
+    elements.uploadBtn.addEventListener("click", () => {
+      const file = elements.fileInput.files[0];
+      if (!file) return setStatus(elements.uploadMsg, "请选择 HTML 文件", "error");
+      if (file.size > MAX_FILE_BYTES) return setStatus(elements.uploadMsg, "文件超过 5MB", "error");
+      if (!/\.html?$/i.test(file.name)) return setStatus(elements.uploadMsg, "只支持 HTML 或 HTM 文件", "error");
+      const form = new FormData();
+      form.append("file", file);
+      publish("/upload", { method: "POST", body: form }, elements.uploadBtn, "上传中...");
+    });
+
+    ["dragenter", "dragover"].forEach((name) => elements.dropArea.addEventListener(name, (event) => { event.preventDefault(); elements.dropArea.classList.add("dragging"); }));
+    ["dragleave", "drop"].forEach((name) => elements.dropArea.addEventListener(name, (event) => { event.preventDefault(); elements.dropArea.classList.remove("dragging"); }));
+    elements.dropArea.addEventListener("drop", (event) => {
+      const file = event.dataTransfer.files[0];
+      if (!file) return;
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      elements.fileInput.files = transfer.files;
+    });
+
+    function showResult(url) {
+      elements.resultLink.href = url;
+      elements.resultLink.textContent = url;
+      elements.openBtn.href = url;
+      elements.result.classList.remove("hidden");
+      setStatus(elements.uploadMsg, "页面已发布，并已写入账号记录", "success");
+    }
+
+    async function loadPages() {
+      elements.pagesList.replaceChildren();
+      setStatus(elements.pagesMsg, "正在加载...");
+      try {
+        const data = await request("/me/pages", {}, true);
+        setStatus(elements.pagesMsg, `共 ${data.pages.length} 个网页`, "success");
+        if (!data.pages.length) {
+          const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = "还没有发布记录"; elements.pagesList.append(empty); return;
+        }
+        for (const page of data.pages) {
+          const item = document.createElement("article"); item.className = "page-item";
+          const info = document.createElement("div"); const title = document.createElement("strong"); title.textContent = page.title;
+          const link = document.createElement("a"); link.href = page.url; link.target = "_blank"; link.rel = "noopener noreferrer"; link.textContent = page.url;
+          const time = document.createElement("time"); time.dateTime = page.created_at; time.textContent = new Date(page.created_at).toLocaleString("zh-CN");
+          info.append(title, link); item.append(info, time); elements.pagesList.append(item);
+        }
+      } catch (error) { setStatus(elements.pagesMsg, error.message, "error"); }
+    }
+
+    elements.copyBtn.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(elements.resultLink.href); elements.copyBtn.textContent = "已复制"; setTimeout(() => { elements.copyBtn.textContent = "复制链接"; }, 1500); }
+      catch { setStatus(elements.uploadMsg, "复制失败，请手动复制链接", "error"); }
+    });
+
+    async function restoreSession() {
+      if (!sessionToken) return;
+      setStatus(elements.authMsg, "正在恢复登录...");
+      try { showAccount((await request("/me", {}, true)).user); }
+      catch (error) { clearSession(); setStatus(elements.authMsg, error.message, "error"); }
+    }
+    restoreSession();
+  </script>
 </body>
-
-
 </html>

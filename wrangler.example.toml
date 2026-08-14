@@ -1,0 +1,32 @@
+name = "html-cloud"
+main = "worker.js"
+compatibility_date = "2026-08-14"
+
+[vars]
+ALLOWED_ORIGINS = "https://your-frontend.example,https://your-admin.example"
+PUBLIC_PAGE_ORIGIN = "https://pages.example.com"
+MAX_HTML_BYTES = "5242880"
+
+[[kv_namespaces]]
+binding = "LICENSE_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[[r2_buckets]]
+binding = "UPLOAD_BUCKET"
+bucket_name = "REPLACE_WITH_R2_BUCKET_NAME"
+
+[[durable_objects.bindings]]
+name = "LICENSE_GUARD"
+class_name = "LicenseGuard"
+
+[[durable_objects.bindings]]
+name = "ACCOUNT_REGISTRY"
+class_name = "AccountRegistry"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["LicenseGuard"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["AccountRegistry"]
