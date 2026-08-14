@@ -1,0 +1,32 @@
+name = "html-uploader"
+main = "worker.js"
+compatibility_date = "2026-08-14"
+
+[vars]
+ALLOWED_ORIGINS = "https://better666.dpdns.org"
+PUBLIC_PAGE_ORIGIN = "https://api.better666.dpdns.org"
+MAX_HTML_BYTES = "5242880"
+
+[[kv_namespaces]]
+binding = "LICENSE_KV"
+id = "7abb1dafb92e4f9c83aa99b6d658fd72"
+
+[[r2_buckets]]
+binding = "UPLOAD_BUCKET"
+bucket_name = "html-files"
+
+[[durable_objects.bindings]]
+name = "LICENSE_GUARD"
+class_name = "LicenseGuard"
+
+[[durable_objects.bindings]]
+name = "ACCOUNT_REGISTRY"
+class_name = "AccountRegistry"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["LicenseGuard"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["AccountRegistry"]
