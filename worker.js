@@ -1,7 +1,13 @@
+import { contentTypeForPath, decodeBase64, encodeBase64, safeAssetPath, unpackStaticSiteZip } from "./zip-utils.js";
+
 const DEFAULT_MAX_HTML_BYTES = 5 * 1024 * 1024;
+const DEFAULT_MAX_ZIP_BYTES = 10 * 1024 * 1024;
+const DEFAULT_MAX_SITE_BYTES = 25 * 1024 * 1024;
+const DEFAULT_MAX_SITE_FILES = 500;
 const RATE_WINDOW_SECONDS = 60;
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-const PBKDF2_ITERATIONS = 210000;
+// Cloudflare Workers Web Crypto supports at most 100000 PBKDF2 iterations.
+const PBKDF2_ITERATIONS = 100000;
 
 function corsHeaders(request, env) {
   const origin = request.headers.get("Origin");
@@ -53,21 +59,27 @@ function randomHex(length = 32) {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-function pageKey(id) { return `pages/${id}/index.html`; }
+function pagePrefix(id) { return `pages/${id}/`; }
+function pageKey(id) { return `${pagePrefix(id)}index.html`; }
+function pageAssetKey(id, assetPath) { return `${pagePrefix(id)}${assetPath}`; }
 
 function pageUrl(request, env, id) {
   const origin = String(env.PUBLIC_PAGE_ORIGIN || new URL(request.url).origin).replace(/\/$/, "");
-  return `${origin}/p/${id}`;
+  return `${origin}/p/${id}/`;
 }
 
 function clientIp(request) {
   return request.headers.get("CF-Connecting-IP") || request.headers.get("X-Forwarded-For") || "unknown";
 }
 
-function maxHtmlBytes(env) {
-  const configured = Number(env.MAX_HTML_BYTES);
-  return Number.isFinite(configured) && configured > 0 ? configured : DEFAULT_MAX_HTML_BYTES;
+function positiveLimit(env, name, fallback) {
+  const configured = Number(env[name]);
+  return Number.isFinite(configured) && configured > 0 ? configured : fallback;
 }
+function maxHtmlBytes(env) { return positiveLimit(env, "MAX_HTML_BYTES", DEFAULT_MAX_HTML_BYTES); }
+function maxZipBytes(env) { return positiveLimit(env, "MAX_ZIP_BYTES", DEFAULT_MAX_ZIP_BYTES); }
+function maxSiteBytes(env) { return positiveLimit(env, "MAX_SITE_BYTES", DEFAULT_MAX_SITE_BYTES); }
+function maxSiteFiles(env) { return Math.floor(positiveLimit(env, "MAX_SITE_FILES", DEFAULT_MAX_SITE_FILES)); }
 
 function byteLength(text) { return new TextEncoder().encode(text).byteLength; }
 
@@ -139,11 +151,11 @@ async function enforceRateLimit(request, env, scope, limit) {
   return response.ok ? null : data;
 }
 
-function publicPageHeaders(object) {
+function publicAssetHeaders(object, isHtml = false) {
   const headers = new Headers();
   object.writeHttpMetadata(headers);
-  headers.set("Content-Type", "text/html;charset=UTF-8");
-  headers.set("Content-Security-Policy", "sandbox allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads");
+  if (!headers.has("Content-Type")) headers.set("Content-Type", "application/octet-stream");
+  if (isHtml) headers.set("Content-Security-Policy", "sandbox allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads");
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Referrer-Policy", "no-referrer");
   headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
@@ -176,6 +188,36 @@ function publicLicense(info) {
 function titleFromHtml(html) {
   const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);
   return (match?.[1] || "未命名页面").trim().slice(0, 120) || "未命名页面";
+}
+
+function siteLimits(env) {
+  return {
+    maxZipBytes: maxZipBytes(env),
+    maxUnzippedBytes: maxSiteBytes(env),
+    maxFileBytes: maxSiteBytes(env),
+    maxFiles: maxSiteFiles(env)
+  };
+}
+
+function validatedPublishedAssets(payload, env) {
+  const rawAssets = Array.isArray(payload.assets) ? payload.assets : [];
+  if (!rawAssets.length || rawAssets.length > maxSiteFiles(env)) throw new Error("网站文件数量超出限制");
+  const seen = new Set();
+  let totalBytes = 0;
+  const assets = rawAssets.map((asset) => {
+    const providedPath = String(asset?.path || "");
+    const path = safeAssetPath(providedPath);
+    if (!path || path !== providedPath || seen.has(path)) throw new Error("网站包含无效或重复的文件路径");
+    const body = decodeBase64(asset?.data);
+    if (body.byteLength > maxSiteBytes(env)) throw new Error(`文件 ${path} 超出单文件大小限制`);
+    totalBytes += body.byteLength;
+    if (totalBytes > maxSiteBytes(env)) throw new Error("网站解压后的总大小超出限制");
+    seen.add(path);
+    return { path, body, contentType: contentTypeForPath(path) };
+  });
+  const index = assets.find((asset) => asset.path === "index.html");
+  if (!index) throw new Error("网站缺少 index.html 首页文件");
+  return { assets, indexHtml: new TextDecoder().decode(index.body), totalBytes };
 }
 
 export class LicenseGuard {
@@ -277,23 +319,38 @@ export class LicenseGuard {
       return json({ success: false, error: "激活码与当前账号不匹配" }, 403);
     }
 
+    let site;
+    try { site = validatedPublishedAssets(payload, this.env); }
+    catch (error) { return json({ success: false, error: error.message || "网站文件校验失败" }, 400); }
+
     const id = payload.id || crypto.randomUUID();
     const createdAt = new Date().toISOString();
-    await this.env.UPLOAD_BUCKET.put(pageKey(id), payload.html, {
-      httpMetadata: { contentType: "text/html;charset=UTF-8" }
-    });
-    const recordResult = await accountRequest(this.env, {
-      action: "record_page",
-      account_id: info.account_id,
-      page: {
-        id,
-        title: titleFromHtml(payload.html),
-        url: payload.url,
-        size_bytes: byteLength(payload.html),
-        created_at: createdAt
+    const savedKeys = [];
+    let savingAssets = true;
+    try {
+      for (const asset of site.assets) {
+        const key = pageAssetKey(id, asset.path);
+        await this.env.UPLOAD_BUCKET.put(key, asset.body, { httpMetadata: { contentType: asset.contentType } });
+        savedKeys.push(key);
       }
-    });
-    if (!recordResult.response.ok) return json({ success: false, error: "页面记录保存失败，请重试" }, 503);
+      savingAssets = false;
+      const recordResult = await accountRequest(this.env, {
+        action: "record_page",
+        account_id: info.account_id,
+        page: {
+          id,
+          title: titleFromHtml(site.indexHtml),
+          url: payload.url,
+          size_bytes: site.totalBytes,
+          file_count: site.assets.length,
+          created_at: createdAt
+        }
+      });
+      if (!recordResult.response.ok) throw new Error("页面记录保存失败，请重试");
+    } catch (error) {
+      await Promise.allSettled(savedKeys.map((key) => this.env.UPLOAD_BUCKET.delete(key)));
+      return json({ success: false, error: error.message || "网站保存失败，请重试" }, savingAssets ? 500 : 503);
+    }
 
     if (info.plan === "count") {
       info.remaining = Number(info.remaining) - 1;
@@ -413,6 +470,25 @@ export class AccountRegistry {
     return json({ success: true, token: session.token, session_expires_at: session.expires_at, user: this.publicUser(user) });
   }
 
+  async handleResetPassword(payload) {
+    const username = String(payload.username || "").trim().toLowerCase();
+    const password = String(payload.password || "");
+    const code = String(payload.license || "").trim().toUpperCase();
+    if (!/^[a-z0-9_]{4,32}$/.test(username)) return json({ success: false, error: "账号格式错误" }, 400);
+    if (password.length < 8 || password.length > 72) return json({ success: false, error: "新密码长度需为 8-72 位" }, 400);
+    if (!code) return json({ success: false, error: "请输入激活码" }, 400);
+    const user = await this.state.storage.get(`user:${username}`);
+    if (!user || user.license_code !== code) return json({ success: false, error: "账号或激活码不匹配" }, 401);
+    const licenseInfo = await licenseRequest(this.env, code, { action: "inspect", code });
+    if (!licenseInfo.response.ok || licenseInfo.data.data.account_id !== user.id) return json({ success: false, error: "激活码绑定信息异常" }, 403);
+    user.password_salt = randomHex(16);
+    user.password_hash = await passwordHash(password, user.password_salt);
+    delete user.session_hash;
+    delete user.session_expires_at;
+    await this.state.storage.put(`user:${username}`, user);
+    return json({ success: true, message: "密码已重置，请使用新密码登录" });
+  }
+
   async handleAuthenticate(payload) {
     const user = await this.authenticate(payload.token);
     if (!user) return json({ success: false, error: "登录已失效，请重新登录" }, 401);
@@ -483,6 +559,7 @@ export class AccountRegistry {
     catch { return json({ success: false, error: "请求数据错误" }, 400); }
     if (payload.action === "register") return this.handleRegister(payload);
     if (payload.action === "login") return this.handleLogin(payload);
+    if (payload.action === "reset_password") return this.handleResetPassword(payload);
     if (payload.action === "authenticate") return this.handleAuthenticate(payload);
     if (payload.action === "logout") return this.handleLogout(payload);
     if (payload.action === "record_page") return this.handleRecordPage(payload);
@@ -532,11 +609,16 @@ export default {
       }
 
       if (url.pathname.startsWith("/p/") && request.method === "GET") {
-        const id = url.pathname.slice(3).split("/")[0];
+        const suffix = url.pathname.slice(3);
+        const [id, ...resourceSegments] = suffix.split("/");
         if (!/^[0-9a-f-]{36}$/i.test(id)) return new Response("网页不存在", { status: 404 });
-        const object = await env.UPLOAD_BUCKET.get(pageKey(id));
-        if (!object) return new Response("网页不存在", { status: 404 });
-        return new Response(object.body, { headers: publicPageHeaders(object) });
+        if (!resourceSegments.length) return Response.redirect(`${url.origin}/p/${id}/`, 302);
+        const requestedPath = resourceSegments.join("/");
+        const assetPath = requestedPath ? safeAssetPath(requestedPath) : "index.html";
+        if (!assetPath) return new Response("网页文件不存在", { status: 404 });
+        const object = await env.UPLOAD_BUCKET.get(pageAssetKey(id, assetPath));
+        if (!object) return new Response("网页文件不存在", { status: 404 });
+        return new Response(object.body, { headers: publicAssetHeaders(object, /\.html?$/i.test(assetPath)) });
       }
 
       if (["/auth/register", "/auth/login"].includes(url.pathname) && request.method === "POST") {
@@ -647,12 +729,11 @@ export default {
         const html = String(parsed.data.html || "");
         if (!html.trim()) return json({ success: false, error: "HTML为空" }, 400, headers);
         if (byteLength(html) > maxHtmlBytes(env)) return json({ success: false, error: "HTML超过大小限制" }, 413, headers);
-        const user = auth.data.user;
         const id = crypto.randomUUID();
         const urlForRecord = pageUrl(request, env, id);
         const result = await licenseRequest(env, auth.data.license_code, {
-          action: "publish", code: auth.data.license_code, account_id: user.id, html,
-          id, url: urlForRecord
+          action: "publish", code: auth.data.license_code, account_id: auth.data.user.id,
+          assets: [{ path: "index.html", data: encodeBase64(new TextEncoder().encode(html)) }], id, url: urlForRecord
         });
         if (!result.response.ok) return json(result.data, result.response.status, headers);
         return json({ success: true, url: urlForRecord, remaining: result.data.remaining }, 200, headers);
@@ -662,7 +743,7 @@ export default {
         const limited = await enforceRateLimit(request, env, "publish", 30);
         if (limited) return json(limited, 429, headers);
         const contentLength = Number(request.headers.get("Content-Length") || 0);
-        if (contentLength > maxHtmlBytes(env) + 100000) return json({ success: false, error: "文件超过大小限制" }, 413, headers);
+        if (contentLength > maxZipBytes(env) + 100000) return json({ success: false, error: "文件超过大小限制" }, 413, headers);
         const auth = await authenticateRequest(request, env);
         if (!auth.response.ok) return json(auth.data, auth.response.status, headers);
         let form;
@@ -671,16 +752,27 @@ export default {
         const file = form.get("file");
         if (!(file instanceof File)) return json({ success: false, error: "没有上传文件" }, 400, headers);
         const extension = file.name.split(".").pop().toLowerCase();
-        if (!["html", "htm"].includes(extension)) return json({ success: false, error: "只支持 HTML 或 HTM 文件" }, 400, headers);
-        if (file.size > maxHtmlBytes(env)) return json({ success: false, error: "文件超过大小限制" }, 413, headers);
-        const html = await file.text();
-        if (!html.trim()) return json({ success: false, error: "HTML文件为空" }, 400, headers);
-        const user = auth.data.user;
+        let assets;
+        try {
+          if (["html", "htm"].includes(extension)) {
+            if (file.size > maxHtmlBytes(env)) return json({ success: false, error: "HTML 文件超过大小限制" }, 413, headers);
+            const html = await file.text();
+            if (!html.trim()) return json({ success: false, error: "HTML文件为空" }, 400, headers);
+            assets = [{ path: "index.html", body: new TextEncoder().encode(html) }];
+          } else if (extension === "zip") {
+            if (file.size > maxZipBytes(env)) return json({ success: false, error: "ZIP 文件超过大小限制" }, 413, headers);
+            assets = unpackStaticSiteZip(new Uint8Array(await file.arrayBuffer()), siteLimits(env));
+          } else {
+            return json({ success: false, error: "只支持 HTML、HTM 或 ZIP 文件" }, 400, headers);
+          }
+        } catch (error) {
+          return json({ success: false, error: error.message || "ZIP 文件无法处理" }, 400, headers);
+        }
         const id = crypto.randomUUID();
         const urlForRecord = pageUrl(request, env, id);
         const result = await licenseRequest(env, auth.data.license_code, {
-          action: "publish", code: auth.data.license_code, account_id: user.id, html,
-          id, url: urlForRecord
+          action: "publish", code: auth.data.license_code, account_id: auth.data.user.id,
+          assets: assets.map((asset) => ({ path: asset.path, data: encodeBase64(asset.body) })), id, url: urlForRecord
         });
         if (!result.response.ok) return json(result.data, result.response.status, headers);
         return json({ success: true, url: urlForRecord, remaining: result.data.remaining }, 200, headers);

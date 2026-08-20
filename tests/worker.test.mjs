@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { strToU8, zipSync } from "fflate";
 import worker, { AccountRegistry, LicenseGuard } from "../worker.js";
 
 class MemoryStorage {
@@ -28,6 +29,7 @@ class MemoryR2 {
     if (this.failNextPut) { this.failNextPut = false; throw new Error("R2 write failed"); }
     this.data.set(key, { value, options });
   }
+  async delete(key) { this.data.delete(key); }
   async get(key) {
     const item = this.data.get(key);
     if (!item) return null;
@@ -75,6 +77,13 @@ function apiRequest(path, { body: requestBody, ip = "203.0.113.10", token, admin
     method: method || (requestBody !== undefined ? "POST" : "GET"), headers,
     body: requestBody !== undefined ? JSON.stringify(requestBody) : undefined
   });
+}
+
+function uploadRequest(file, token) {
+  const headers = { "CF-Connecting-IP": "203.0.113.10", "Origin": "https://frontend.example", "User-Agent": "HTMLCloud-Test/1.0", Authorization: `Bearer ${token}` };
+  const form = new FormData();
+  form.append("file", new Blob([file.bytes], { type: file.type || "application/zip" }), file.name);
+  return new Request("https://api.example/upload", { method: "POST", headers, body: form });
 }
 
 async function responseBody(response) { return response.json(); }
@@ -141,7 +150,7 @@ test("publishes with an account session and exposes records to user and admin", 
   }), env);
   assert.equal(publishResponse.status, 200);
   const published = await responseBody(publishResponse);
-  assert.match(published.url, /^https:\/\/pages\.example\/p\/[0-9a-f-]{36}$/);
+  assert.match(published.url, /^https:\/\/pages\.example\/p\/[0-9a-f-]{36}\/$/);
   assert.equal(published.remaining, 1);
 
   const pagesResponse = await worker.fetch(apiRequest("/me/pages", { token }), env);
@@ -171,6 +180,46 @@ test("publishes with an account session and exposes records to user and admin", 
   assert.equal(page.status, 200);
   assert.match(page.headers.get("Content-Security-Policy"), /^sandbox/);
   assert.equal(page.headers.get("X-Content-Type-Options"), "nosniff");
+});
+
+test("publishes a ZIP static site and serves its CSS asset", async () => {
+  const env = createEnv();
+  const code = await generate(env);
+  const registered = await register(env, "zip_publisher", code);
+  const zip = zipSync({
+    "site/index.html": strToU8("<!doctype html><title>ZIP Site</title><link rel=\"stylesheet\" href=\"assets/site.css\"><h1>ZIP works</h1>"),
+    "site/assets/site.css": strToU8("body { color: rgb(0, 128, 0); }")
+  });
+
+  const publishResponse = await worker.fetch(uploadRequest({ name: "site.zip", bytes: zip }, registered.data.token), env);
+  assert.equal(publishResponse.status, 200);
+  const published = await responseBody(publishResponse);
+  assert.match(published.url, /^https:\/\/pages\.example\/p\/[0-9a-f-]{36}\/$/);
+
+  const pagePath = new URL(published.url).pathname;
+  const page = await worker.fetch(apiRequest(pagePath), env);
+  assert.equal(page.status, 200);
+  assert.match(page.headers.get("Content-Type"), /^text\/html/);
+  assert.match(await page.text(), /ZIP works/);
+
+  const css = await worker.fetch(apiRequest(`${pagePath}assets/site.css`), env);
+  assert.equal(css.status, 200);
+  assert.match(css.headers.get("Content-Type"), /^text\/css/);
+  assert.match(await css.text(), /rgb\(0, 128, 0\)/);
+
+  const unsafeAsset = await worker.fetch(apiRequest(`${pagePath}%5Csecret.css`), env);
+  assert.equal(unsafeAsset.status, 404);
+});
+
+test("rejects a ZIP archive containing a path traversal entry", async () => {
+  const env = createEnv();
+  const code = await generate(env);
+  const registered = await register(env, "zip_reject", code);
+  const zip = zipSync({ "../index.html": strToU8("<!doctype html><title>Unsafe</title>") });
+  const response = await worker.fetch(uploadRequest({ name: "unsafe.zip", bytes: zip }, registered.data.token), env);
+  assert.equal(response.status, 400);
+  assert.match((await responseBody(response)).error, /不安全/);
+  assert.equal(env.UPLOAD_BUCKET.data.size, 0);
 });
 
 test("does not consume usage when page storage fails", async () => {

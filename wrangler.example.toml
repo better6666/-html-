@@ -3,9 +3,12 @@ main = "worker.js"
 compatibility_date = "2026-08-14"
 
 [vars]
-ALLOWED_ORIGINS = "https://your-frontend.example,https://your-admin.example"
+ALLOWED_ORIGINS = "https://your-frontend.example,https://your-admin.example,https://your-github-user.github.io"
 PUBLIC_PAGE_ORIGIN = "https://pages.example.com"
 MAX_HTML_BYTES = "5242880"
+MAX_ZIP_BYTES = "10485760"
+MAX_SITE_BYTES = "26214400"
+MAX_SITE_FILES = "500"
 
 [[kv_namespaces]]
 binding = "LICENSE_KV"

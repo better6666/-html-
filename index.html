@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HTML Cloud - HTML 网页发布</title>
-  <meta name="description" content="粘贴 HTML 代码或上传 HTML 文件，生成可分享的在线访问链接。">
+  <meta name="description" content="粘贴 HTML 代码或上传 HTML、ZIP 静态网站包，生成可分享的在线访问链接。">
   <meta name="color-scheme" content="light">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23087f8c'/%3E%3Cpath d='M18 17h9v11h10V17h9v30h-9V36H27v11h-9z' fill='white'/%3E%3C/svg%3E">
   <style>
@@ -193,7 +193,7 @@
       <div class="intro">
         <div class="eyebrow">静态网页发布工具</div>
         <h1 id="page-title">把 HTML 变成可访问链接</h1>
-        <p class="intro-copy">用激活码注册账号，登录后粘贴代码或上传单个 HTML 文件。发布记录会保存在账号中，随时可以回来查看。</p>
+        <p class="intro-copy">用激活码注册账号，登录后可粘贴代码、上传单个 HTML 文件，或上传包含完整静态资源的 ZIP 网站包。发布记录会保存在账号中，随时可以回来查看。</p>
         <ul class="facts">
           <li><span class="fact-no">1</span><span><strong>一卡一账号</strong><span>激活码注册成功后不能再绑定其他账号。</span></span></li>
           <li><span class="fact-no">2</span><span><strong>按发布次数核销</strong><span>只有页面保存成功后才扣减次卡余量。</span></span></li>
@@ -212,6 +212,7 @@
             <div class="tabs" role="tablist" aria-label="账号操作">
               <button class="tab" id="loginTab" type="button" role="tab" aria-selected="true" aria-controls="authForm">登录</button>
               <button class="tab" id="registerTab" type="button" role="tab" aria-selected="false" aria-controls="authForm">激活码注册</button>
+              <button class="tab" id="resetTab" type="button" role="tab" aria-selected="false" aria-controls="authForm">重置密码</button>
             </div>
             <div id="authForm">
               <div class="field">
@@ -260,7 +261,7 @@
                 <div class="button-row"><button class="button primary" id="createBtn" type="button">发布代码</button></div>
               </div>
               <div class="hidden" id="filePanel" role="tabpanel" aria-labelledby="fileTab">
-                <div class="drop-zone" id="dropArea"><label for="fileInput"><strong>选择或拖入 HTML 文件</strong></label><p>支持 .html、.htm，单文件不超过 5MB。</p><input type="file" id="fileInput" accept=".html,.htm,text/html"></div>
+                <div class="drop-zone" id="dropArea"><label for="fileInput"><strong>选择或拖入 HTML / ZIP 文件</strong></label><p>支持 .html、.htm（不超过 5MB）及 ZIP 静态网站包（不超过 10MB，解压后不超过 25MB）。ZIP 内须包含 index.html。</p><input type="file" id="fileInput" accept=".html,.htm,.zip,text/html,application/zip"></div>
                 <div class="button-row" style="margin-top: 14px;"><button class="button primary" id="uploadBtn" type="button">上传并发布</button></div>
               </div>
               <div class="status" id="uploadMsg" role="status" aria-live="polite"></div>
@@ -285,16 +286,16 @@
         <p>整个过程不需要安装软件。</p>
         <ol class="steps">
           <li>使用激活码注册唯一账号</li>
-          <li>登录后粘贴 HTML 代码或选择 HTML 文件</li>
+          <li>登录后粘贴 HTML 代码，或选择 HTML / ZIP 静态网站包</li>
           <li>在“我的网页”中查看和分享历史记录</li>
         </ol>
       </div>
       <div class="detail-block">
         <h2>服务边界</h2>
-        <p>当前版本面向单文件静态页面。</p>
+        <p>当前版本面向纯前端静态网站。</p>
         <ul class="boundary">
           <li>支持内联 HTML、CSS、JavaScript</li>
-          <li>不支持 ZIP、多文件目录和后端程序</li>
+          <li>支持 ZIP 内的静态 HTML、CSS、JavaScript、图片和字体资源；不支持后端程序</li>
           <li>页面脚本采用浏览器沙箱隔离</li>
           <li>同一账号只保留一个有效登录会话</li>
         </ul>
@@ -305,11 +306,12 @@
 
   <script>
     const WORKER_URL = "https://api.better666.dpdns.org";
-    const MAX_FILE_BYTES = 5 * 1024 * 1024;
+    const MAX_HTML_BYTES = 5 * 1024 * 1024;
+    const MAX_ZIP_BYTES = 10 * 1024 * 1024;
     const SESSION_KEY = "html_cloud_session";
     const $ = (selector) => document.querySelector(selector);
     const elements = {
-      authSection: $("#authSection"), authTitle: $("#authTitle"), loginTab: $("#loginTab"), registerTab: $("#registerTab"),
+      authSection: $("#authSection"), authTitle: $("#authTitle"), loginTab: $("#loginTab"), registerTab: $("#registerTab"), resetTab: $("#resetTab"),
       username: $("#usernameInput"), password: $("#passwordInput"), licenseField: $("#licenseField"), license: $("#licenseInput"),
       authBtn: $("#authBtn"), authMsg: $("#authMsg"), accountSection: $("#accountSection"), accountName: $("#accountName"),
       accountMeta: $("#accountMeta"), logoutBtn: $("#logoutBtn"), planValue: $("#planValue"), expireValue: $("#expireValue"),
@@ -320,7 +322,7 @@
       dropArea: $("#dropArea"), uploadMsg: $("#uploadMsg"), result: $("#result"), resultLink: $("#resultLink"),
       copyBtn: $("#copyBtn"), openBtn: $("#openBtn")
     };
-    let registerMode = false;
+    let authMode = "login";
     let sessionToken = localStorage.getItem(SESSION_KEY) || "";
 
     function setStatus(element, message, type = "") {
@@ -364,31 +366,35 @@
     }
 
     function switchAuth(mode) {
-      registerMode = mode === "register";
-      elements.loginTab.setAttribute("aria-selected", String(!registerMode));
-      elements.registerTab.setAttribute("aria-selected", String(registerMode));
-      elements.licenseField.classList.toggle("hidden", !registerMode);
-      elements.authTitle.textContent = registerMode ? "使用激活码注册" : "登录账号";
-      elements.authBtn.textContent = registerMode ? "注册并绑定" : "登录";
-      elements.password.autocomplete = registerMode ? "new-password" : "current-password";
-      setStatus(elements.authMsg, registerMode ? "激活码绑定后不能注册其他账号" : "请输入账号和密码");
+      authMode = mode;
+      elements.loginTab.setAttribute("aria-selected", String(authMode === "login"));
+      elements.registerTab.setAttribute("aria-selected", String(authMode === "register"));
+      elements.resetTab.setAttribute("aria-selected", String(authMode === "reset"));
+      elements.licenseField.classList.toggle("hidden", authMode === "login");
+      elements.authTitle.textContent = authMode === "register" ? "使用激活码注册" : authMode === "reset" ? "使用激活码重置密码" : "登录账号";
+      elements.authBtn.textContent = authMode === "register" ? "注册并绑定" : authMode === "reset" ? "重置密码" : "登录";
+      elements.password.autocomplete = authMode === "login" ? "current-password" : "new-password";
+      setStatus(elements.authMsg, authMode === "register" ? "激活码绑定后不能注册其他账号" : authMode === "reset" ? "只有绑定该账号的激活码才能重置密码" : "请输入账号和密码");
     }
 
     elements.loginTab.addEventListener("click", () => switchAuth("login"));
     elements.registerTab.addEventListener("click", () => switchAuth("register"));
+    elements.resetTab.addEventListener("click", () => switchAuth("reset"));
     elements.authBtn.addEventListener("click", async () => {
       const username = elements.username.value.trim().toLowerCase();
       const password = elements.password.value;
       const license = elements.license.value.trim().toUpperCase();
       if (!username || !password) return setStatus(elements.authMsg, "请输入账号和密码", "error");
-      if (registerMode && !license) return setStatus(elements.authMsg, "请输入激活码", "error");
+      if (authMode !== "login" && !license) return setStatus(elements.authMsg, "请输入激活码", "error");
       elements.authBtn.disabled = true;
       const original = elements.authBtn.textContent;
-      elements.authBtn.textContent = registerMode ? "注册中..." : "登录中...";
+      elements.authBtn.textContent = authMode === "register" ? "注册中..." : authMode === "reset" ? "重置中..." : "登录中...";
       try {
-        const data = await request(registerMode ? "/auth/register" : "/auth/login", {
+        const endpoint = authMode === "register" ? "/auth/register" : authMode === "reset" ? "/auth/reset-password" : "/auth/login";
+        const data = await request(endpoint, {
           method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password, license })
         });
+        if (authMode === "reset") { setStatus(elements.authMsg, data.message, "success"); switchAuth("login"); elements.license.value = ""; elements.password.value = ""; return; }
         sessionToken = data.token;
         localStorage.setItem(SESSION_KEY, sessionToken);
         showAccount(data.user);
@@ -446,18 +452,23 @@
     elements.createBtn.addEventListener("click", () => {
       const html = elements.htmlCode.value.trim();
       if (!html) return setStatus(elements.uploadMsg, "请输入 HTML 代码", "error");
-      if (new Blob([html]).size > MAX_FILE_BYTES) return setStatus(elements.uploadMsg, "HTML 超过 5MB", "error");
+      if (new Blob([html]).size > MAX_HTML_BYTES) return setStatus(elements.uploadMsg, "HTML 超过 5MB", "error");
       publish("/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ html }) }, elements.createBtn, "发布中...");
     });
 
     elements.uploadBtn.addEventListener("click", () => {
       const file = elements.fileInput.files[0];
-      if (!file) return setStatus(elements.uploadMsg, "请选择 HTML 文件", "error");
-      if (file.size > MAX_FILE_BYTES) return setStatus(elements.uploadMsg, "文件超过 5MB", "error");
-      if (!/\.html?$/i.test(file.name)) return setStatus(elements.uploadMsg, "只支持 HTML 或 HTM 文件", "error");
+      if (!file) return setStatus(elements.uploadMsg, "请选择 HTML 或 ZIP 文件", "error");
+      const extension = file.name.split(".").pop().toLowerCase();
+      const isHtml = ["html", "htm"].includes(extension);
+      const isZip = extension === "zip";
+      if (!isHtml && !isZip) return setStatus(elements.uploadMsg, "只支持 HTML、HTM 或 ZIP 文件", "error");
+      const limit = isZip ? MAX_ZIP_BYTES : MAX_HTML_BYTES;
+      const label = isZip ? "ZIP 文件" : "HTML 文件";
+      if (file.size > limit) return setStatus(elements.uploadMsg, `${label} 超过 ${isZip ? "10MB" : "5MB"}`, "error");
       const form = new FormData();
       form.append("file", file);
-      publish("/upload", { method: "POST", body: form }, elements.uploadBtn, "上传中...");
+      publish("/upload", { method: "POST", body: form }, elements.uploadBtn, isZip ? "解压发布中..." : "上传中...");
     });
 
     ["dragenter", "dragover"].forEach((name) => elements.dropArea.addEventListener(name, (event) => { event.preventDefault(); elements.dropArea.classList.add("dragging"); }));

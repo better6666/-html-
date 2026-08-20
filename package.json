@@ -2,5 +2,10 @@
   "name": "html-cloud",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test tests/worker.test.mjs" }
+  "scripts": {
+    "test": "node --test tests/worker.test.mjs"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3"
+  }
 }

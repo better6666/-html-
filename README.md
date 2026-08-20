@@ -1,14 +1,15 @@
 # HTML Cloud
 
-HTML Cloud 用于把单文件 HTML 页面发布到 Cloudflare R2，并返回可分享链接。用户必须先用激活码注册账号，再登录发布页面。系统支持粘贴 HTML 代码以及上传 `.html` / `.htm` 文件，不支持 ZIP、多文件目录和后端程序。
+HTML Cloud 用于把静态网站发布到 Cloudflare R2，并返回可分享链接。用户必须先用激活码注册账号，再登录发布页面。系统支持粘贴 HTML 代码、上传 `.html` / `.htm` 文件，以及上传包含 HTML、CSS、JavaScript、图片与字体资源的 ZIP 静态网站包；不支持后端程序。
 
 ## 项目文件
 
 - `index.html`：账号注册、登录、发布和“我的网页”。
 - `admin.html`：激活码生成、状态管理、账号与发布记录查询。
-- `worker.js`：Cloudflare Worker、两个 Durable Object、KV 和 R2 逻辑。
+- `worker.js`：Cloudflare Worker、两个 Durable Object、KV、R2 与网站资源分发逻辑。
+- `zip-utils.js`：ZIP 文件预检、安全路径校验、解压和内容类型识别。
 - `wrangler.example.toml`：Worker 配置示例。
-- `tests/worker.test.mjs`：核心接口自动化测试。
+- `tests/worker.test.mjs`：核心接口与 ZIP 发布自动化测试。
 - `可视化/`：桌面端、手机端及管理端成品截图。
 
 ## 账号与激活规则
@@ -20,7 +21,7 @@ HTML Cloud 用于把单文件 HTML 页面发布到 Cloudflare R2，并返回可�
 - 后台记录最近登录的 User-Agent 和加盐 IP 哈希，供异常使用排查，不因更换设备或公网 IP 直接封禁。
 - 激活码被管理员作废后，账号已有登录会话仍不能继续发布。
 
-`LicenseGuard` 按激活码串行处理绑定与核销，阻止同一卡密并发注册或超额使用。`AccountRegistry` 串行维护账号、密码摘要、单会话状态和发布记录。密码使用 PBKDF2-SHA-256 与独立随机盐保存，迭代次数为 210,000；服务端不保存明文密码或明文 IP。
+`LicenseGuard` 按激活码串行处理绑定与核销，阻止同一卡密并发注册或超额使用。`AccountRegistry` 串行维护账号、密码摘要、单会话状态和发布记录。密码使用 PBKDF2-SHA-256 与独立随机盐保存，迭代次数为 100,000；服务端不保存明文密码或明文 IP。
 
 ## Cloudflare 配置
 
@@ -44,12 +45,15 @@ npx wrangler deploy
 必须同时存在以下绑定：
 
 - `LICENSE_KV`：激活码镜像以及旧数据导入来源。
-- `UPLOAD_BUCKET`：用户 HTML 页面存储。
+- `UPLOAD_BUCKET`：用户 HTML 页面及 ZIP 静态网站资源存储。
 - `LICENSE_GUARD`：激活码强一致绑定、状态与核销。
 - `ACCOUNT_REGISTRY`：账号、单会话和网页发布记录。
 - `ALLOWED_ORIGINS`：逗号分隔的前台、后台完整来源，正式环境不要使用 `*`。
 - `PUBLIC_PAGE_ORIGIN`：用户页面专用域名，建议与 API 管理域名分离。
-- `MAX_HTML_BYTES`：默认 `5242880`，即 5MB。
+- `MAX_HTML_BYTES`：默认 `5242880`，即 5MB，适用于粘贴或上传的单个 HTML 文件。
+- `MAX_ZIP_BYTES`：默认 `10485760`，即 10MB，适用于上传的 ZIP 文件。
+- `MAX_SITE_BYTES`：默认 `26214400`，即 25MB，限制 ZIP 解压后的所有网站文件总大小及单文件最大值。
+- `MAX_SITE_FILES`：默认 `500`，限制每个 ZIP 网站的文件数量。
 
 从旧版升级时，KV 激活码会在首次查询或注册时导入对应的 `LicenseGuard`。旧数据中已有的到期时间会保留；未激活时间卡从账号注册成功时起算。部署迁移前应备份 KV 和 R2 数据。
 
@@ -65,7 +69,8 @@ https://api.better666.dpdns.org
 
 ## 安全边界
 
-- 用户页面响应包含 CSP sandbox、`nosniff`、无引用来源和浏览器权限限制。
+- 用户页面响应包含 CSP sandbox、`nosniff`、无引用来源和浏览器权限限制；CSS、JavaScript、图片等资源会按其文件类型返回。
+- ZIP 上传会拒绝加密包、分卷包、ZIP64、重复路径、路径穿越、绝对路径、超限文件及没有唯一 `index.html` / `index.htm` 入口的包。
 - 激活码、账号密码只通过 POST 请求体传输，激活码不会出现在请求 URL。
 - 激活码使用 `crypto.getRandomValues` 生成，写入时再次检查冲突。
 - 认证接口每个 IP 每分钟最多 20 次，发布接口最多 30 次，管理接口最多 20 次。

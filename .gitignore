@@ -1,4 +1,6 @@
 激活码/
 .playwright-mcp/
+.wrangler/
+node_modules/
 *.zip
 .DS_Store
