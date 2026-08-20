@@ -155,7 +155,7 @@ function publicAssetHeaders(object, isHtml = false) {
   const headers = new Headers();
   object.writeHttpMetadata(headers);
   if (!headers.has("Content-Type")) headers.set("Content-Type", "application/octet-stream");
-  if (isHtml) headers.set("Content-Security-Policy", "sandbox allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads");
+  if (isHtml) headers.set("Content-Security-Policy", "sandbox allow-same-origin allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads");
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Referrer-Policy", "no-referrer");
   headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");

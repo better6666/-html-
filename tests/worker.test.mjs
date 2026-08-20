@@ -179,6 +179,7 @@ test("publishes with an account session and exposes records to user and admin", 
   const page = await worker.fetch(apiRequest(new URL(published.url).pathname), env);
   assert.equal(page.status, 200);
   assert.match(page.headers.get("Content-Security-Policy"), /^sandbox/);
+  assert.match(page.headers.get("Content-Security-Policy"), /allow-same-origin/);
   assert.equal(page.headers.get("X-Content-Type-Options"), "nosniff");
 });
 
