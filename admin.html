@@ -82,8 +82,8 @@
               <div class="field full"><label for="adminPassword">管理员密码</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="ADMIN_PASSWORD"></div>
               <div class="field"><label for="prefix">卡密前缀</label><input id="prefix" value="HTML" maxlength="12"></div>
               <div class="field"><label for="count">生成数量</label><input id="count" type="number" value="10" min="1" max="50"></div>
-              <div class="field"><label for="plan">卡类型</label><select id="plan"><option value="count">次卡</option><option value="hour">小时卡</option><option value="day">日卡</option><option value="week">周卡</option><option value="month">月卡</option><option value="forever">永久卡</option></select></div>
-              <div class="field"><label for="duration">有效时长</label><input id="duration" type="number" value="1" min="1" max="3650"><span class="hint">时间卡从账号注册成功开始计时</span></div>
+              <div class="field"><label for="plan">卡类型</label><select id="plan"><option value="count">次卡</option><option value="hour">小时卡</option><option value="day">日卡</option><option value="week">周卡</option><option value="month">月卡</option><option value="quarter">三个月卡</option><option value="halfyear">半年卡</option><option value="year">一年卡</option><option value="forever">永久卡</option></select></div>
+              <div class="field"><label for="duration">有效时长</label><input id="duration" type="number" value="1" min="1" max="3650"><span class="hint" id="durationHint">时间卡从账号注册成功开始计时</span></div>
               <div class="field"><label for="uses">可用次数</label><input id="uses" type="number" value="10" min="1" max="100000"><span class="hint">仅次卡使用此设置</span></div>
               <div class="field"><label for="batch">批次</label><input id="batch" value="default" maxlength="80"></div>
               <div class="field"><label for="groupSize">每组字符</label><input id="groupSize" type="number" value="4" min="3" max="8"></div>
@@ -166,6 +166,24 @@
       element.className = `status${type ? ` ${type}` : ""}`;
     }
 
+    function planLabel(plan) {
+      return ({ count: "次卡", hour: "小时卡", day: "日卡", week: "周卡", month: "月卡", quarter: "三个月卡", halfyear: "半年卡", year: "一年卡", forever: "永久卡" })[plan] || plan;
+    }
+
+    function syncDuration() {
+      const fixed = { quarter: 3, halfyear: 6, year: 12 }[fields.plan.value];
+      fields.duration.disabled = fixed !== undefined;
+      if (fixed !== undefined) {
+        fields.duration.value = fixed;
+        $("#durationHint").textContent = `${planLabel(fields.plan.value)}固定为 ${fixed} 个月，注册成功后开始计时`;
+      } else {
+        $("#durationHint").textContent = "时间卡从账号注册成功开始计时";
+      }
+    }
+
+    fields.plan.addEventListener("change", syncDuration);
+    syncDuration();
+
     async function request(path, body) {
       const password = adminPassword.value.trim();
       if (!password) throw new Error("请输入管理员密码");
@@ -210,7 +228,7 @@
     $("#csvBtn").addEventListener("click", () => {
       const codes = output.value.split("\n").map((value) => value.trim()).filter(Boolean);
       if (!codes.length) return setStatus(generateStatus, "没有可导出的激活码", "error");
-      const rows = [["code", "plan", "duration", "uses", "batch"], ...codes.map((code) => [code, fields.plan.value, fields.duration.value, fields.uses.value, fields.batch.value])];
+      const rows = [["code", "plan", "duration", "uses", "batch"], ...codes.map((code) => [code, planLabel(fields.plan.value), fields.duration.value, fields.uses.value, fields.batch.value])];
       const csv = rows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(",")).join("\n");
       const url = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
       const link = document.createElement("a");
@@ -226,7 +244,7 @@
       currentRecord = item;
       $("#rCode").textContent = item.code;
       $("#rStatus").textContent = item.status === "revoked" ? "已作废" : "正常";
-      $("#rPlan").textContent = item.plan;
+      $("#rPlan").textContent = planLabel(item.plan);
       $("#rUsage").textContent = item.plan === "count" ? `${item.remaining} / ${item.used || 0}` : "不限";
       $("#rExpire").textContent = item.plan === "count" ? "按次数" : (item.expire_at ? dateText(item.expire_at) : "注册后起算");
       $("#rAccount").textContent = item.account_username || "未绑定";
